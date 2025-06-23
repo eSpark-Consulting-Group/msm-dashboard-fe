@@ -1,0 +1,33 @@
+import dashboardIcon from "./icons/dashboard.svg";
+import devicesIcon from "./icons/devices.svg";
+import userIcon from "./icons/users.svg";
+import supportIcon from "./icons/support.svg";
+import reportIcon from "./icons/report.svg";
+import settingsIcon from "./icons/settings.svg";
+import logoutIcon from "./icons/logout.svg";
+import hamburger from "./icons/hamburger.svg";
+import searchIcon from "./icons/search.svg";
+import messageIcon from "./icons/message.svg";
+import bellIcon from "./icons/bell.svg";
+import view from "./icons/view.svg";
+import edit from "./icons/edit.svg";
+import trash from "./icons/delete.svg";
+import avatar from "./images/avatar.png";
+
+export {
+  dashboardIcon,
+  devicesIcon,
+  userIcon,
+  supportIcon,
+  reportIcon,
+  settingsIcon,
+  logoutIcon,
+  hamburger,
+  searchIcon,
+  messageIcon,
+  bellIcon,
+  view,
+  edit,
+  trash,
+  avatar,
+};

@@ -10,9 +10,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
-import { getValue } from "../../utils";
-import { view, edit, trash } from "../../assets";
+import { copyToClipboard, getValue } from "../../utils";
+import { view, edit, trash, copy } from "../../assets";
 
 const DynamicTable = ({
   data,
@@ -22,6 +23,7 @@ const DynamicTable = ({
   handleEdit,
   handleDelete,
   page,
+  pageSize,
   handlePageChange,
   total,
 }) => {
@@ -68,8 +70,20 @@ const DynamicTable = ({
           }}
         />
       </Stack>
-    ) : column.key[0] === "chip" ? (
-      <Chip label={item?.chip?.label} variant={item?.chip?.variant} />
+    ) : column?.chip ? (
+      <Chip label={cell?.label} variant={cell?.variant} />
+    ) : column?.copy ? (
+      <Stack
+        onClick={() => copyToClipboard(cell)}
+        sx={{ cursor: "pointer" }}
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        gap="5px"
+      >
+        <Typography>{cell}</Typography>
+        <img src={copy} alt="copy" />
+      </Stack>
     ) : (
       cell
     );
@@ -123,7 +137,7 @@ const DynamicTable = ({
           )}
         </TableContainer>
       )}
-      {data?.length >= 7 && !isLoading ? (
+      {data?.length >= pageSize && !isLoading ? (
         <Stack
           sx={{ marginTop: { xs: "20px", sm: "10px" } }}
           p={{ xs: 0, sm: 2 }}
@@ -136,7 +150,7 @@ const DynamicTable = ({
             onChange={
               handlePageChange ? (_, page) => handlePageChange(page) : () => {}
             }
-            count={Math.ceil((total || 1) / 7)}
+            count={Math.ceil((total || 1) / pageSize)}
           />
         </Stack>
       ) : null}

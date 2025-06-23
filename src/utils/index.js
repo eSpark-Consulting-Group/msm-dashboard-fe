@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export function useClickOutside(ref, onClickOutside) {
   useEffect(() => {
@@ -28,3 +29,14 @@ export function getValue(item, keys) {
 
   return value;
 }
+
+export const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard!");
+    return true;
+  } catch (error) {
+    toast.error("Failed to copy to clipboard");
+    return false;
+  }
+};

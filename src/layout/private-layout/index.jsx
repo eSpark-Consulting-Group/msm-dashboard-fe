@@ -10,7 +10,14 @@ const PrivateLayout = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar open={open} setOpen={setOpen} />
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          width: "calc(100vw - 290px)",
+        }}
+      >
         <Header open={open} setOpen={setOpen} />
         <Box
           sx={{

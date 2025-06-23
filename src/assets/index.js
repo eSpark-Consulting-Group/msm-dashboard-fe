@@ -12,6 +12,7 @@ import bellIcon from "./icons/bell.svg";
 import view from "./icons/view.svg";
 import edit from "./icons/edit.svg";
 import trash from "./icons/delete.svg";
+import copy from "./icons/copy.svg";
 import avatar from "./images/avatar.png";
 
 export {
@@ -29,5 +30,6 @@ export {
   view,
   edit,
   trash,
+  copy,
   avatar,
 };

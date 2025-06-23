@@ -82,51 +82,129 @@ export const theme = createTheme({
         },
       ],
     },
+    MuiTable: {
+      styleOverrides: {
+        root: {
+          borderCollapse: "separate !important",
+          borderSpacing: "0 10px",
+        },
+      },
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          ".MuiTableRow-root": {
+            background: "#fff",
+            borderRadius: "4px",
+          },
+          ".MuiTableCell-root": {
+            whiteSpace: "nowrap",
+            color: "#454545",
+            borderBottom: "none",
+            fontSize: "18px",
+            fontWeight: 500,
+            padding: "20px 0px",
+          },
+        },
+      },
+    },
+    MuiTableBody: {
+      styleOverrides: {
+        root: {
+          ".MuiTableRow-root": {
+            background: "#fff",
+            borderRadius: "4px",
+          },
+          "& .MuiTableCell-root": {
+            whiteSpace: "nowrap",
+            borderBottom: "none",
+            color: "#505050",
+            fontSize: "16px",
+            padding: "10px 16px",
+          },
+        },
+      },
+    },
+    MuiPagination: {
+      styleOverrides: {
+        root: {
+          marginTop: "20px",
+          display: "flex",
+          justifyContent: "center",
+        },
+      },
+    },
+    MuiPaginationItem: {
+      styleOverrides: {
+        root: {
+          fontSize: "14px",
+          fontWeight: 500,
+          color: "#505050",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+          "&:hover": {
+            backgroundColor: "#f0f0f0",
+          },
+
+          "&.Mui-selected": {
+            backgroundColor: "#0077FF",
+            color: "#fff",
+            borderColor: "#0077FF",
+            "&:hover": {
+              backgroundColor: "#1565c0",
+            },
+          },
+          "&.MuiPaginationItem-previousNext": {
+            color: "#505050",
+            border: "1.5px solid #505050",
+            borderRadius: "50%",
+            width: "20px",
+            minWidth: "20px",
+            maxWidth: "20px",
+            height: "20px",
+          },
+        },
+      },
+    },
     MuiChip: {
       variants: [
         {
           props: { variant: "green" },
           style: {
-            paddingTop: "3.41px",
-            paddingRight: "14px",
-            paddingBottom: "3.41px",
-            paddingLeft: "14px",
-            backgroundColor: "#A9F49A",
-            border: "0.57px solid #30F408",
-            borderRadius: "10.5px",
-            color: "#22A309",
-            textTransform: "capitalize",
-            height: "21px",
+            backgroundColor: "#EFFFEC",
+            border: "1px solid #05A300",
+            borderRadius: "21px",
+            color: "#05A300",
+            width: "100px",
+            height: "30px",
+            fontSize: "16px",
+            fontWeight: 400,
           },
         },
         {
           props: { variant: "red" },
           style: {
-            paddingTop: "7px",
-            paddingRight: "14px",
-            paddingBottom: "3.41px",
-            paddingLeft: "14px",
-            backgroundColor: "#E434153B",
-            border: "0.57px solid #E43415",
-            borderRadius: "10.5px",
-            color: "#E43415",
-            textTransform: "capitalize",
-            height: "27px",
+            backgroundColor: "#FFDCD1",
+            border: "1px solid #EB1B1B",
+            borderRadius: "21px",
+            color: "#EB1B1B",
+            width: "100px",
+            height: "30px",
+            fontSize: "16px",
+            fontWeight: 400,
           },
         },
         {
-          props: { variant: "yellow" },
+          props: { variant: "outlined" },
           style: {
-            paddingTop: "7px",
-            paddingRight: "14px",
-            paddingBottom: "3.41px",
-            paddingLeft: "14px",
-            backgroundColor: "#E4D3153B",
-            border: "0.57px solid #E4AD15",
-            borderRadius: "10.5px",
-            color: "#E4AD15",
-            textTransform: "capitalize",
-            height: "27px",
+            backgroundColor: "transparent",
+            border: "1px solid #0077FF",
+            borderRadius: "21px",
+            color: "#505050",
+            width: "100px",
+            height: "30px",
+            fontSize: "16px",
+            fontWeight: 400,
           },
         },
       ],

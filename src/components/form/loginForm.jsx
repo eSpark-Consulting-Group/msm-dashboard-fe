@@ -7,12 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-
-const validationSchema = Yup.object({
-  username: Yup.string().required("Username is required"),
-  password: Yup.string().required("Password is required"),
-});
+import { loginValidationSchema } from "../../schemas";
 
 const LoginForm = () => {
   const formik = useFormik({
@@ -21,7 +16,7 @@ const LoginForm = () => {
       password: "",
       remember: false,
     },
-    validationSchema,
+    validationSchema: loginValidationSchema,
     onSubmit: (values) => {
       console.log("Login Data:", values);
     },

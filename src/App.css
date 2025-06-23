@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #FFFFFF;
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FFFFFF;
+    border-radius: 7px;
+    box-shadow: 0px 4px 4px 0px #00000040 inset;
+}
+
+@font-face {
+    font-family: "AlbertSans";
+    src: url("./assets/font/AlbertSans-Medium.ttf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: "AlbertSans", sans-serif;
+    background-color: #F5F5F5;
+}

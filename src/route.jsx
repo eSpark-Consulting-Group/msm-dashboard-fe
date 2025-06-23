@@ -1,0 +1,38 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import AuthLayout from "./layout/auth-layout";
+import PrivateLayout from "./layout/private-layout";
+import {
+  Login,
+  Dashboard,
+  Devices,
+  Reports,
+  Settings,
+  Support,
+  Users,
+  AddUser,
+} from "./pages";
+
+const Router = () => {
+  return (
+    <>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+        </Route>
+        <Route element={<PrivateLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/devices" element={<Devices />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/add" element={<AddUser />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
+  );
+};
+
+export default Router;

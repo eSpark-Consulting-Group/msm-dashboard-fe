@@ -26,6 +26,7 @@ export default function SearchBar({
           paddingLeft: 0,
           background: "#fff",
           borderRadius: "10px",
+          backgroundColor: "white",
           height: 40,
           "& fieldset": {
             borderColor: "#E4E4E7",

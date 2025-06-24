@@ -41,7 +41,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "none",
-          height: "60px",
+          height: "45px",
           textTransform: "capitalize",
           width: "100%",
           borderRadius: "16px",
@@ -70,7 +70,7 @@ export const theme = createTheme({
         {
           props: { variant: "outlined", color: "primary" },
           style: {
-            background: "transparent",
+            background: "#FFFFFF",
             border: "1px solid #0077FF",
             color: "#0077FF",
             "&:hover": {
@@ -220,6 +220,37 @@ export const theme = createTheme({
         bar: {
           borderRadius: 5,
           backgroundColor: "#0C89E2",
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          "&::placeholder": {
+            color: "#A1A1AA",
+            fontWeight: "400",
+            opacity: 1,
+            fontSize: "14px",
+          },
+        },
+
+        root: {
+          border: "1px solid #E4E4E4",
+          width: "100%",
+          outline: "none",
+          padding: "0px 5px",
+          fontSize: "14px",
+          color: "#000",
+          fontWeight: 400,
+          borderRadius: "5px",
+          backgroundColor: "#FFFFFF",
+          height: "40px",
+          ":focus": {
+            border: "1px solid #E4E4E4",
+          },
+          fieldset: {
+            border: 0,
+          },
         },
       },
     },

@@ -33,7 +33,7 @@ export default function SearchBar({
       variant="outlined"
       placeholder={placeholder}
       value={value}
-      onChange={onChange}
+      onChange={(e) => onChange(e.target.value)}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start" sx={{ pl: 1.5 }}>

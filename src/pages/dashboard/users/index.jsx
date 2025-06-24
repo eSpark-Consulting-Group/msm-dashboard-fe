@@ -48,7 +48,7 @@ const Users = () => {
         onClick={() => navigate("/users/add")}
       />
       <Box sx={{ width: { xs: "100%", sm: "495px" } }}>
-        <SearchBar onChange={(e) => setSearch(e.target.value)} />
+        <SearchBar onChange={(e) => setSearch(e)} />
       </Box>
       <DynamicTable
         data={data}

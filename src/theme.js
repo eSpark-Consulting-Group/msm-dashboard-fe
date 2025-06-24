@@ -223,5 +223,36 @@ export const theme = createTheme({
         },
       },
     },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          "&::placeholder": {
+            color: "#A1A1AA",
+            fontWeight: "400",
+            opacity: 1,
+            fontSize: "14px",
+          },
+        },
+
+        root: {
+          border: "1px solid #E4E4E4",
+          width: "100%",
+          outline: "none",
+          padding: "0px 5px",
+          fontSize: "14px",
+          color: "#000",
+          fontWeight: 400,
+          borderRadius: "5px",
+          backgroundColor: "#FFFFFF",
+          height: "40px",
+          ":focus": {
+            border: "1px solid #E4E4E4",
+          },
+          fieldset: {
+            border: 0,
+          },
+        },
+      },
+    },
   },
 });

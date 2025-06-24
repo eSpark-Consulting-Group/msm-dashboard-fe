@@ -13,6 +13,15 @@ import view from "./icons/view.svg";
 import edit from "./icons/edit.svg";
 import trash from "./icons/delete.svg";
 import copy from "./icons/copy.svg";
+import user from "./icons/user.svg";
+import dummyUser from "./icons/avatar.svg";
+import uploadIcon from "./icons/upload.svg";
+import DropDownIcon from "./icons/dropdownIcon.svg";
+import addOption from "./icons/addOption.svg";
+import deleteOption from "./icons/deleteOption.svg";
+import eye from "./icons/eye.svg";
+import eyeClose from "./icons/closeEye.svg";
+
 import avatar from "./images/avatar.png";
 
 export {
@@ -32,4 +41,12 @@ export {
   trash,
   copy,
   avatar,
+  user,
+  dummyUser,
+  uploadIcon,
+  DropDownIcon,
+  addOption,
+  deleteOption,
+  eye,
+  eyeClose,
 };

@@ -13,6 +13,7 @@ export default function SearchBar({
         "& .MuiOutlinedInput-root": {
           paddingLeft: 0,
           borderRadius: "10px",
+          backgroundColor: "white",
           height: 40,
           "& fieldset": {
             borderColor: "#E4E4E7",

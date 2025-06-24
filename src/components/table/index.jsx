@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Chip,
   LinearProgress,
@@ -84,6 +85,24 @@ const DynamicTable = ({
         <Typography>{cell}</Typography>
         <img src={copy} alt="copy" />
       </Stack>
+    ) : column?.image ? (
+      <Box
+        sx={{
+          display: "flex",
+          columnGap: "10px",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Avatar
+          src={cell?.image}
+          alt={cell?.name}
+          sx={{ width: "30px", height: "30px" }}
+        />
+        <Typography sx={{ fontSize: "16px", color: "#505050" }}>
+          {cell?.name}
+        </Typography>
+      </Box>
     ) : (
       cell
     );

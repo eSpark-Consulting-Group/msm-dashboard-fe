@@ -6,6 +6,7 @@ import {
   reportIcon,
   settingsIcon,
   logoutIcon,
+  user,
 } from "../assets";
 
 export const sidebarTabs = [
@@ -43,5 +44,127 @@ export const sidebarTabs = [
     icon: logoutIcon,
     title: "Logout",
     link: "/logout",
+  },
+];
+
+export const userTableData = [
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
+  },
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
+  },
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
+  },
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
+  },
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
+  },
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
+  },
+  {
+    userName: {
+      image: user,
+      name: "Liya",
+    },
+    email: "abc@espar.com",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+    deviceId: {
+      label: "123456",
+      variant: "outlined",
+    },
+    addedOn: "2 June ,2025",
+    access: "Read",
   },
 ];

@@ -48,7 +48,7 @@ const DynamicTable = ({
           style={{ cursor: "pointer" }}
           onClick={(e) => {
             e.stopPropagation();
-            handleView(column);
+            handleView(item);
           }}
         />
         <img
@@ -57,7 +57,7 @@ const DynamicTable = ({
           style={{ cursor: "pointer" }}
           onClick={(e) => {
             e.stopPropagation();
-            handleEdit(column);
+            handleEdit(item);
           }}
         />
         <img
@@ -66,7 +66,7 @@ const DynamicTable = ({
           style={{ cursor: "pointer" }}
           onClick={(e) => {
             e.stopPropagation();
-            handleDelete(column);
+            handleDelete(item);
           }}
         />
       </Stack>
@@ -91,7 +91,7 @@ const DynamicTable = ({
   return (
     <>
       {data?.length === 0 && !isLoading ? (
-        <Box>No Data Found</Box>
+        <Typography fontSize={20} fontWeight={900} mt="100px" textAlign="center">No Data Found</Typography>
       ) : (
         <TableContainer>
           <Table>

@@ -45,3 +45,22 @@ export const sidebarTabs = [
     link: "/logout",
   },
 ];
+
+export const deviceData = [
+  {
+    id: "1",
+    deviceId: "123456",
+    area: "Place1",
+    addedOn: "2 June ,2025",
+    assigned: { variant: "outlined", label: "2 Person" },
+    status: { variant: "green", label: "Active" },
+  },
+  {
+    id: "2",
+    deviceId: "123456",
+    area: "Place1",
+    addedOn: "2 June ,2025",
+    assigned: { variant: "outlined", label: "2 Person" },
+    status: { variant: "red", label: "In active" },
+  },
+];

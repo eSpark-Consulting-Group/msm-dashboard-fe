@@ -41,7 +41,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "none",
-          height: "60px",
+          height: "45px",
           textTransform: "capitalize",
           width: "100%",
           borderRadius: "16px",
@@ -70,7 +70,7 @@ export const theme = createTheme({
         {
           props: { variant: "outlined", color: "primary" },
           style: {
-            background: "transparent",
+            background: "#FFFFFF",
             border: "1px solid #0077FF",
             color: "#0077FF",
             "&:hover": {

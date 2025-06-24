@@ -1,48 +1,65 @@
 import { Box, Button, Typography } from "@mui/material";
-import { DynamicTable, SearchBar } from "../../../components";
+import { DynamicTable, SearchBar, SubHeader } from "../../../components";
 import { userTableData } from "../../../constant";
 import { columns } from "../../../columns/users";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Users = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState(userTableData || []);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(7);
+  const [total] = useState(7);
+
+  const handleView = (item) => {
+    console.log(item, "view");
+  };
+
+  const handleEdit = (item) => {
+    console.log(item, "edit");
+  };
+
+  const handleDelete = (item) => {
+    console.log(item, "delete");
+  };
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
+
+  useEffect(() => {
+    const filtered = userTableData.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(search.toLowerCase())
+      )
+    );
+    setData(filtered);
+    setPage(1);
+  }, [search]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", rowGap: "20px" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: { xs: "column", sm: "row" },
-        }}
-      >
-        <Typography
-          sx={{ fontSize: "40px", color: "#454545", fontWeight: "900" }}
-        >
-          Users
-        </Typography>
-        <Box sx={{ width: { xs: "100%", sm: "160px" } }}>
-          <Button
-            variant="outlined"
-            sx={{ height: "45px", backgroundColor: "white" }}
-            disableRipple
-            onClick={() => navigate("/users/add")}
-          >
-            Add User
-          </Button>
-        </Box>
-      </Box>
-      <Typography sx={{ color: "#A1A1AA", fontSize: "20px" }}>
-        Here’s what’s happening with your device and users
-      </Typography>
+      <SubHeader
+        heading={"Users"}
+        buttonText={"Add User"}
+        subHeading={"Here’s what’s happening with your device and users"}
+        onClick={() => navigate("/users/add")}
+      />
       <Box sx={{ width: { xs: "100%", sm: "495px" } }}>
-        <SearchBar />
+        <SearchBar onChange={(e) => setSearch(e.target.value)} />
       </Box>
       <DynamicTable
-        data={userTableData}
+        data={data}
         columns={columns()}
-        page={1}
-        pageSize={7}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        handleView={handleView}
+        handlePageChange={handlePageChange}
       />
     </Box>
   );

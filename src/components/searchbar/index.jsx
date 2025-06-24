@@ -1,17 +1,30 @@
 import { TextField, InputAdornment } from "@mui/material";
 import { searchIcon } from "../../assets";
+import { useState, useRef } from "react";
 
 export default function SearchBar({
-  value,
   onChange,
   placeholder = "Type to search",
 }) {
+  const [search, setSearch] = useState("");
+  const timeoutRef = useRef(null);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setSearch(val);
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      onChange(val);
+    }, 500);
+  };
+
   return (
     <TextField
       sx={{
         width: "100%",
         "& .MuiOutlinedInput-root": {
           paddingLeft: 0,
+          background: "#fff",
           borderRadius: "10px",
           backgroundColor: "white",
           height: 40,
@@ -32,8 +45,8 @@ export default function SearchBar({
       }}
       variant="outlined"
       placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
+      value={search}
+      onChange={handleChange}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start" sx={{ pl: 1.5 }}>

@@ -14,3 +14,8 @@ export const loginSchema = Yup.object({
     .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
     .matches(/[0-9]/, "Password must contain at least one number."),
 });
+
+export const loginValidationSchema = Yup.object({
+  username: Yup.string().required("Username is required"),
+  password: Yup.string().required("Password is required"),
+});

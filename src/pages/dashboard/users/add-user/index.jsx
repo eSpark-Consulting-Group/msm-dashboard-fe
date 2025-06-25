@@ -246,7 +246,7 @@ const AddUser = () => {
               width: { xs: "100%", lg: "790px", xl: "65%" },
               flexDirection: { xs: "column", lg: "row" },
               columnGap: "30px",
-              rowGap: "1px",
+              rowGap: "15px",
             }}
           >
             <Box sx={{ width: { xs: "100%", lg: "300px" }, height: "98px" }}>
@@ -291,7 +291,6 @@ const AddUser = () => {
             <Box
               sx={{
                 width: { xs: "100%", lg: "120px" },
-                mt: { xs: "25px", lg: "0px" },
               }}
             >
               <Button
@@ -426,8 +425,8 @@ const AddUser = () => {
             sx={{
               mt: index ? "30px" : "10px",
               display: "flex",
-              rowGap: "10px",
-              gap: "30px",
+              rowGap: "15px",
+              columnGap: "30px",
             }}
           >
             <Box

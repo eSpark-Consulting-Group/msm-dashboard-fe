@@ -5,6 +5,7 @@ import SubHeader from "./sub-header";
 import DynamicTable from "./table";
 import OutlinedInput from "./input";
 import Dropdown from "./drop-down";
+import CustomAutoComplete from "./auto-complete";
 
 export {
   Button,
@@ -14,4 +15,5 @@ export {
   DynamicTable,
   OutlinedInput,
   Dropdown,
+  CustomAutoComplete,
 };

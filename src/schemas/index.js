@@ -19,3 +19,19 @@ export const loginValidationSchema = Yup.object({
   username: Yup.string().required("Username is required"),
   password: Yup.string().required("Password is required"),
 });
+
+export const generalScehma = Yup.object({
+  username: Yup.string().required("Username is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});
+
+export const passwordScehma = Yup.object({
+  password: Yup.string()
+    .min(5, "Password must be at least 5 characters")
+    .required("Password is required"),
+  conPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Please confirm your password"),
+});

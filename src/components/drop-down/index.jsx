@@ -67,7 +67,7 @@ const Dropdown = ({
           onChange={handleChange}
           value={value || options[0]?.value}
           sx={{
-            color: (theme) => ("" === "" ? "#A1A1AA" : "inherit"),
+            color: "#A1A1AA",
           }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {

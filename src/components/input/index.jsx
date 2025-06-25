@@ -21,6 +21,9 @@ const OutlinedInput = ({
   disabled,
   type = "text",
   readOnly,
+  error,
+  helperText,
+  onBlur,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -54,6 +57,7 @@ const OutlinedInput = ({
         onKeyDown={onKeyDown}
         disabled={disabled}
         multiline={multiline}
+        onBlur={onBlur}
         type={type === "password" && !showPassword ? "password" : "text"}
         InputProps={{
           startAdornment: startAdornment && (
@@ -100,7 +104,11 @@ const OutlinedInput = ({
           ),
           readOnly: readOnly,
         }}
+        error={error}
       />
+      <Typography variant="caption" color="red" sx={{ display: "block" }}>
+        {helperText ? helperText : ""}
+      </Typography>
     </Box>
   );
 };

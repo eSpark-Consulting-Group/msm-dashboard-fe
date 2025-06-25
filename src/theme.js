@@ -232,6 +232,11 @@ export const theme = createTheme({
             opacity: 1,
             fontSize: "14px",
           },
+          "&:-webkit-autofill": {
+            WebkitBoxShadow: "0 0 0 1000px transparent inset",
+            WebkitTextFillColor: "#000",
+            transition: "background-color 5000s ease-in-out 0s",
+          },
         },
 
         root: {

@@ -66,6 +66,9 @@ const Dropdown = ({
           id="demo-simple-select-filled"
           onChange={handleChange}
           value={value || options[0]?.value}
+          sx={{
+            color: "#A1A1AA",
+          }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {
             if (!selected) {

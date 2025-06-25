@@ -3,11 +3,11 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "../../schemas";
+import OutlinedInput from "../input";
 
 const LoginForm = () => {
   const formik = useFormik({
@@ -30,17 +30,12 @@ const LoginForm = () => {
       autoComplete="off"
     >
       <Box sx={{ mt: 2 }}>
-        <Typography variant="subtitle2" fontWeight="bold" mb={0.5}>
-          Username
-        </Typography>
-        <TextField
-          fullWidth
-          margin="dense"
-          id="username"
+        <OutlinedInput
+          label="Username"
           name="username"
           placeholder="Enter your username"
           value={formik.values.username}
-          onChange={formik.handleChange}
+          onInputChange={formik.handleChange}
           onBlur={formik.handleBlur}
           error={formik.touched.username && Boolean(formik.errors.username)}
           helperText={formik.touched.username && formik.errors.username}
@@ -48,18 +43,13 @@ const LoginForm = () => {
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        <Typography variant="subtitle2" fontWeight="bold" mb={0.5}>
-          Password
-        </Typography>
-        <TextField
-          fullWidth
-          margin="dense"
-          id="password"
+        <OutlinedInput
+          label="Password"
           name="password"
           type="password"
           placeholder="Enter your password"
           value={formik.values.password}
-          onChange={formik.handleChange}
+          onInputChange={formik.handleChange}
           onBlur={formik.handleBlur}
           error={formik.touched.password && Boolean(formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
@@ -75,7 +65,6 @@ const LoginForm = () => {
             onChange={formik.handleChange}
             sx={{
               color: "#A1A1AA",
-
               "&.Mui-checked": {
                 color: "#147FCC",
               },
@@ -87,6 +76,7 @@ const LoginForm = () => {
         }
         label="Remember me"
       />
+
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Button
           type="submit"
@@ -94,7 +84,6 @@ const LoginForm = () => {
           variant="contained"
           sx={{
             mt: 2,
-            // borderRadius: 2,
             py: 1.5,
             width: "200px",
             height: "60px",
@@ -108,4 +97,5 @@ const LoginForm = () => {
     </Box>
   );
 };
+
 export default LoginForm;

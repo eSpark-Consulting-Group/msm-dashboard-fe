@@ -1,6 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 import LoginForm from "../../components/form/loginForm";
 import RightPanel from "../../components/form/rightPanel";
+import Logo from "../../components/logo";
 
 const Login = () => {
   return (
@@ -27,26 +28,9 @@ const Login = () => {
               flexWrap: "wrap",
             }}
           >
-            <Typography
-              variant="h1"
-              fontWeight={900}
-              sx={{
-                fontSize: { xs: "40px", sm: "60px" },
-                color: "#0C89E2",
-              }}
-            >
-              MSM
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: { xs: "24px", sm: "40px" },
-                color: "#5AB4F4",
-                padding: "10px 0 0 10px",
-              }}
-            >
-              Application
-            </Typography>
+            <Logo bigLogo />
           </Box>
+          
           <Typography
             variant="h5"
             mt={2}

@@ -6,6 +6,12 @@ import DynamicTable from "./table";
 import OutlinedInput from "./input";
 import Dropdown from "./drop-down";
 import CustomAutoComplete from "./auto-complete";
+import Channels from "./channels";
+import NavigateHeader from "./navigate-header";
+import DynamicTabs from "./tabs";
+import PhaseCards from "./phase-cards";
+import StackedBarChart from "./stack-chart";
+import ChannelPagination from "./channel-pagination";
 
 export {
   Button,
@@ -16,4 +22,10 @@ export {
   OutlinedInput,
   Dropdown,
   CustomAutoComplete,
+  Channels,
+  NavigateHeader,
+  DynamicTabs,
+  PhaseCards,
+  StackedBarChart,
+  ChannelPagination,
 };

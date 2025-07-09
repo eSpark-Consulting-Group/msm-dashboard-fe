@@ -10,6 +10,8 @@ import {
   Support,
   Users,
   AddUser,
+  DashboardHome,
+  ChannelInfo,
 } from "./pages";
 
 const Router = () => {
@@ -27,6 +29,11 @@ const Router = () => {
           <Route path="/support" element={<Support />} />
           <Route path="/users" element={<Users />} />
           <Route path="/users/add" element={<AddUser />} />
+          <Route path="/dashboard/:id/home" element={<DashboardHome />} />
+          <Route
+            path="/dashboard/:id/info/:channelId"
+            element={<ChannelInfo />}
+          />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

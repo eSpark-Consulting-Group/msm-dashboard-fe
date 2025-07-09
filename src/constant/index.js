@@ -186,3 +186,38 @@ export const deviceData = [
     status: { variant: "red", label: "In active" },
   },
 ];
+
+export const infoData = [
+  { label: "DEVICE ID", value: "IND10000480" },
+  { label: "DEVICE IMEI", value: "865788062393172" },
+  { label: "DEVICE IP", value: "183.171.213.34" },
+  { label: "MQTT STATUS", value: "Server Connected" },
+  { label: "SFTP STATUS", value: "No Connection" },
+];
+
+export const networkProtocol = [
+  { label: "IND10000570-2", value: "SERVER 01", showIcon: true },
+  { label: "IND10000570-2", value: "SERVER 02", showIcon: true },
+  { label: "IND10000570-2", value: "SERVER 03", showIcon: true },
+];
+
+export const mqttProtocol = [
+  { label: "BROKER-IP", value: "Things Board", showIcon: true },
+  { label: "BROKER-PORT", value: "1883", showIcon: true },
+  { label: "BROKER-USER", value: "OFP-INDKOM", showIcon: true },
+  { label: "BROKER-PASS", value: "IND10", showIcon: true },
+  { label: "DATA-INTERVAL", value: "60 SEC", showIcon: true },
+  { label: "MQTT_TOPIC", value: "v1/devices/me/telemetry", showIcon: true },
+];
+
+export const sftp = [
+  {
+    label: "SERVER_IP",
+    value: "ap-southeast-1.sftpcloud.io",
+    showIcon: true,
+  },
+  { label: "SERVER_PORT", value: "22", showIcon: true },
+  { label: "USERNAME", value: "ofp-msm", showIcon: true },
+  { label: "PASSWORD", value: "root123456", showIcon: true },
+  { label: "DATA INTERVAL", value: "900", showIcon: true },
+];

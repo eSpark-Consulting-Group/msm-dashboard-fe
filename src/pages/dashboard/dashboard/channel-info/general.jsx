@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material";
 import { generalCards } from "../../../../constant";
-import { PhaseCards } from "../../../../components/index.js";
+import { PhaseCards } from "../../../../components";
 
 const General = () => {
   return (

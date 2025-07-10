@@ -20,6 +20,33 @@ const ChannelInfo = () => {
   const navigate = useNavigate();
   const path = location.pathname.split("/");
   const channelName = path[path.length - 1];
+  const dynamicId = path[2];
+
+  const handleBack = () => {
+    navigate(`/dashboard/${dynamicId}/home`);
+  };
+
+  const handlePageForward = () => {
+    const number = channelName.split("-");
+    const newNumber = Number(number[1]);
+    navigate(
+      `/dashboard/${dynamicId}/info/channel-${newNumber + 1 > 9 ? "" : "0"}${
+        newNumber + 1
+      }${location?.search}`
+    );
+  };
+
+  const handlePageBack = () => {
+    const number = channelName.split("-");
+    const newNumber = Number(number[1]);
+    if (newNumber - 1 > 0) {
+      navigate(
+        `/dashboard/${dynamicId}/info/channel-${newNumber - 1 > 9 ? "" : "0"}${
+          newNumber - 1
+        }${location?.search}`
+      );
+    }
+  };
   return (
     <Box>
       <NavigateHeader />
@@ -34,7 +61,7 @@ const ChannelInfo = () => {
           m: "30px 0px 10px 30px",
           cursor: "pointer",
         }}
-        onClick={() => navigate(-1)}
+        onClick={handleBack}
       >
         <img src={backIcon} alt="Icon" />
         <Typography sx={{ fontSize: "17px", color: "#FFFFFF" }}>
@@ -52,7 +79,11 @@ const ChannelInfo = () => {
           }}
         >
           <DynamicTabs tabs={tabs} />
-          <ChannelPagination channelName={channelName} />
+          <ChannelPagination
+            channelName={channelName}
+            handlePageBack={handlePageBack}
+            handlePageForward={handlePageForward}
+          />
         </Box>
       </Paper>
     </Box>

@@ -1,15 +1,35 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const DynamicTabs = ({ tabs, onTabChange }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromQuery = searchParams.get("tab");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const selectedTab = tabs[selectedIndex];
 
-  const handleTabChange = (event, index) => {
-    setSelectedIndex(index);
-    if (onTabChange) onTabChange(tabs[index]);
+  useEffect(() => {
+    if (tabs.length === 0) return;
+
+    const queryIndex = parseInt(tabFromQuery);
+    const isValidIndex =
+      !isNaN(queryIndex) && queryIndex >= 0 && queryIndex < tabs.length;
+    const newIndex = isValidIndex ? queryIndex : 0;
+
+    setSelectedIndex(newIndex);
+    if (!isValidIndex && tabFromQuery !== null) {
+      setSearchParams({ tab: newIndex });
+    }
+  }, [tabFromQuery, tabs]);
+
+  const handleTabChange = (event, newIndex) => {
+    setSelectedIndex(newIndex);
+    setSearchParams({ tab: newIndex });
+    if (onTabChange) onTabChange(tabs[newIndex]);
   };
 
+  const selectedTab = tabs[selectedIndex];
+
+  if (tabs.length === 0) return null;
   return (
     <>
       <Box
@@ -65,7 +85,7 @@ const DynamicTabs = ({ tabs, onTabChange }) => {
 
       {/* Tab Content */}
       <Box marginY={2} paddingX={2} sx={{ width: "100%" }}>
-        {typeof selectedTab.component === "function" ? (
+        {typeof selectedTab?.component === "function" ? (
           <selectedTab.component {...(selectedTab.props || {})} />
         ) : (
           selectedTab.component

@@ -1,7 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import { paginationBack, paginationForward } from "../../assets";
 
-const ChannelPagination = ({ channelName }) => {
+const ChannelPagination = ({
+  channelName,
+  handlePageBack,
+  handlePageForward,
+}) => {
   return (
     <Box sx={{ display: "flex", columnGap: "10px" }}>
       <Box
@@ -13,7 +17,9 @@ const ChannelPagination = ({ channelName }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          cursor: "pointer",
         }}
+        onClick={handlePageBack}
       >
         <img src={paginationBack} alt="Icon" />
       </Box>
@@ -48,7 +54,9 @@ const ChannelPagination = ({ channelName }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          cursor: "pointer",
         }}
+        onClick={handlePageForward}
       >
         <img src={paginationForward} alt="Icon" />
       </Box>

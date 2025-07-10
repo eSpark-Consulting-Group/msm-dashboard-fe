@@ -1,18 +1,37 @@
 import { Box, Tab, Tabs, useMediaQuery, useTheme } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const DynamicTabs = ({ tabs, onTabChange }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromQuery = searchParams.get("tab");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const selectedTab = tabs[selectedIndex];
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleTabChange = (event, index) => {
-    setSelectedIndex(index);
-    if (onTabChange) onTabChange(tabs[index]);
+  useEffect(() => {
+    if (tabs.length === 0) return;
+
+    const queryIndex = parseInt(tabFromQuery);
+    const isValidIndex =
+      !isNaN(queryIndex) && queryIndex >= 0 && queryIndex < tabs.length;
+    const newIndex = isValidIndex ? queryIndex : 0;
+
+    setSelectedIndex(newIndex);
+    if (!isValidIndex && tabFromQuery !== null) {
+      setSearchParams({ tab: newIndex });
+    }
+  }, [tabFromQuery, tabs]);
+
+  const handleTabChange = (event, newIndex) => {
+    setSelectedIndex(newIndex);
+    setSearchParams({ tab: newIndex });
+    if (onTabChange) onTabChange(tabs[newIndex]);
   };
 
+  const selectedTab = tabs[selectedIndex];
+
+  if (tabs.length === 0) return null;
   return (
     <>
       <Box
@@ -21,7 +40,7 @@ const DynamicTabs = ({ tabs, onTabChange }) => {
           p: 0.5,
           display: "flex",
           justifyContent: "center",
-          width: "100%",
+          width: { xs: "100%", sm: "fit-content" },
         }}
       >
         <Box sx={{ width: "100%", maxWidth: 652 }}>

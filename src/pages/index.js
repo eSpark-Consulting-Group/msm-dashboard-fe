@@ -9,5 +9,18 @@ import Settings from "./dashboard/settings";
 import Support from "./dashboard/support";
 import Users from "./dashboard/users";
 import AddUser from "./dashboard/users/add-user";
+import DashboardHome from "./dashboard/dashboard/home";
+import ChannelInfo from "./dashboard/dashboard/channel-info";
 
-export { Login, Dashboard, Devices, Reports, Settings, Support, Users, AddUser };
+export {
+  Login,
+  Dashboard,
+  Devices,
+  Reports,
+  Settings,
+  Support,
+  Users,
+  AddUser,
+  DashboardHome,
+  ChannelInfo,
+};

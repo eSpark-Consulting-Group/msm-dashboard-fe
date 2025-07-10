@@ -21,6 +21,21 @@ import addOption from "./icons/addOption.svg";
 import deleteOption from "./icons/deleteOption.svg";
 import eye from "./icons/eye.svg";
 import eyeClose from "./icons/closeEye.svg";
+import info from "./icons/info.svg";
+import disconnect from "./icons/disconnect.svg";
+import disable from "./icons/disable.svg";
+import flashUnfilled from "./icons/flash_unfilled.svg";
+import flashFilled from "./icons/flash_filled.svg";
+import blueShadow from "./icons/blue_shadow.svg";
+import home from "./icons/home.svg";
+import file from "./icons/file.svg";
+import nextArrow from "./icons/next_arrow.svg";
+import backIcon from "./icons/Back.svg";
+import flashBlack from "./icons/flashBlack.svg";
+import energy from "./icons/energy.svg";
+import paginationBack from "./icons/pagination_backward.svg";
+import paginationForward from "./icons/pagination_forward.svg";
+import homeBlack from "./icons/home_black.svg";
 
 import avatar from "./images/avatar.png";
 
@@ -49,4 +64,19 @@ export {
   deleteOption,
   eye,
   eyeClose,
+  info,
+  disable,
+  disconnect,
+  flashFilled,
+  flashUnfilled,
+  blueShadow,
+  home,
+  file,
+  nextArrow,
+  backIcon,
+  flashBlack,
+  energy,
+  paginationBack,
+  paginationForward,
+  homeBlack,
 };

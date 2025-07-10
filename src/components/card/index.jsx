@@ -1,6 +1,15 @@
 import { Box, Button, Card } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const DashboardWrapper = ({ children }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const path = location.pathname.split("/");
+  const dynamicId = path[2];
+
+  const handleHome = () => {
+    navigate(`/dashboard/${dynamicId}/home`);
+  };
   return (
     <Box
       sx={{
@@ -44,6 +53,7 @@ const DashboardWrapper = ({ children }) => {
               borderBottomLeftRadius: "0",
               borderBottomRightRadius: "0",
             }}
+            onClick={handleHome}
           >
             <img
               src="/src/assets/icons/home.svg"

@@ -35,6 +35,7 @@ import flashBlack from "./icons/flashBlack.svg";
 import energy from "./icons/energy.svg";
 import paginationBack from "./icons/pagination_backward.svg";
 import paginationForward from "./icons/pagination_forward.svg";
+import homeBlack from "./icons/home_black.svg";
 
 import avatar from "./images/avatar.png";
 
@@ -77,4 +78,5 @@ export {
   energy,
   paginationBack,
   paginationForward,
+  homeBlack,
 };

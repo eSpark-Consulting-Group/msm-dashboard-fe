@@ -40,7 +40,7 @@ const DynamicTabs = ({ tabs, onTabChange }) => {
           p: 0.5,
           display: "flex",
           justifyContent: "center",
-          width: "100%",
+          width: { xs: "100%", sm: "fit-content" },
         }}
       >
         <Box sx={{ width: "100%", maxWidth: 652 }}>

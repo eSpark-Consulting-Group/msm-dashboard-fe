@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { file, home, nextArrow } from "../../assets";
+import { file, homeBlack, nextArrow } from "../../assets";
 
 const NavigateHeader = () => {
   const location = useLocation();
@@ -21,7 +21,7 @@ const NavigateHeader = () => {
           sx={{ display: "flex", columnGap: "7.02px", alignItems: "center" }}
           key={index}
         >
-          <img src={index === 0 ? home : file} alt="Icon" />
+          <img src={index === 0 ? homeBlack : file} alt="Icon" />
           <Typography
             sx={{
               fontSize: "12.28px",

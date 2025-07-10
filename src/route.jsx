@@ -13,6 +13,7 @@ import {
   DashboardHome,
   ChannelInfo,
 } from "./pages";
+import DashboardInfo from "./pages/dashboard/dashboardInfo";
 
 const Router = () => {
   return (
@@ -21,8 +22,10 @@ const Router = () => {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
         </Route>
+
         <Route element={<PrivateLayout />}>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard/:id/info" element={<DashboardInfo />} />
           <Route path="/devices" element={<Devices />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />

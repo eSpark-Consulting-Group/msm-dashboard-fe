@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -6,6 +6,8 @@ const DynamicTabs = ({ tabs, onTabChange }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromQuery = searchParams.get("tab");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (tabs.length === 0) return;
@@ -34,58 +36,80 @@ const DynamicTabs = ({ tabs, onTabChange }) => {
     <>
       <Box
         sx={{
-          bgcolor: "#f5f5f5",
           borderRadius: "8px",
           p: 0.5,
-          display: "inline-flex",
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
         }}
       >
-        <Tabs
-          sx={{
-            padding: "5px",
-            backgroundColor: "#EFEFEF",
-            border: "1px solid #DBD6D6",
-            borderRadius: "8px",
-          }}
-          value={selectedIndex}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          slotProps={{
-            indicator: {
-              style: { display: "none" },
-            },
-          }}
-        >
-          {tabs.map((tab, index) => (
-            <Tab
-              key={index}
-              label={tab.label}
-              sx={{
-                textTransform: "none",
-                fontWeight: 600,
-                borderRadius: "8px",
-                mx: 0.5,
-                minHeight: 0,
-                height: 36,
-                width: 131,
-                minWidth: 80,
-                px: 2,
-                color: selectedIndex === index ? "#fff !important" : "#888",
-                bgcolor: selectedIndex === index ? "#0C89E2" : "transparent",
-                border: selectedIndex === index ? "2px solid #2383C8" : "none",
-                "&:hover": {
-                  bgcolor: selectedIndex === index ? "" : "#e0e0e0",
-                },
-              }}
-            />
-          ))}
-        </Tabs>
+        <Box sx={{ width: "100%", maxWidth: 652 }}>
+          <Tabs
+            key={isMobile ? "mobile" : "desktop"}
+            value={selectedIndex}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            sx={{
+              padding: "5px",
+              backgroundColor: "#EFEFEF",
+              border: "1px solid #DBD6D6",
+              borderRadius: "8px",
+              width: "100%",
+              "& .MuiTabs-scroller": {
+                overflowX: "auto",
+                scrollSnapType: "x mandatory",
+              },
+              "& .MuiTabs-flexContainer": {
+                display: "inline-flex",
+                scrollSnapType: "x mandatory",
+                scrollPadding: "5px",
+                margin: 0,
+                gap: "35px",
+              },
+            }}
+            slotProps={{
+              indicator: {
+                style: { display: "none" },
+              },
+            }}
+          >
+            {tabs.map((tab, index) => (
+              <Tab
+                key={index}
+                label={tab.label}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: "8px",
+                  minHeight: 0,
+                  height: 36,
+                  width: {
+                    xs: "80px",
+                    sm: "131px",
+                  },
+                  minWidth: 80,
+                  px: 0,
+                  mx: 0,
+                  color: selectedIndex === index ? "#fff !important" : "#888",
+                  bgcolor: selectedIndex === index ? "#0C89E2" : "transparent",
+                  border:
+                    selectedIndex === index ? "2px solid #2383C8" : "none",
+                  "&:hover": {
+                    bgcolor: selectedIndex === index ? "" : "#e0e0e0",
+                  },
+                  flexShrink: 0,
+                  scrollSnapAlign: "start",
+                }}
+              />
+            ))}
+          </Tabs>
+        </Box>
       </Box>
 
-      {/* Tab Content */}
       <Box marginY={2} paddingX={2} sx={{ width: "100%" }}>
-        {typeof selectedTab?.component === "function" ? (
+        {typeof selectedTab.component === "function" ? (
           <selectedTab.component {...(selectedTab.props || {})} />
         ) : (
           selectedTab.component

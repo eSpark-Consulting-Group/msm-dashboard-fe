@@ -1,4 +1,4 @@
-import { Box, Button, Modal } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import { modalClose } from "../../assets";
 
 const DynamicModal = ({
@@ -10,6 +10,7 @@ const DynamicModal = ({
   acceptButtonText,
   handleCancel,
   handleAccept,
+  heading,
 }) => {
   return (
     <Modal
@@ -49,10 +50,13 @@ const DynamicModal = ({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
             alignItems: "center",
           }}
         >
+          <Typography sx={{ color: "#147FCC", fontSize: "34.55px" }}>
+            {heading}
+          </Typography>
           <img
             src={modalClose}
             alt="Icon"
@@ -74,25 +78,36 @@ const DynamicModal = ({
         >
           {children}
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            columnGap: "15px",
-          }}
-        >
-          <Box sx={{ width: "203.70px", height: "50px" }}>
-            <Button variant="secondary" disableRipple onClick={handleCancel}>
-              {cancelButtonText}
-            </Button>
+        {(acceptButtonText || cancelButtonText) && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              columnGap: "15px",
+              mt: "30px",
+            }}
+          >
+            <Box sx={{ width: "203.70px", height: "50px" }}>
+              {cancelButtonText && (
+                <Button variant="outlined" disableRipple onClick={handleCancel}>
+                  {cancelButtonText}
+                </Button>
+              )}
+            </Box>
+            <Box sx={{ width: "203.70px", height: "50px" }}>
+              {acceptButtonText && (
+                <Button
+                  variant="contained"
+                  disableRipple
+                  onClick={handleAccept}
+                >
+                  {acceptButtonText}
+                </Button>
+              )}
+            </Box>
           </Box>
-          <Box sx={{ width: "203.70px", height: "50px" }}>
-            <Button variant="primary" disableRipple onClick={handleAccept}>
-              {acceptButtonText}
-            </Button>
-          </Box>
-        </Box>
+        )}
       </Box>
     </Modal>
   );

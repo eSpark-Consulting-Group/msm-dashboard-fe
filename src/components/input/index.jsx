@@ -24,6 +24,7 @@ const OutlinedInput = ({
   error,
   helperText,
   onBlur,
+  endAdornment,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -73,35 +74,51 @@ const OutlinedInput = ({
               )}
             </InputAdornment>
           ),
-          endAdornment: type === "password" && value?.length > 0 && (
-            <InputAdornment position="end">
-              <IconButton onClick={handleTogglePassword} edge="end">
-                {showPassword ? (
-                  <img
-                    src={eye}
-                    alt="Icon"
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      marginRight: "10px",
-                      marginTop: "5px",
-                    }}
-                  />
-                ) : (
-                  <img
-                    src={eyeClose}
-                    alt="Icon"
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      marginRight: "10px",
-                      marginTop: "5px",
-                    }}
-                  />
-                )}
-              </IconButton>
-            </InputAdornment>
+          endAdornment: (
+            <>
+              {type === "password" && value?.length > 0 && (
+                <IconButton onClick={handleTogglePassword} edge="end">
+                  {showPassword ? (
+                    <img
+                      src={eye}
+                      alt="Icon"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        marginRight: "10px",
+                        marginTop: "5px",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={eyeClose}
+                      alt="Icon"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        marginRight: "10px",
+                        marginTop: "5px",
+                      }}
+                    />
+                  )}
+                </IconButton>
+              )}
+              {endAdornment && (
+                <InputAdornment position="end" sx={{ mr: "5px" }}>
+                  {typeof endAdornment === "string" ? (
+                    <img
+                      src={endAdornment}
+                      alt="icon"
+                      style={{ width: 24, height: 24 }}
+                    />
+                  ) : (
+                    endAdornment
+                  )}
+                </InputAdornment>
+              )}
+            </>
           ),
+
           readOnly: readOnly,
         }}
         error={error}

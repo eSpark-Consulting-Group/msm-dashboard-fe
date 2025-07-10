@@ -58,12 +58,13 @@ export const theme = createTheme({
         {
           props: { variant: "contained", color: "primary" },
           style: {
-            color: "#FFF",
-            background: "#5AB4F4",
+            color: "#FFFFFF",
+            background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",
             "&:hover": {
-              background: "#0077FF",
-              color: "#FFF",
-              border: "2px solid #FFF",
+              background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",
+              color: "#FFFFFF",
+              border: "none",
+              boxShadow: "none",
             },
           },
         },
@@ -71,13 +72,27 @@ export const theme = createTheme({
           props: { variant: "outlined", color: "primary" },
           style: {
             background: "#FFFFFF",
-            border: "1px solid #0077FF",
-            color: "#0077FF",
+            border: "1px solid #505050",
+            color: "#505050",
             "&:hover": {
-              border: "2px solid #FFF !important",
-              color: "#FFF",
-              background: "#0077FF",
-              boxShadow: "0px 0px 20px -6px #12203B",
+              border: "1px solid #505050",
+              color: "#505050",
+              background: "#FFFFFF",
+              boxShadow: "none",
+            },
+          },
+        },
+        {
+          props: { variant: "delete", color: "primary" },
+          style: {
+            background: "#DF1C41",
+            border: "none",
+            color: "#FFFFFF",
+            "&:hover": {
+              border: "none",
+              color: "#FFFFFF",
+              background: "#DF1C41",
+              boxShadow: "none",
             },
           },
         },

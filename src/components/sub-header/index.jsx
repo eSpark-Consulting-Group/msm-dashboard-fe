@@ -30,8 +30,9 @@ const SubHeader = ({ heading, sideText, subHeading, buttonText, onClick }) => {
         {buttonText && (
           <Button
             sx={{ width: "max-content", minWidth: "160px" }}
-            variant="outlined"
+            variant="contained"
             onClick={onClick ? onClick : () => {}}
+            disableRipple
           >
             {buttonText}
           </Button>

@@ -37,6 +37,8 @@ import paginationBack from "./icons/pagination_backward.svg";
 import paginationForward from "./icons/pagination_forward.svg";
 import homeBlack from "./icons/home_black.svg";
 import modalClose from "./icons/modalClose.svg";
+import pencil from "./icons/pencil.svg";
+import deleteInfo from "./icons/information-fill.svg";
 
 import avatar from "./images/avatar.png";
 import loginFrame from "./images/login_image.png";
@@ -83,4 +85,6 @@ export {
   homeBlack,
   modalClose,
   loginFrame,
+  pencil,
+  deleteInfo,
 };

@@ -16,6 +16,10 @@ const DashboardHome = () => {
       `/dashboard/${newLocation[1]}/info/channel-${id > 9 ? "" : "0"}${id}`
     );
   };
+
+  const handleInfo = () => {
+    navigate(`/dashboard/${newLocation[1]}/info`);
+  };
   return (
     <Box>
       <NavigateHeader />
@@ -31,7 +35,9 @@ const DashboardHome = () => {
           ml: "30px",
           border: "1px solid #0077FF",
           mt: "30px",
+          cursor: "pointer",
         }}
+        onClick={handleInfo}
       >
         <img src={info} alt="Icon" />
         <Typography

@@ -81,6 +81,19 @@ export const theme = createTheme({
             },
           },
         },
+        {
+          props: { variant: "blue" },
+          style: {
+            backgroundColor: "#0095FF",
+            color: "#FFFFFF",
+            border: "1px solid #0077FF",
+            width: "193px",
+            height: "45px",
+            fontSize: "16px",
+            fontWeight: 400,
+            borderRadius: "12px",
+          },
+        },
       ],
     },
     MuiTable: {
@@ -201,6 +214,17 @@ export const theme = createTheme({
             backgroundColor: "transparent",
             border: "1px solid #0077FF",
             borderRadius: "21px",
+            color: "#505050",
+            width: "100px",
+            height: "30px",
+            fontSize: "16px",
+            fontWeight: 400,
+          },
+        },
+        {
+          props: { variant: "simple" },
+          style: {
+            backgroundColor: "#ffffff",
             color: "#505050",
             width: "100px",
             height: "30px",

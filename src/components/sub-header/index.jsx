@@ -1,7 +1,14 @@
 import { Box, Stack, Typography } from "@mui/material";
 import Button from "../buttons";
 
-const SubHeader = ({ heading, sideText, subHeading, buttonText, onClick }) => {
+const SubHeader = ({
+  heading,
+  sideText,
+  subHeading,
+  buttonText,
+  onClick,
+  variant = "outlined",
+}) => {
   return (
     <Box>
       <Stack
@@ -30,7 +37,7 @@ const SubHeader = ({ heading, sideText, subHeading, buttonText, onClick }) => {
         {buttonText && (
           <Button
             sx={{ width: "max-content", minWidth: "160px" }}
-            variant="outlined"
+            variant={variant}
             onClick={onClick ? onClick : () => {}}
           >
             {buttonText}

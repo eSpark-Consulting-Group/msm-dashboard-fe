@@ -38,84 +38,101 @@ const DynamicTable = ({
     const cell = column.component
       ? column.component(item)
       : getValue(item, column.key);
-    return column.key[0] === "action" ? (
-      <Stack
-        direction="row"
-        justifyContent={"center"}
-        justifyItems="center"
-        alignItems="center"
-        spacing={1}
-      >
-        {!hideView && (
-          <img
-            src={view}
-            alt="Icon"
-            style={{ cursor: "pointer" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleView(item);
-            }}
-          />
-        )}
-        {!hideEdit && (
-          <img
-            src={edit}
-            alt="Icon"
-            style={{ cursor: "pointer" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(item);
-            }}
-          />
-        )}
-        {!hideDelete && (
-          <img
-            src={trash}
-            alt="Icon"
-            style={{ cursor: "pointer" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(item);
-            }}
-          />
-        )}
-      </Stack>
-    ) : column?.chip ? (
-      <Chip onClick={() => {}} label={cell?.label} variant={cell?.variant} />
-    ) : column?.copy ? (
-      <Stack
-        onClick={() => copyToClipboard(cell)}
-        sx={{ cursor: "pointer" }}
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        gap="5px"
-      >
-        <Typography>{cell}</Typography>
-        <img src={copy} alt="copy" />
-      </Stack>
-    ) : column?.image ? (
-      <Box
-        sx={{
-          display: "flex",
-          columnGap: "10px",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Avatar
-          src={cell?.image}
-          alt={cell?.name}
-          sx={{ width: "30px", height: "30px" }}
-        />
-        <Typography sx={{ fontSize: "16px", color: "#505050" }}>
-          {cell?.name}
-        </Typography>
-      </Box>
-    ) : (
-      cell
-    );
+
+    if (column.key[0] === "action") {
+      return (
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          spacing={1}
+        >
+          {!hideView && (
+            <img
+              src={view}
+              alt="View"
+              style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleView(item);
+              }}
+            />
+          )}
+          {!hideEdit && (
+            <img
+              src={edit}
+              alt="Edit"
+              style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit(item);
+              }}
+            />
+          )}
+          {!hideDelete && (
+            <img
+              src={trash}
+              alt="Delete"
+              style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item);
+              }}
+            />
+          )}
+        </Stack>
+      );
+    }
+
+    if (column.chip) {
+      return (
+        <Chip onClick={() => {}} label={cell?.label} variant={cell?.variant} />
+      );
+    }
+
+    if (column.copy) {
+      return (
+        <Stack
+          onClick={() => copyToClipboard(cell)}
+          sx={{ cursor: "pointer" }}
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          gap="5px"
+        >
+          <Typography>{cell}</Typography>
+          <img src={copy} alt="copy" />
+        </Stack>
+      );
+    }
+
+    if ("image" in column) {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            columnGap: "10px",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {column.image && (
+            <Avatar
+              src={cell?.image}
+              alt={cell?.name}
+              sx={{ width: "30px", height: "30px" }}
+            />
+          )}
+          <Typography sx={{ fontSize: "16px", color: "#505050" }}>
+            {cell?.name}
+          </Typography>
+        </Box>
+      );
+    }
+
+    return cell;
   };
+
   return (
     <>
       {data?.length === 0 && !isLoading ? (

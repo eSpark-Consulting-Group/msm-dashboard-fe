@@ -1,11 +1,11 @@
 export const columns = () => {
   return [
-    { name: "User Name", key: "userName", image: true },
+    { name: "Created Time", key: "addedOn" },
+    { name: "First Name", key: "userName", image: false },
+    { name: "Costumer Name", key: "costumerName" },
     { name: "Email", key: "email" },
+    { name: "Device ID", key: "deviceId", chip: true },
     { name: "Status", key: "status", chip: true },
-    { name: "Device IDs", key: "deviceId", chip: true },
-    { name: "Added On", key: "addedOn" },
-    { name: "Access", key: "access" },
-    { name: "Actions", key: "action" },
+    { name: "Actions", key: "action",  },
   ];
 };

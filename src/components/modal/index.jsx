@@ -1,0 +1,101 @@
+import { Box, Button, Modal } from "@mui/material";
+import { modalClose } from "../../assets";
+
+const DynamicModal = ({
+  open,
+  handleClose,
+  sx,
+  children,
+  cancelButtonText,
+  acceptButtonText,
+  handleCancel,
+  handleAccept,
+}) => {
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      BackdropProps={{
+        sx: {
+          backdropFilter: "blur(0.5px)",
+          backgroundColor: "#A49D9D7A",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: {
+            xs: "95%",
+            md: "70%",
+            lg: "50%",
+          },
+          maxHeight: "90vh",
+          background: "#FFF",
+          borderRadius: "35px",
+          padding: "20px 20px 50px 20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          "&:focus-visible": { border: "none", outline: "none" },
+          ...sx,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={modalClose}
+            alt="Icon"
+            style={{ cursor: "pointer" }}
+            onClick={handleClose}
+          />
+        </Box>
+        <Box
+          sx={{
+            flex: 1,
+            height: "calc(100% - 130px)",
+            overflowY: "auto",
+            msOverflowStyle: "none",
+            scrollbarWidth: "none",
+            "::-webkit-scrollbar": {
+              display: "none",
+            },
+          }}
+        >
+          {children}
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            columnGap: "15px",
+          }}
+        >
+          <Box sx={{ width: "203.70px", height: "50px" }}>
+            <Button variant="secondary" disableRipple onClick={handleCancel}>
+              {cancelButtonText}
+            </Button>
+          </Box>
+          <Box sx={{ width: "203.70px", height: "50px" }}>
+            <Button variant="primary" disableRipple onClick={handleAccept}>
+              {acceptButtonText}
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    </Modal>
+  );
+};
+
+export default DynamicModal;

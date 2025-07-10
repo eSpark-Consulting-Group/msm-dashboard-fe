@@ -11,43 +11,53 @@ import {
   energy,
 } from "../assets";
 
-export const sidebarTabs = [
-  {
-    icon: dashboardIcon,
-    title: "Dashboard",
-    link: "/",
-  },
-  {
-    icon: devicesIcon,
-    title: "Devices",
-    link: "/devices",
-  },
-  {
-    icon: userIcon,
-    title: "Users",
-    link: "/users",
-  },
-  {
-    icon: supportIcon,
-    title: "Support",
-    link: "/support",
-  },
-  {
-    icon: reportIcon,
-    title: "Report",
-    link: "/reports",
-  },
-  {
-    icon: settingsIcon,
-    title: "Settings",
-    link: "/settings",
-  },
-  {
-    icon: logoutIcon,
-    title: "Logout",
-    link: "/logout",
-  },
-];
+export const sidebarTabs = (role) => {
+  return role === "user"
+    ? [
+        {
+          icon: dashboardIcon,
+          title: "Dashboard",
+          link: "/",
+        },
+      ]
+    : [
+        {
+          icon: dashboardIcon,
+          title: "Dashboard",
+          link: "/",
+        },
+        {
+          icon: devicesIcon,
+          title: "Devices",
+          link: "/devices",
+        },
+        {
+          icon: userIcon,
+          title: "Users",
+          link: "/users",
+        },
+        // {
+        //   icon: supportIcon,
+        //   title: "Support",
+        //   link: "/support",
+        // },
+        // {
+        //   icon: reportIcon,
+        //   title: "Report",
+        //   link: "/reports",
+        // },
+        // {
+        //   icon: settingsIcon,
+        //   title: "Settings",
+        //   link: "/settings",
+        // },
+        // {
+        //   icon: logoutIcon,
+        //   title: "Logout",
+        //   link: "/logout",
+        // },
+      ];
+};
 
 export const userTableData = [
   {
@@ -170,6 +180,7 @@ export const userTableData = [
     access: "Read",
   },
 ];
+
 export const deviceData = [
   {
     id: "1",
@@ -491,4 +502,84 @@ export const sftp = [
   { label: "USERNAME", value: "ofp-msm", showIcon: true },
   { label: "PASSWORD", value: "root123456", showIcon: true },
   { label: "DATA INTERVAL", value: "900", showIcon: true },
+];
+
+export const dashboardData = [
+  {
+    id: "1",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "2",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "3",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "4",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "5",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "6",
+    createdAt: "",
+    title: "",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "7",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "8",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "9",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "10",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
+  {
+    id: "11",
+    createdAt: "2025-05-09 18:52:32",
+    title: "IND10000479-Dashboard 02",
+    customerName: "",
+    group: "",
+  },
 ];

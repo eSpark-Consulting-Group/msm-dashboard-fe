@@ -58,7 +58,7 @@ const Sidebar = ({ open, setOpen }) => {
           },
         }}
       >
-        {sidebarTabs.map((item) => (
+        {sidebarTabs("admin").map((item) => (
           <Box
             onClick={() => handleNavigate(item.link)}
             sx={{

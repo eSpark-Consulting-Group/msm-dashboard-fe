@@ -36,8 +36,10 @@ import energy from "./icons/energy.svg";
 import paginationBack from "./icons/pagination_backward.svg";
 import paginationForward from "./icons/pagination_forward.svg";
 import homeBlack from "./icons/home_black.svg";
+import modalClose from "./icons/modalClose.svg";
 
 import avatar from "./images/avatar.png";
+import loginFrame from "./images/login_image.png";
 
 export {
   dashboardIcon,
@@ -79,4 +81,6 @@ export {
   paginationBack,
   paginationForward,
   homeBlack,
+  modalClose,
+  loginFrame,
 };

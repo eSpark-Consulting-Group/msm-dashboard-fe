@@ -23,6 +23,9 @@ const DynamicTable = ({
   handleView,
   handleEdit,
   handleDelete,
+  hideView,
+  hideEdit,
+  hideDelete,
   page,
   pageSize,
   handlePageChange,
@@ -43,36 +46,42 @@ const DynamicTable = ({
         alignItems="center"
         spacing={1}
       >
-        <img
-          src={view}
-          alt="Icon"
-          style={{ cursor: "pointer" }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleView(item);
-          }}
-        />
-        <img
-          src={edit}
-          alt="Icon"
-          style={{ cursor: "pointer" }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEdit(item);
-          }}
-        />
-        <img
-          src={trash}
-          alt="Icon"
-          style={{ cursor: "pointer" }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete(item);
-          }}
-        />
+        {!hideView && (
+          <img
+            src={view}
+            alt="Icon"
+            style={{ cursor: "pointer" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleView(item);
+            }}
+          />
+        )}
+        {!hideEdit && (
+          <img
+            src={edit}
+            alt="Icon"
+            style={{ cursor: "pointer" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(item);
+            }}
+          />
+        )}
+        {!hideDelete && (
+          <img
+            src={trash}
+            alt="Icon"
+            style={{ cursor: "pointer" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(item);
+            }}
+          />
+        )}
       </Stack>
     ) : column?.chip ? (
-      <Chip label={cell?.label} variant={cell?.variant} />
+      <Chip onClick={() => {}} label={cell?.label} variant={cell?.variant} />
     ) : column?.copy ? (
       <Stack
         onClick={() => copyToClipboard(cell)}
@@ -110,7 +119,14 @@ const DynamicTable = ({
   return (
     <>
       {data?.length === 0 && !isLoading ? (
-        <Typography fontSize={20} fontWeight={900} mt="100px" textAlign="center">No Data Found</Typography>
+        <Typography
+          fontSize={20}
+          fontWeight={900}
+          mt="100px"
+          textAlign="center"
+        >
+          No Data Found
+        </Typography>
       ) : (
         <TableContainer>
           <Table>

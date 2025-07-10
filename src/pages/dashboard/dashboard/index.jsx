@@ -1,85 +1,64 @@
-import { Box, Stack, Typography } from "@mui/material";
-import { SubHeader } from "../../../components";
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { DynamicTable, SearchBar, SubHeader } from "../../../components";
+import { dashboardData } from "../../../constant";
+import { columns } from "../../../columns/dashboard";
+import AddDashboardModal from "./add-dashboard-modal";
 
 const Dashboard = () => {
-  const cards = [
-    [
-      { label: "Total Devices", count: 40 },
-      { label: "Active Devices", count: 25 },
-      { label: "Inactive Devices", count: 15 },
-    ],
-    [
-      { label: "Total Users", count: 40 },
-      { label: "Active Users", count: 25 },
-      { label: "Inactive Users", count: 15 },
-    ],
-    [
-      { label: "Total Alarm", count: 40 },
-      { label: "Active Alarm", count: 25 },
-      { label: "Inactive Alarm", count: 15 },
-    ],
-  ];
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState(dashboardData || []);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(11);
+  const [total] = useState(11);
+
+  const handleDelete = (item) => {
+    console.log(item, "delete");
+  };
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
+
+  useEffect(() => {
+    const filtered = dashboardData.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(search.toLowerCase())
+      )
+    );
+    setData(filtered);
+    setPage(1);
+  }, [search]);
   return (
     <>
       <SubHeader
-        heading="Hey Alex -"
-        sideText="here’s what’s happening with your device and users"
+        heading="Dashboard"
+        subHeading="Here’s what’s happening with your device and users"
+        buttonText="Add New Dashoard"
+        onClick={() => setOpen(true)}
       />
-      <Stack
-        mt="35px"
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-        gap={2}
-        flexWrap="wrap"
-      >
-        {cards.map((card, ind) => (
-          <Box
-            sx={{
-              width: { xs: "100%", lg: "353px" },
-              minHeight: "135px",
-              background: "#FFF",
-              padding: { xs: "21px 15px", sm: "21px 35px" },
-              border: "1px solid #E4E4E7",
-              borderRadius: "10px",
-            }}
-            key={ind}
-          >
-            <Stack>
-              {card.map((item) => (
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  key={item?.label}
-                  gap={1}
-                >
-                  <Typography
-                    fontSize={20}
-                    fontWeight={400}
-                    color="primary.dark"
-                    sx={{
-                      display: "list-item",
-                      listStyleType: "disc",
-                      listStylePosition: "inside",
-                      marginLeft: "1.2rem",
-                    }}
-                  >
-                    {item?.label}
-                  </Typography>
-                  <Typography
-                    fontSize={20}
-                    fontWeight={900}
-                    color="secondary.dark"
-                  >
-                    {item?.count}
-                  </Typography>
-                </Stack>
-              ))}
-            </Stack>
-          </Box>
-        ))}
-      </Stack>
+      <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
+        <SearchBar value={search} onChange={(val) => setSearch(val)} />
+      </Box>
+      <DynamicTable
+        data={data}
+        columns={columns()}
+        hideView
+        hideEdit
+        handleDelete={handleDelete}
+        isLoading={false}
+        page={page}
+        pageSize={pageSize}
+        handlePageChange={handlePageChange}
+        total={total}
+      />
+      <AddDashboardModal
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleCancel={() => setOpen(false)}
+        handleAccept={() => console.log("success")}
+      />
     </>
   );
 };

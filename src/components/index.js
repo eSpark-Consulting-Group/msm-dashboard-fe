@@ -12,6 +12,7 @@ import DynamicTabs from "./tabs";
 import PhaseCards from "./phase-cards";
 import StackedBarChart from "./stack-chart";
 import ChannelPagination from "./channel-pagination";
+import DynamicModal from "./modal";
 
 export {
   Button,
@@ -28,4 +29,5 @@ export {
   PhaseCards,
   StackedBarChart,
   ChannelPagination,
+  DynamicModal,
 };

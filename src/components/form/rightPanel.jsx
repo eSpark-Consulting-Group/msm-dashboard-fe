@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { loginFrame } from "../../assets";
 
 const RightPanel = () => {
   return (
@@ -12,7 +13,7 @@ const RightPanel = () => {
     >
       <Box
         component="img"
-        src="/images/login_image.png"
+        src={loginFrame}
         alt="Dashboard Preview"
         sx={{
           width: "100%",

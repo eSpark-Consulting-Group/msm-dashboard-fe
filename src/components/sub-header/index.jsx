@@ -29,7 +29,7 @@ const SubHeader = ({ heading, sideText, subHeading, buttonText, onClick }) => {
         </Stack>
         {buttonText && (
           <Button
-            sx={{ width: "160px" }}
+            sx={{ width: "max-content", minWidth: "160px" }}
             variant="outlined"
             onClick={onClick ? onClick : () => {}}
           >
@@ -39,7 +39,7 @@ const SubHeader = ({ heading, sideText, subHeading, buttonText, onClick }) => {
       </Stack>
       {subHeading && (
         <Typography
-          mt="16px"
+          mt="8px"
           color="primary.light"
           fontSize={20}
           fontWeight={400}

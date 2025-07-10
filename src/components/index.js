@@ -13,6 +13,9 @@ import PhaseCards from "./phase-cards";
 import StackedBarChart from "./stack-chart";
 import ChannelPagination from "./channel-pagination";
 import DynamicModal from "./modal";
+import EditDeviceModal from "./edit-device-modal";
+import DeleteModal from "./delete-modal";
+import AddDeviceModal from "./add-device-modal";
 
 export {
   Button,
@@ -30,4 +33,7 @@ export {
   StackedBarChart,
   ChannelPagination,
   DynamicModal,
+  EditDeviceModal,
+  DeleteModal,
+  AddDeviceModal,
 };

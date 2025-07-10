@@ -1,10 +1,12 @@
 export const columns = () => {
   return [
-    { name: "Device ID", key: "deviceId", copy: true },
-    { name: "Area", key: "area" },
-    { name: "Added On", key: "addedOn" },
-    { name: "Assigned to", key: "assigned", chip: true },
-    { name: "Status", key: "status", chip: true },
+    { name: "Created Time", key: "createdTime" },
+    { name: "Device ID", key: "deviceId" },
+    { name: "Device Name", key: "deviceName" },
+    { name: "Label", key: "label" },
+    { name: "User Name", key: "userName" },
+    { name: "Group", key: "group" },
+    { name: "Status ", key: "status", chip: true },
     { name: "Actions", key: "action" },
   ];
 };

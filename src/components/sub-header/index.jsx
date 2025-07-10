@@ -39,6 +39,7 @@ const SubHeader = ({
             sx={{ width: "max-content", minWidth: "160px" }}
             variant={variant}
             onClick={onClick ? onClick : () => {}}
+            disableRipple
           >
             {buttonText}
           </Button>

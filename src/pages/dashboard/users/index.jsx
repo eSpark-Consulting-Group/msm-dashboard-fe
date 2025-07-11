@@ -43,9 +43,10 @@ const Users = () => {
     <Box sx={{ display: "flex", flexDirection: "column", rowGap: "20px" }}>
       <SubHeader
         heading={"Users"}
-        buttonText={"Add User"}
+        buttonText={"Add New User"}
         subHeading={"Here’s what’s happening with your device and users"}
         onClick={() => navigate("/users/add")}
+        variant="blue"
       />
       <Box sx={{ width: { xs: "100%", sm: "495px" } }}>
         <SearchBar onChange={(e) => setSearch(e)} />
@@ -60,6 +61,7 @@ const Users = () => {
         handleEdit={handleEdit}
         handleView={handleView}
         handlePageChange={handlePageChange}
+        hideView={true}
       />
     </Box>
   );

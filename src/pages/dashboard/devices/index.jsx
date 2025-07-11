@@ -115,6 +115,7 @@ const Devices = () => {
         subHeading="Here’s what’s happening with your device and users"
         buttonText={activeTab === 0 ? "Add New Device" : "Add New Entity Group"}
         onClick={handleSubHeaderClick}
+        variant="contained"
       />
       <Box
         sx={{

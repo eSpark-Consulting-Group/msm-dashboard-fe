@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import {
   AddDeviceModal,
+  AddGroupModal,
   DeleteModal,
   DynamicModal,
   DynamicTable,
   DynamicTabs,
+  EditGroupModal,
+  ImportDeviceModal,
   SearchBar,
   SubHeader,
 } from "../../../components";
@@ -28,6 +31,9 @@ const Devices = () => {
   const [editDevicevalues, setEditDeviceValues] = useState({});
   const [deviceDelete, setDeviceDelete] = useState(false);
   const [addDeviceModal, setAddDeviceModal] = useState(false);
+  const [addGroup, setAddGroup] = useState(false);
+  const [editGroup, setEditGroup] = useState(false);
+  const [importDeviceModal, setImportDeviceModal] = useState(false);
 
   useEffect(() => {
     if (tab) {
@@ -53,6 +59,8 @@ const Devices = () => {
     setEditDeviceValues(item);
     if (activeTab === 0) {
       setDeviceEditModal(true);
+    } else {
+      setEditGroup(true);
     }
   };
 
@@ -60,11 +68,21 @@ const Devices = () => {
     console.log(item, "delete");
     if (activeTab === 0) {
       setDeviceDelete(true);
+    } else {
+      setDeviceDelete(true);
     }
   };
 
   const handlePageChange = (page) => {
     setPage(page);
+  };
+
+  const handleSubHeaderClick = () => {
+    if (activeTab === 0) {
+      setAddDeviceModal(true);
+    } else {
+      setAddGroup(true);
+    }
   };
 
   useEffect(() => {
@@ -85,13 +103,18 @@ const Devices = () => {
     { label: "Group", component: <></> },
   ];
 
+  const handleAddDeviceAccept = () => {
+    setAddDeviceModal(false);
+    setImportDeviceModal(true);
+  };
+
   return (
     <>
       <SubHeader
         heading="Device"
         subHeading="Here’s what’s happening with your device and users"
-        buttonText="Add New Device"
-        onClick={() => setAddDeviceModal(true)}
+        buttonText={activeTab === 0 ? "Add New Device" : "Add New Entity Group"}
+        onClick={handleSubHeaderClick}
       />
       <Box
         sx={{
@@ -133,6 +156,7 @@ const Devices = () => {
         <EditDeviceModal
           values={editDevicevalues}
           handleModalClose={() => setDeviceEditModal(false)}
+          handleCancel={() => setDeviceEditModal(false)}
         />
       </DynamicModal>
 
@@ -153,8 +177,48 @@ const Devices = () => {
         handleClose={() => setAddDeviceModal(false)}
         acceptButtonText={"Next"}
         heading={"Add New Device"}
+        handleAccept={handleAddDeviceAccept}
       >
         <AddDeviceModal />
+      </DynamicModal>
+      <DynamicModal
+        open={addGroup}
+        handleClose={() => setAddGroup(false)}
+        heading={"Add Entity Group"}
+      >
+        <AddGroupModal
+          handleCancel={() => setAddGroup(false)}
+          handleAccept={() => setAddGroup(false)}
+        />
+      </DynamicModal>
+      <DynamicModal
+        open={editGroup}
+        handleClose={() => setEditGroup(false)}
+        heading={"Edit Entity Groups"}
+        sx={{
+          width: {
+            xs: "95%",
+            md: "70%",
+            lg: "30%",
+          },
+        }}
+      >
+        <EditGroupModal
+          values={editDevicevalues}
+          handleModalClose={() => setEditGroup(false)}
+          handleCancel={() => setEditGroup(false)}
+        />
+      </DynamicModal>
+      <DynamicModal
+        open={importDeviceModal}
+        handleClose={() => setImportDeviceModal(false)}
+        acceptButtonText={"Add"}
+        heading={"Import Device"}
+        cancelButtonText={"Cancel "}
+        handleAccept={() => setImportDeviceModal(false)}
+        handleCancel={() => setImportDeviceModal(false)}
+      >
+        <ImportDeviceModal />
       </DynamicModal>
     </>
   );

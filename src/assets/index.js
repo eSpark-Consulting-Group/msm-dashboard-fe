@@ -39,6 +39,7 @@ import homeBlack from "./icons/home_black.svg";
 import modalClose from "./icons/modalClose.svg";
 import pencil from "./icons/pencil.svg";
 import deleteInfo from "./icons/information-fill.svg";
+import checkmark from "./icons/checkmark.svg";
 
 import avatar from "./images/avatar.png";
 import loginFrame from "./images/login_image.png";
@@ -87,4 +88,5 @@ export {
   loginFrame,
   pencil,
   deleteInfo,
+  checkmark,
 };

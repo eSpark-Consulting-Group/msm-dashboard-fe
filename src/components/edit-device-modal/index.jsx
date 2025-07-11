@@ -18,7 +18,7 @@ const sharedInputStyles = {
   },
 };
 
-const EditDeviceModal = ({ values, handleModalClose }) => {
+const EditDeviceModal = ({ values, handleModalClose, handleCancel }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const dropdownOptions = ["Active", "In active"];
@@ -159,7 +159,7 @@ const EditDeviceModal = ({ values, handleModalClose }) => {
         }}
       >
         <Box sx={{ width: "203.70px", height: "50px" }}>
-          <Button variant="outlined" disableRipple>
+          <Button variant="outlined" disableRipple onClick={handleCancel}>
             Confirm
           </Button>
         </Box>

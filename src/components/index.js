@@ -16,6 +16,9 @@ import DynamicModal from "./modal";
 import EditDeviceModal from "./edit-device-modal";
 import DeleteModal from "./delete-modal";
 import AddDeviceModal from "./add-device-modal";
+import AddGroupModal from "./add-group-modal";
+import EditGroupModal from "./edit-group-modal";
+import ImportDeviceModal from "./import-device-modal";
 
 export {
   Button,
@@ -36,4 +39,7 @@ export {
   EditDeviceModal,
   DeleteModal,
   AddDeviceModal,
+  AddGroupModal,
+  EditGroupModal,
+  ImportDeviceModal,
 };

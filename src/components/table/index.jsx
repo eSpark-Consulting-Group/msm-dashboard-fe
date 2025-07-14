@@ -30,6 +30,7 @@ const DynamicTable = ({
   pageSize,
   handlePageChange,
   total,
+  onRowClick,
 }) => {
   const extendedColumns = columns?.map((column) => {
     return { ...column, key: column.key.split(".") };
@@ -171,8 +172,10 @@ const DynamicTable = ({
                         sx={{
                           textAlign: "center",
                           pl: "0px",
+                          cursor: onRowClick ? "pointer" : "auto",
                         }}
                         key={column.key.join(".")}
+                        onClick={onRowClick ? () => onRowClick(item) : () => {}}
                       >
                         {generateCell(column, item)}
                       </TableCell>

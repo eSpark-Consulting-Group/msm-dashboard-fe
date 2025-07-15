@@ -4,19 +4,10 @@ import { DropDownIcon, pencil } from "../../assets";
 import { useFormik } from "formik";
 import { useState } from "react";
 import Button from "../buttons";
+import Dropdown from "../drop-down";
+import { sharedInputStyles } from "../../theme";
 
-const sharedInputStyles = {
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EFEFEF",
-    borderRadius: "6.92px",
-    height: "55px",
-    color: "#000000",
-  },
-  "& .MuiOutlinedInput-input::placeholder": {
-    color: "#000000",
-    opacity: 1,
-  },
-};
+ 
 
 const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -120,35 +111,28 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       />
 
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
-        <Typography
-          component="label"
-          sx={{ fontSize: "14px", fontWeight: "400", color: "#454545" }}
-        >
-          Status
-        </Typography>
-        <Box
-          sx={{
-            backgroundColor: "#EFEFEF",
-            border: "1.38px solid #DBD6D6",
-            borderRadius: "8px",
-            p: "12px 15px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            cursor: "pointer",
+        
+        <Dropdown
+          name="status"
+          customLabel="Status"
+          variant="filled"
+          options={[
+            { label: "Active", value: "Active" },
+            { label: "In active", value: "In active" },
+          ]}
+          value={formik.values.status}
+          handleChange={formik.handleChange}
+          renderValueSx={{
+            color: formik.values.status === "Active" ? "#35B21C" : "#EB1B1B",
+            fontWeight: 600,
           }}
-          onClick={handleClick}
-        >
-          <Typography
-            sx={{
-              color: formik.values.status === "Active" ? "#35B21C" : "#EB1B1B",
-              fontSize: "18px",
-            }}
-          >
-            {formik.values.status}
-          </Typography>
-          <img src={DropDownIcon} alt="dropdown icon" />
-        </Box>
+          selectSx={{
+            backgroundColor:
+              formik.values.status === "Active" ? "#EFEFEF" : "#FDE8E8",
+            border: "1.38px solid #DBD6D6",
+            borderRadius: "6.92px",
+          }}
+        />
       </Box>
 
       <Menu

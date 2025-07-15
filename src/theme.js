@@ -329,3 +329,19 @@ export const theme = createTheme({
     },
   },
 });
+
+export const sharedInputStyles = {
+  '& .MuiOutlinedInput-root': {
+    backgroundColor: '#EFEFEF',
+    borderRadius: '6.92px',
+    height: '55px',
+    color: '#000',
+    border: '1.28px solid #DBD6D6',
+    fontSize: '16px',
+  },
+  '& .MuiOutlinedInput-input::placeholder': {
+    color: '#A1A1AA',
+    opacity: 1,
+    fontSize: '16px',
+  },
+};

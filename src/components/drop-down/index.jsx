@@ -33,12 +33,20 @@ const Dropdown = ({
   error,
   helperText,
   value,
+  renderValueSx = {},
+  selectSx = {},
 }) => {
   const [options] = useState(
     noLabel
       ? [{ label: placeholder, value: placeholder }, ...dropdownOptions]
       : dropdownOptions
   );
+
+  const defaultRenderValueStyle = {
+    color: "#A1A1AA",
+    ...renderValueSx,
+  };
+
   return (
     <>
       {customLabel && (
@@ -52,12 +60,14 @@ const Dropdown = ({
           </Typography>
         </Stack>
       )}
+
       <FormControl sx={{ width: "100%" }} variant="filled" error={error}>
         {!noLabel && (
           <InputLabel id="demo-simple-select-filled-label">
             {placeholder}
           </InputLabel>
         )}
+
         <Select
           name={name}
           variant={variant}
@@ -68,16 +78,34 @@ const Dropdown = ({
           value={value || options[0]?.value}
           sx={{
             color: "#A1A1AA",
+            ...selectSx,
+            "&::before": {
+              borderBottom: "none",
+            },
+            "&::after": {
+              borderBottom: "none",
+            },
+            "&:hover::before": {
+              borderBottom: "none !important", 
+            },
           }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {
             if (!selected) {
-              return <span style={{ color: "#aaa" }}>Place holder</span>;
+              return (
+                <span style={{ color: "#aaa", ...renderValueSx }}>
+                  {placeholder}
+                </span>
+              );
             }
             const selectedOption = options?.find(
               (opt) => opt.value === selected
             );
-            return selectedOption ? selectedOption.label : selected;
+            return (
+              <span style={defaultRenderValueStyle}>
+                {selectedOption ? selectedOption.label : selected}
+              </span>
+            );
           }}
         >
           {options?.map(
@@ -89,6 +117,7 @@ const Dropdown = ({
               )
           )}
         </Select>
+
         {error && <FormHelperText>{helperText}</FormHelperText>}
       </FormControl>
     </>

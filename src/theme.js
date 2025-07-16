@@ -264,12 +264,32 @@ export const theme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        root: {
+          backgroundColor: "#EFEFEF",
+          borderRadius: "6.92px",
+          height: "55px",
+          color: "#000",
+          border: "1.28px solid #DBD6D6",
+          fontSize: "16px",
+          width: "100%",
+          outline: "none",
+          padding: "0px 5px",
+          fontWeight: 400,
+          background: "#FFFFFF",
+          ":focus": {
+            border: "1.28px solid #DBD6D6",
+          },
+          fieldset: {
+            border: 0,
+          },
+        },
         input: {
+          fontSize: "14px",
           "&::placeholder": {
             color: "#A1A1AA",
-            fontWeight: "400",
             opacity: 1,
             fontSize: "14px",
+            fontWeight: 400,
           },
           "&:-webkit-autofill": {
             WebkitBoxShadow: "0 0 0 1000px transparent inset",
@@ -277,27 +297,9 @@ export const theme = createTheme({
             transition: "background-color 5000s ease-in-out 0s",
           },
         },
-
-        root: {
-          border: "1px solid #E4E4E4",
-          width: "100%",
-          outline: "none",
-          padding: "0px 5px",
-          fontSize: "14px",
-          color: "#000",
-          fontWeight: 400,
-          borderRadius: "5px",
-          backgroundColor: "#FFFFFF",
-          height: "40px",
-          ":focus": {
-            border: "1px solid #E4E4E4",
-          },
-          fieldset: {
-            border: 0,
-          },
-        },
       },
     },
+
     MuiPaper: {
       styleOverrides: {
         root: {

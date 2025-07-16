@@ -1,11 +1,10 @@
-import { Box, Menu, MenuItem, Typography } from "@mui/material";
-import OutlinedInput from "../input";
-import { DropDownIcon, pencil } from "../../assets";
+import { Box, Menu, MenuItem } from "@mui/material";
 import { useFormik } from "formik";
 import { useState } from "react";
+import { pencil } from "../../assets";
 import Button from "../buttons";
 import Dropdown from "../drop-down";
-import { sharedInputStyles } from "../../theme";
+import OutlinedInput from "../input";
 
  
 
@@ -61,7 +60,6 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       <OutlinedInput
         label={"First Name"}
         placeholder={"Enter First Name"}
-        sx={sharedInputStyles}
         endAdornment={pencil}
         name={"firstName"}
         value={formik.values.firstName}
@@ -74,7 +72,6 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       <OutlinedInput
         label={"Last Name"}
         placeholder={"Enter Last Name"}
-        sx={sharedInputStyles}
         endAdornment={pencil}
         name={"lastName"}
         value={formik.values.lastName}
@@ -87,7 +84,6 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       <OutlinedInput
         label={"Email"}
         placeholder={"Enter Email"}
-        sx={sharedInputStyles}
         endAdornment={pencil}
         name={"email"}
         value={formik.values.email}
@@ -100,7 +96,6 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       <OutlinedInput
         label={"No. of Devices"}
         placeholder={"Enter Device Count"}
-        sx={sharedInputStyles}
         endAdornment={pencil}
         name={"devices"}
         value={formik.values.devices}

@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
-import OutlinedInput from "../input";
 import { useFormik } from "formik";
-import { sharedInputStyles } from "../../theme";
+import OutlinedInput from "../input";
 
 const fields = [
   { name: "name", label: "Name", placeholder: "Enter Name" },
@@ -48,7 +47,6 @@ const AddUserModal = () => {
         label={label}
         placeholder={placeholder}
         type={type || "text"}
-        sx={sharedInputStyles}
         name={name}
         value={formik.values[name]}
         onInputChange={formik.handleChange}

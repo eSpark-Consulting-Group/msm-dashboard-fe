@@ -52,7 +52,7 @@ const NavigateHeader = () => {
               textTransform: "capitalize",
             }}
           >
-            {item.replace(/-/g, " ")}
+            {item.replace(/-/g, " ").replace(/%/g, " ")}
           </Typography>
           {index !== newLocation?.length - 1 && (
             <img src={nextArrow} alt="Icon" />

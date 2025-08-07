@@ -11,6 +11,7 @@ import Users from "./dashboard/users";
 import AddUser from "./dashboard/users/add-user";
 import DashboardHome from "./dashboard/dashboard/home";
 import ChannelInfo from "./dashboard/dashboard/channel-info";
+import MqttProtocol from "./dashboard/mqtt-protocol";
 
 export {
   Login,
@@ -23,4 +24,5 @@ export {
   AddUser,
   DashboardHome,
   ChannelInfo,
+  MqttProtocol,
 };

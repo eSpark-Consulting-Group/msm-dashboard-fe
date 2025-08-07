@@ -11,6 +11,7 @@ const DynamicModal = ({
   handleCancel,
   handleAccept,
   heading,
+  hideClose,
 }) => {
   return (
     <Modal
@@ -57,12 +58,14 @@ const DynamicModal = ({
           <Typography sx={{ color: "#147FCC", fontSize: "34.55px" }}>
             {heading}
           </Typography>
-          <img
-            src={modalClose}
-            alt="Icon"
-            style={{ cursor: "pointer" }}
-            onClick={handleClose}
-          />
+          {!hideClose && (
+            <img
+              src={modalClose}
+              alt="Icon"
+              style={{ cursor: "pointer" }}
+              onClick={handleClose}
+            />
+          )}
         </Box>
         <Box
           sx={{

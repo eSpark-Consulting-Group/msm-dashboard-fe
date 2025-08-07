@@ -33,6 +33,7 @@ const Dashboard = () => {
 
   const handleRowClick = (item) => {
     navigate(`/dashboard/${item?.id}/info`);
+    // navigate(`/dashboard/${item?.title}`);
   };
 
   useEffect(() => {

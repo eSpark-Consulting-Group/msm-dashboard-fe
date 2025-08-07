@@ -109,6 +109,19 @@ export const theme = createTheme({
             borderRadius: "12px",
           },
         },
+        {
+          props: { variant: "blue2" },
+          style: {
+            backgroundColor: "#0077FF",
+            color: "#FFFFFF",
+            border: "none",
+            width: "193px",
+            height: "45px",
+            fontSize: "18px",
+            fontWeight: 500,
+            borderRadius: "15px",
+          },
+        },
       ],
     },
     MuiTable: {
@@ -325,6 +338,45 @@ export const theme = createTheme({
         root: {
           "&.Mui-checked": {
             color: "#1877F2",
+          },
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        scroller: {
+          overflowX: "inherit",
+          overflowY: "inherit",
+        },
+        root: {
+          overflowX: "inherit",
+          overflowY: "inherit",
+          minHeight: "36px !important",
+        },
+        indicator: {
+          height: "5px",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+          width: "114px !important",
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          minWidth: "114px !important", // ✅ Move it here for individual tabs
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.75rem", // base styles
+          marginLeft: "0px",
+          // 👉 style when helperText is in error state
+          "&.Mui-error": {
+            color: "red",
+            fontWeight: 500,
           },
         },
       },

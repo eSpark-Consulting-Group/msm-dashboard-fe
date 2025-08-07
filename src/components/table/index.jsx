@@ -31,6 +31,7 @@ const DynamicTable = ({
   handlePageChange,
   total,
   onRowClick,
+  mqttTable,
 }) => {
   const extendedColumns = columns?.map((column) => {
     return { ...column, key: column.key.split(".") };
@@ -148,7 +149,20 @@ const DynamicTable = ({
       ) : (
         <TableContainer>
           <Table>
-            <TableHead>
+            <TableHead
+              sx={{
+                ...(mqttTable && {
+                  "& .MuiTableRow-root": {
+                    background: "#F7F9FB",
+                    border: "1px solid #E9E9EA",
+                  },
+                  "& .MuiTableCell-root": {
+                    padding: "8px 8px",
+                    color: "#454545",
+                  },
+                }),
+              }}
+            >
               <TableRow>
                 {extendedColumns?.map((column, index) => (
                   <TableCell key={`${index}`}>
@@ -164,7 +178,19 @@ const DynamicTable = ({
               </TableRow>
             </TableHead>
             {!isLoading && (
-              <TableBody>
+              <TableBody
+                sx={{
+                  ...(mqttTable && {
+                    "& .MuiTableRow-root": {
+                      backgroundColor: "#F7F9FB", // or alternate row background logic
+                    },
+                    "& .MuiTableCell-root": {
+                      padding: "20px 8px",
+                      color: "#454545",
+                    },
+                  }),
+                }}
+              >
                 {data?.map((item, index) => (
                   <TableRow key={index}>
                     {extendedColumns?.map((column) => (

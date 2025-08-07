@@ -35,3 +35,17 @@ export const passwordScehma = Yup.object({
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Please confirm your password"),
 });
+
+export const profileSchema = Yup.object({
+  yourName: Yup.string().required("Name is required"),
+  userName: Yup.string().required("Username is required"),
+  dob: Yup.date()
+    .nullable()
+    .required("Date of Birth is required")
+    .max(new Date(), "DOB cannot be in the future"),
+  companyName: Yup.string().required("Company name is required"),
+  companyMail: Yup.string().required("Company mail is required"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(/^[0-9]{10,15}$/, "Phone number must be between 10 and 15 digits"),
+});

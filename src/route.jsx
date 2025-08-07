@@ -12,6 +12,7 @@ import {
   AddUser,
   DashboardHome,
   ChannelInfo,
+  MqttProtocol,
 } from "./pages";
 import DashboardInfo from "./pages/dashboard/dashboardInfo";
 
@@ -37,6 +38,7 @@ const Router = () => {
             path="/dashboard/:id/info/:channelId"
             element={<ChannelInfo />}
           />
+          <Route path="/dashboard/:mqttName" element={<MqttProtocol />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

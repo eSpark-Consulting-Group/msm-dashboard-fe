@@ -738,3 +738,32 @@ export const dashboardData = [
     group: "",
   },
 ];
+
+export const mqttTableData = [
+  {
+    timestamp: "",
+    date: "",
+    time: "",
+    V_R: "",
+    In1_R1: "",
+    In1_RPF: "",
+    V_Y: "",
+    In1_Y1: "",
+    In1_YPF: "",
+    V_B: "",
+    In1_B1: "",
+    In1_BPF: "",
+    P1_R: "",
+    P1_Y: "",
+    P1_B: "",
+    Q1_R: "",
+    Q1_Y: "",
+    Q1_B: "",
+    Q1: "",
+    S1_R: "",
+    S1_Y: "",
+    "S1 V_R": "",
+    S1_B: "",
+    S1: "",
+  },
+];

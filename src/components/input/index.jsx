@@ -25,6 +25,7 @@ const OutlinedInput = ({
   helperText,
   onBlur,
   endAdornment,
+  labelStyle,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,7 +45,12 @@ const OutlinedInput = ({
       {label && (
         <Typography
           component="label"
-          sx={{ fontSize: "14px", fontWeight: "400", color: "#454545" }}
+          sx={{
+            fontSize: "14px",
+            fontWeight: "400",
+            color: "#454545",
+            ...labelStyle,
+          }}
         >
           {label}
         </Typography>

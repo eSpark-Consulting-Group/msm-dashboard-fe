@@ -31,3 +31,23 @@ body {
     font-family: "AlbertSans", sans-serif;
     background-color: #F5F5F5;
 }
+
+.react-datepicker-wrapper {
+    width: 100% !important;
+    border-radius: 15px !important;
+}
+
+.react-datepicker__input-container {
+    /* height: 50px !important; */
+    /* border: 1px solid #DFEAF2 !important; */
+    width: 100% !important;
+    /* border-radius: 15px !important; */
+    /* padding: 13px 8px !important; */
+}
+
+.react-datepicker__input-container>input {
+    width: 100% !important;
+    border: none !important;
+    height: 48px !important;
+    outline: none !important;
+}

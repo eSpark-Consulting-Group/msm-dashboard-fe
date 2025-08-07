@@ -7,7 +7,11 @@ import { useClickOutside } from "../../utils";
 
 const Sidebar = ({ open, setOpen }) => {
   const { pathname: path } = useLocation();
-  const pathname = `/${path?.split("/")[1]}`;
+  let pathname = `/${path?.split("/")[1]}`;
+  if (pathname[0] === "/") {
+    pathname = pathname.slice(1);
+  }
+  console.log(pathname);
   const navigate = useNavigate();
 
   const handleNavigate = (link) => {
@@ -70,16 +74,27 @@ const Sidebar = ({ open, setOpen }) => {
               justifyContent: "flex-start",
               alignItems: "center",
               gap: "10px",
-              background: pathname === item.link ? "#0077FF" : "#FFF",
+              background:
+                pathname === item.title?.toLowerCase() ||
+                (pathname === "" && item?.title?.toLowerCase() === "dashboard")
+                  ? "#0077FF"
+                  : "#FFF",
               cursor: "pointer",
               img: {
                 filter:
-                  pathname === item.link
+                  pathname === item.title?.toLowerCase() ||
+                  (pathname === "" &&
+                    item?.title?.toLowerCase() === "dashboard")
                     ? "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)"
                     : "",
               },
               ":hover": {
-                background: pathname === item.link ? "#0077FF" : "#0077FF",
+                background:
+                  pathname === item.title?.toLowerCase() ||
+                  (pathname === "" &&
+                    item?.title?.toLowerCase() === "dashboard")
+                    ? "#0077FF"
+                    : "#0077FF",
                 "& .MuiTypography-root": {
                   color: "#FFF",
                 },
@@ -93,7 +108,12 @@ const Sidebar = ({ open, setOpen }) => {
           >
             <img src={item.icon} alt={item.title} />
             <Typography
-              color={pathname === item.link ? "text.secondary" : "text.primary"}
+              color={
+                pathname === item.title?.toLowerCase() ||
+                (pathname === "" && item?.title?.toLowerCase() === "dashboard")
+                  ? "text.secondary"
+                  : "text.primary"
+              }
               fontSize={18}
               fontWeight={400}
             >

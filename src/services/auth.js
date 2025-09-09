@@ -7,7 +7,6 @@ export const authApi = api.injectEndpoints({
         url: "/auth/login",
         method: "POST",
         body: credentials,
-        credentials: "include",
       }),
     }),
     getUserInfo: builder.mutation({

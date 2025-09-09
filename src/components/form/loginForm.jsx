@@ -1,26 +1,65 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Box,
   Button,
   Checkbox,
   FormControlLabel,
-  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { loginValidationSchema } from "../../schemas";
+import { loginSchema } from "../../schemas";
 import OutlinedInput from "../input";
+import { useLoginMutation } from "../../services/auth";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+  const [login, { isLoading }] = useLoginMutation();
+
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
       remember: false,
     },
-    validationSchema: loginValidationSchema,
+    validationSchema: loginSchema,
     onSubmit: (values) => {
-      console.log("Login Data:", values);
+      login({ email: values.email, password: values.password }).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Login failed");
+          return;
+        }
+        if (res?.data) {
+          if (values.remember) {
+            const encoded = btoa(
+              JSON.stringify({ email: values.email, password: values.password })
+            );
+            localStorage.setItem("rememberCreds", encoded);
+          } else {
+            localStorage.removeItem("rememberCreds");
+          }
+
+          navigate("/");
+        }
+      });
     },
   });
+
+  useEffect(() => {
+    const savedCreds = localStorage.getItem("rememberCreds");
+    if (savedCreds) {
+      try {
+        const decoded = JSON.parse(atob(savedCreds));
+        formik.setValues({
+          email: decoded.email || "",
+          password: decoded.password || "",
+          remember: true,
+        });
+      } catch (err) {
+        console.error("Failed to decode saved creds", err);
+      }
+    }
+  }, []);
 
   return (
     <Box
@@ -31,14 +70,14 @@ const LoginForm = () => {
     >
       <Box sx={{ mt: 2 }}>
         <OutlinedInput
-          label="Username"
-          name="username"
-          placeholder="Enter your username"
-          value={formik.values.username}
+          label="Email"
+          name="email"
+          placeholder="Enter your email"
+          value={formik.values.email}
           onInputChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.username && Boolean(formik.errors.username)}
-          helperText={formik.touched.username && formik.errors.username}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
         />
       </Box>
 
@@ -82,6 +121,7 @@ const LoginForm = () => {
           type="submit"
           fullWidth
           variant="contained"
+          disabled={isLoading}
           sx={{
             mt: 2,
             py: 1.5,
@@ -91,7 +131,7 @@ const LoginForm = () => {
             backgroundColor: "#5AB4F4",
           }}
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </Button>
       </Box>
     </Box>

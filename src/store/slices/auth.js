@@ -11,7 +11,7 @@ const slice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("token");
+      localStorage.removeItem("msm_token");
       localStorage.removeItem("user");
     },
     updateUser: (state, action) => {
@@ -24,6 +24,7 @@ const slice = createSlice({
       (state, { payload }) => {
         const { data } = payload;
         state.user = data?.user;
+        localStorage.setItem("msm_token", JSON.stringify(data?.token));
         localStorage.setItem("user", JSON.stringify(data?.user));
       }
     );

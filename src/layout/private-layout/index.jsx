@@ -1,11 +1,19 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import Sidebar from "./sidebar";
 import Header from "./header";
 
 const PrivateLayout = () => {
   const [open, setOpen] = useState(false);
+  const token = localStorage.getItem("msm_token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token]);
 
   return (
     <Box sx={{ display: "flex" }}>

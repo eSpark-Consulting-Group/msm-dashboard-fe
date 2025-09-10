@@ -19,7 +19,7 @@ const DeleteModal = ({
       BackdropProps={{
         sx: {
           backdropFilter: "blur(0.5px)",
-          backgroundColor: "#A49D9D7A",
+          backgroundColor: "#f8595962",
         },
       }}
     >

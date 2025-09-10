@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import Button from "../buttons";
+import { gtIcon } from "../../assets";
 
 const SubHeader = ({
   heading,
@@ -8,6 +9,8 @@ const SubHeader = ({
   buttonText,
   onClick,
   variant = "outlined",
+  userDetails,
+  userName = "User",
 }) => {
   return (
     <Box>
@@ -25,6 +28,31 @@ const SubHeader = ({
           flexWrap={"wrap"}
           gap={1}
         >
+          {userDetails && (
+            <Box
+              sx={{ display: "flex", columnGap: "10px", alignItems: "center" }}
+            >
+              <Typography
+                sx={{ fontSize: { xs: "24px", md: "40px" }, opacity: "60%" }}
+                color="#454545"
+                fontWeight={900}
+              >
+                User
+              </Typography>
+              <img
+                src={gtIcon}
+                alt="Icon"
+                style={{ width: "22px", height: "51px" }}
+              />
+              <Typography
+                sx={{ fontSize: { xs: "24px", md: "40px" } }}
+                color="#454545"
+                fontWeight={900}
+              >
+                {userName}
+              </Typography>
+            </Box>
+          )}
           <Typography color="primary.dark" fontSize={40} fontWeight={900}>
             {heading}
           </Typography>

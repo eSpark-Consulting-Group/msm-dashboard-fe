@@ -43,6 +43,7 @@ import checkmark from "./icons/checkmark.svg";
 import pencilWhite from "./icons/pencil-white.svg";
 import userAvatar from "./icons/userAvatar.svg";
 import uploadIcon2 from "./icons/uploadIcon.svg";
+import gtIcon from "./icons/gtIcon.svg";
 
 import avatar from "./images/avatar.png";
 import loginFrame from "./images/login_image.png";
@@ -95,4 +96,5 @@ export {
   pencilWhite,
   userAvatar,
   uploadIcon2,
+  gtIcon,
 };

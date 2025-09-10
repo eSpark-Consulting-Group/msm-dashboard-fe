@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
-import { DynamicModal, ProfileModal, SearchBar } from "../../components";
+import { useSelector } from "react-redux";
+import { Avatar, Box, Menu, MenuItem } from "@mui/material";
+import { DynamicModal, LogoutModal, ProfileModal, SearchBar } from "../../components";
 import { messageIcon, bellIcon, avatar, hamburger } from "../../assets";
 
 const Notifications = ({ icon, count }) => {
@@ -31,8 +32,26 @@ const Notifications = ({ icon, count }) => {
 };
 
 const Header = ({ open, setOpen }) => {
+  const { user } = useSelector((state) => state.auth);
+  console.log(user, "user")
   const [query, setQuery] = useState("");
   const [profileModal, setProfileModal] = useState(false);
+  const [logoutModal, setLogoutModal] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    setProfileModal(true);
+    handleMenuClose();
+  };
 
   return (
     <>
@@ -75,14 +94,36 @@ const Header = ({ open, setOpen }) => {
         >
           <Notifications icon={messageIcon} count={2} />
           <Notifications icon={bellIcon} count={6} />
-          <img
-            style={{ cursor: "pointer" }}
-            src={avatar}
-            alt="avatar"
-            onClick={() => setProfileModal(!profileModal)}
+          <Avatar
+            sx={{ cursor: "pointer" }}
+            alt="User"
+            onClick={handleAvatarClick}
+            src={user?.profile_image || null}
+
           />
         </Box>
       </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <MenuItem onClick={handleProfile}>Profile</MenuItem>
+        <MenuItem onClick={() => {
+          setLogoutModal(true)
+          handleMenuClose()
+        }}>Logout</MenuItem>
+      </Menu>
+
       <DynamicModal
         open={profileModal}
         // handleAccept={() => setProfileModal(false)}
@@ -93,6 +134,11 @@ const Header = ({ open, setOpen }) => {
       >
         <ProfileModal handleClose={() => setProfileModal(false)} />
       </DynamicModal>
+      <LogoutModal
+        open={logoutModal}
+        handleClose={() => setLogoutModal(false)}
+      >
+      </LogoutModal>
     </>
   );
 };

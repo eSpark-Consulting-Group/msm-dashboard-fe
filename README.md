@@ -1,8 +1,8 @@
 # MSM Frontend
-#### Client Name: Nabil faisal
+#### Client Name: Nabel faisal
 
 ## Project Requirements
 The project requirements are outlined in below documents:
 
 ### Figma Link
-[project-name](https://www.figma.com/design/Mva9wUPM5kAPSiJdLJ6re0/MSM-Application?node-id=449-15225&p=f&t=d2fWW1BxGr2ukR7z-0)
+[MSM - Dashboard](https://www.figma.com/design/GdLV83zrFsa9h3tV5rSUu2/MSM-Dashboard?node-id=1-4578&t=q1uM5z9imO8OjzJb-0)

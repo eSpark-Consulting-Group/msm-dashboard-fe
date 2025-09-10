@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../../services/auth";
+import { userApi } from "../../services/users";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -14,9 +15,6 @@ const slice = createSlice({
       localStorage.removeItem("msm_token");
       localStorage.removeItem("user");
     },
-    updateUser: (state, action) => {
-      state.user = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -24,8 +22,16 @@ const slice = createSlice({
       (state, { payload }) => {
         const { data } = payload;
         state.user = data?.user;
-        localStorage.setItem("msm_token", JSON.stringify(data?.token));
+        localStorage.setItem("msm_token", data?.token);
         localStorage.setItem("user", JSON.stringify(data?.user));
+      }
+    );
+    builder.addMatcher(
+      userApi.endpoints.updateUser.matchFulfilled,
+      (state, { payload }) => {
+        const { data } = payload;
+        state.user = data;
+        localStorage.setItem("user", JSON.stringify(data));
       }
     );
     builder.addMatcher(
@@ -39,6 +45,6 @@ const slice = createSlice({
   },
 });
 
-export const { logout, updateUser } = slice.actions;
+export const { logout } = slice.actions;
 
 export default slice.reducer;

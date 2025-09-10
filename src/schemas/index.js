@@ -37,15 +37,16 @@ export const passwordScehma = Yup.object({
 });
 
 export const profileSchema = Yup.object({
-  yourName: Yup.string().required("Name is required"),
-  userName: Yup.string().required("Username is required"),
+  name: Yup.string().required("Name is required"),
   dob: Yup.date()
     .nullable()
     .required("Date of Birth is required")
     .max(new Date(), "DOB cannot be in the future"),
   companyName: Yup.string().required("Company name is required"),
-  companyMail: Yup.string().required("Company mail is required"),
+  companyMail: Yup.string().matches(
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    "Invalid email address"
+  ).required("Company mail is required"),
   phone: Yup.string()
-    .required("Phone number is required")
-    .matches(/^[0-9]{10,15}$/, "Phone number must be between 10 and 15 digits"),
+    .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
 });

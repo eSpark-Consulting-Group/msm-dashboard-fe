@@ -20,6 +20,7 @@ import AddGroupModal from "./add-group-modal";
 import EditGroupModal from "./edit-group-modal";
 import ImportDeviceModal from "./import-device-modal";
 import ProfileModal from "./profile-modal";
+import LogoutModal from "./logout-modal";
 
 export {
   Button,
@@ -44,4 +45,5 @@ export {
   EditGroupModal,
   ImportDeviceModal,
   ProfileModal,
+  LogoutModal,
 };

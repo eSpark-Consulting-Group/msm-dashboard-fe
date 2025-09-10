@@ -8,6 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
 import { edit, pencilWhite, uploadIcon2, userAvatar } from "../../assets";
 import OutlinedInput from "../input";
 import { useFormik } from "formik";
@@ -16,6 +19,7 @@ import { useFormik } from "formik";
 // import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { profileSchema } from "../../schemas";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useUpdateUserMutation } from "../../services/users";
 
 const sharedInputStyles = {
   "& .MuiOutlinedInput-root": {
@@ -34,8 +38,8 @@ const sharedInputStyles = {
 };
 
 const items = [
-  { name: "yourName", label: "Your Name", placeholder: "" },
-  { name: "userName", label: "User Name", placeholder: "" },
+  { name: "name", label: "User Name", placeholder: "" },
+  // { name: "userName", label: "User Name", placeholder: "" },
   { type: "date" },
   { name: "companyName", label: "Company Name", placeholder: "" },
   { name: "companyMail", label: "Company Mail", placeholder: "" },
@@ -43,32 +47,47 @@ const items = [
 ];
 
 const ProfileModal = ({ handleClose }) => {
+  const { user } = useSelector((state) => state.auth);
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
   const [tabIndex, setTabIndex] = useState(0);
   const handleTabChange = (event, newValue) => setTabIndex(newValue);
   const imageRef = useRef(null);
   const logoRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [selectedFile2, setSelectedFile2] = useState(null);
-  const [previewUrl2, setPreviewUrl2] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(`${import.meta.env.VITE_IMAGE_BASE_URL}${user?.profile_image}`);
+  const [previewUrl2, setPreviewUrl2] = useState(`${import.meta.env.VITE_IMAGE_BASE_URL}${user?.logo}`);
 
   const formik = useFormik({
     initialValues: {
-      yourName: "",
-      userName: "",
-      dob: null,
-      companyName: "",
-      companyMail: "",
-      phone: "",
-      logo: null,
-      profileImg: null,
+      name: user?.name || "",
+      // userName: user?.,
+      dob: dayjs(user?.date_of_birth) || null,
+      companyName: user?.company_name || "",
+      companyMail: user?.company_mail || "",
+      phone: user?.phone_number || "",
+      logo: user?.logo || null,
+      profileImg: user?.profile_image || null,
     },
     validationSchema: profileSchema,
+    enableReinitialize: true,
     onSubmit: (values) => {
-      if (formik.values.logo) {
-        console.log(values);
-        handleClose();
-      }
+      const formData = new FormData();
+      if (values?.name) formData.append("name", values?.name);
+      if (values?.dob) formData.append("date_of_birth", values?.dob);
+      if (values?.companyName) formData.append("company_name", values?.companyName);
+      if (values?.companyMail) formData.append("company_mail", values?.companyMail);
+      if (values?.phone) formData.append("phone_number", values?.phone);
+      if (values?.logo && typeof values?.logo !== "string") formData.append("logo", values?.logo);
+      if (values?.profileImg && typeof values?.profileImg !== "string") formData.append("profile_image", values?.profileImg);
+      updateUser({ id: user?._id, formData }).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to update profile");
+          return;
+        }
+        if (res?.data) {
+          toast.success("Profile updated successfully");
+          handleClose();
+        }
+      })
     },
   });
 
@@ -91,32 +110,15 @@ const ProfileModal = ({ handleClose }) => {
     </Grid>
   );
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event, type) => {
     const file = event.target.files?.[0];
-    // console.log("File selected:", file);
-
     if (file) {
-      setSelectedFile(file);
-      formik.setFieldValue("profileImg", file);
+      formik.setFieldValue(type === "profile" ? "profileImg" : "logo", file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  const handleFileChange2 = (event) => {
-    const file = event.target.files?.[0];
-    // console.log("File selected:", file);
+        type === "profile" ? setPreviewUrl(reader.result) : setPreviewUrl2(reader.result);
 
-    if (file) {
-      setSelectedFile2(file);
-      formik.setFieldValue("logo", file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl2(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -157,7 +159,7 @@ const ProfileModal = ({ handleClose }) => {
           <Avatar
             sx={{ width: "100%", height: "100%" }}
             alt="User"
-            src={previewUrl || userAvatar}
+            src={previewUrl}
           />
           <Box
             sx={{
@@ -282,7 +284,7 @@ const ProfileModal = ({ handleClose }) => {
             }}
           >
             <Box sx={{ width: "190px", height: "50px", mr: "5px" }}>
-              <Button variant="blue2" type="submit" disableRipple>
+              <Button loading={isLoading} disabled={isLoading} variant="blue2" type="submit" disableRipple>
                 Edit
               </Button>
             </Box>
@@ -294,7 +296,7 @@ const ProfileModal = ({ handleClose }) => {
         name="userImage"
         style={{ display: "none" }}
         ref={imageRef}
-        onChange={handleFileChange}
+        onChange={(e) => handleFileChange(e, "profile")}
         accept="image/*"
       />
       <input
@@ -302,7 +304,7 @@ const ProfileModal = ({ handleClose }) => {
         name="logoImage"
         style={{ display: "none" }}
         ref={logoRef}
-        onChange={handleFileChange2}
+        onChange={(e) => handleFileChange(e, "logo")}
         accept="image/*"
       />
     </>

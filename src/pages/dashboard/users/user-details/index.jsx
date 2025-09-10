@@ -15,12 +15,14 @@ import { toast } from "react-toastify";
 const UserDetails = () => {
   const [search, setSearch] = useState("");
   const params = useParams();
-  console.log(params);
   const { search: searchQuery } = useLocation();
+
+  const [allData, setAllData] = useState(userDetails || []);
   const [data, setData] = useState(userDetails || []);
+
   const [page, setPage] = useState(1);
   const [pageSize] = useState(7);
-  const [total] = useState(7);
+  const [total, setTotal] = useState(userDetails?.length || 0);
   const [deviceDelete, setDeviceDelete] = useState(false);
 
   const {
@@ -47,11 +49,23 @@ const UserDetails = () => {
 
   useEffect(() => {
     if (userDetailsData) {
-      console.log(userDetailsData);
-    } else {
-      // setData([]);
+      console.log("API data:", userDetailsData);
     }
   }, [userDetailsData]);
+
+  useEffect(() => {
+    if (!search.trim()) {
+      setData(allData);
+    } else {
+      const filtered = allData.filter((item) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(search.toLowerCase())
+        )
+      );
+      setData(filtered);
+    }
+    setPage(1);
+  }, [search, allData]);
 
   return (
     <>

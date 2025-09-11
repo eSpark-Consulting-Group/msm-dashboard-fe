@@ -11,24 +11,63 @@ import {
 } from "../../../components";
 import AddUserModal from "../../../components/add-user-modal";
 import EditUserModal from "../../../components/edit-user-modal";
-import { userTableData } from "../../../constant";
+import { 
+  useGetAllUsersQuery, 
+  useCreateUserMutation, 
+  useUpdateUserMutation, 
+  useDeleteUserMutation 
+} from "../../../services/users";
 
 const Users = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [data, setData] = useState(userTableData || []);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(7);
-  const [total] = useState(7);
   const [addUserModal, setAddUserModal] = useState(false);
   const [editGroup, setEditGroup] = useState(false);
   const [editUserValues, setEditUserValues] = useState({});
   const [deviceDelete, setDeviceDelete] = useState(false);
   const [selectedUserToDelete, setSelectedUserToDelete] = useState(null);
 
-  const handleAddUserAccept = () => {
-    console.log("User added or next step triggered");
-    setAddUserModal(false);
+  // RTK Query hooks
+  const { data: usersData, isLoading, error, refetch } = useGetAllUsersQuery();
+  const [createUser] = useCreateUserMutation();
+  const [updateUser] = useUpdateUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
+
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    if (usersData) {
+      const usersArray = usersData?.data || usersData || [];
+      setData(usersArray);
+      setTotal(usersArray.length);
+      
+      // Filter data based on search
+      if (search) {
+        const filtered = usersArray.filter((item) =>
+          Object.values(item).some((val) =>
+            String(val).toLowerCase().includes(search.toLowerCase())
+          )
+        );
+        setData(filtered);
+        setTotal(filtered.length);
+      }
+    }
+  }, [usersData, search]);
+
+  const handleAddUserAccept = (newUserData) => {
+    createUser(newUserData)
+      .unwrap()
+      .then(() => {
+        console.log("User created successfully");
+        setAddUserModal(false);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Failed to create user:", error);
+      });
   };
 
   const handleView = (item) => {
@@ -38,7 +77,19 @@ const Users = () => {
   const handleEdit = (item) => {
     setEditUserValues(item);
     setEditGroup(true);
-    console.log("Editing user:", item);
+  };
+
+  const handleUpdateUser = (updatedUserData) => {
+    updateUser({ id: editUserValues.id, formData: updatedUserData })
+      .unwrap()
+      .then(() => {
+        console.log("User updated successfully");
+        setEditGroup(false);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Failed to update user:", error);
+      });
   };
 
   const handleDelete = (item) => {
@@ -46,19 +97,28 @@ const Users = () => {
     setDeviceDelete(true);
   };
 
+  const handleConfirmDelete = () => {
+    if (selectedUserToDelete) {
+      deleteUser(selectedUserToDelete.id)
+        .unwrap()
+        .then(() => {
+          console.log("User deleted successfully");
+          setDeviceDelete(false);
+          setSelectedUserToDelete(null);
+          refetch();
+        })
+        .catch((error) => {
+          console.error("Failed to delete user:", error);
+        });
+    }
+  };
+
   const handlePageChange = (page) => {
     setPage(page);
   };
 
-  useEffect(() => {
-    const filtered = userTableData.filter((item) =>
-      Object.values(item).some((val) =>
-        String(val).toLowerCase().includes(search.toLowerCase())
-      )
-    );
-    setData(filtered);
-    setPage(1);
-  }, [search]);
+  if (isLoading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography>Error loading users: {error.message}</Typography>;
 
   return (
     <>
@@ -66,7 +126,7 @@ const Users = () => {
         <SubHeader
           heading={"Users"}
           buttonText={"Add New User"}
-          subHeading={"Here’s what’s happening with your device and users"}
+          subHeading={"Here's what's happening with your device and users"}
           onClick={() => setAddUserModal(true)}
           variant="blue"
         />
@@ -86,16 +146,25 @@ const Users = () => {
           hideView={true}
         />
       </Box>
+      
       <DynamicModal
         open={addUserModal}
         handleClose={() => setAddUserModal(false)}
-        acceptButtonText={"Add"}
-        cancelButtonText={"Confirm"}
         heading={"Add New User"}
-        handleAccept={handleAddUserAccept}
+        sx={{
+          width: {
+            xs: "95%",
+            md: "70%",
+            lg: "60%",
+          },
+        }}
       >
-        <AddUserModal />
+        <AddUserModal 
+          onSubmit={handleAddUserAccept} 
+          onCancel={() => setAddUserModal(false)} 
+        />
       </DynamicModal>
+
       <DynamicModal
         open={editGroup}
         handleClose={() => setEditGroup(false)}
@@ -110,6 +179,7 @@ const Users = () => {
       >
         <EditUserModal
           values={editUserValues}
+          onSubmit={handleUpdateUser}
           handleModalClose={() => setEditGroup(false)}
           handleCancel={() => setEditGroup(false)}
         />
@@ -119,16 +189,7 @@ const Users = () => {
         open={deviceDelete}
         handleClose={() => setDeviceDelete(false)}
         heading={"Are you sure you want to Delete?"}
-        handleAccept={() => {
-          console.log("Deleting user:", selectedUserToDelete);
-
-          setData((prevData) =>
-            prevData.filter((user) => user !== selectedUserToDelete)
-          );
-
-          setDeviceDelete(false);
-          setSelectedUserToDelete(null);
-        }}
+        handleAccept={handleConfirmDelete}
         handleCancel={() => {
           setDeviceDelete(false);
           setSelectedUserToDelete(null);

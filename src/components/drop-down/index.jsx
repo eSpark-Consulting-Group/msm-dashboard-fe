@@ -36,11 +36,9 @@ const Dropdown = ({
   renderValueSx = {},
   selectSx = {},
 }) => {
-  const [options] = useState(
-    noLabel
-      ? [{ label: placeholder, value: placeholder }, ...dropdownOptions]
-      : dropdownOptions
-  );
+  const options = noLabel
+    ? [{ label: placeholder, value: placeholder }, ...(dropdownOptions || [])]
+    : dropdownOptions || [];
 
   const defaultRenderValueStyle = {
     color: "#A1A1AA",
@@ -86,7 +84,7 @@ const Dropdown = ({
               borderBottom: "none",
             },
             "&:hover::before": {
-              borderBottom: "none !important", 
+              borderBottom: "none !important",
             },
           }}
           IconComponent={CustomIcon}
@@ -108,14 +106,11 @@ const Dropdown = ({
             );
           }}
         >
-          {options?.map(
-            (item, index) =>
-              index !== 0 && (
-                <MenuItem value={item?.value} key={index}>
-                  {item?.label}
-                </MenuItem>
-              )
-          )}
+          {options?.map((item, index) => (
+            <MenuItem value={item?.value} key={index}>
+              {item?.label}
+            </MenuItem>
+          ))}
         </Select>
 
         {error && <FormHelperText>{helperText}</FormHelperText>}

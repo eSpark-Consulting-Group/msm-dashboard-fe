@@ -6,9 +6,7 @@ import Button from "../buttons";
 import Dropdown from "../drop-down";
 import OutlinedInput from "../input";
 
- 
-
-const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
+const EditUserModal = ({ values, handleModalClose, handleCancel, onSubmit }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const dropdownOptions = ["Active", "In active"];
@@ -33,16 +31,22 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: values?.userName?.name || "",
-      lastName: values?.costumerName || "",
+      firstName: values?.firstName || values?.userName?.name || "",
+      lastName: values?.lastName || values?.costumerName || "",
       email: values?.email || "",
-      devices: values?.deviceId?.label || "",
-      status: values?.status?.label || "Active",
+      devices: values?.devices || values?.deviceId?.label || "",
+      status: values?.status || values?.status?.label || "Active",
     },
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log("Updated User:", values);
-      handleModalClose();
+      const formData = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        devices: values.devices,
+        status: values.status,
+      };
+      onSubmit(formData);
     },
   });
 
@@ -106,7 +110,6 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       />
 
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
-        
         <Dropdown
           name="status"
           customLabel="Status"

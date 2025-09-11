@@ -11,7 +11,6 @@ const Sidebar = ({ open, setOpen }) => {
   if (pathname[0] === "/") {
     pathname = pathname.slice(1);
   }
-  console.log(pathname);
   const navigate = useNavigate();
 
   const handleNavigate = (link) => {

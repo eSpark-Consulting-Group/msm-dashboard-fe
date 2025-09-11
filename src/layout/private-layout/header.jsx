@@ -33,7 +33,6 @@ const Notifications = ({ icon, count }) => {
 
 const Header = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.auth);
-  console.log(user, "user")
   const [query, setQuery] = useState("");
   const [profileModal, setProfileModal] = useState(false);
   const [logoutModal, setLogoutModal] = useState(null);

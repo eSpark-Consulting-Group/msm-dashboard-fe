@@ -1,6 +1,6 @@
 export const columns = () => {
   return [
-    { name: "Created Time", key: "createdTime" },
+    { name: "Created Time", key: "createdAt" },
     { name: "Device ID", key: "deviceId" },
     { name: "Device Name", key: "deviceName" },
     { name: "Label", key: "label" },

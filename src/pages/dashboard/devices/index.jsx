@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
 import { Box, Typography } from "@mui/material";
 import {
   AddDeviceModal,
@@ -13,10 +15,11 @@ import {
   SubHeader,
 } from "../../../components";
 import { columns } from "../../../columns/devices";
-import { deviceData, deviceGroupData } from "../../../constant";
 import { useSearchParams } from "react-router-dom";
 import { deviceGroupColumns } from "../../../columns/deviceGroupColumns";
 import { EditDeviceModal } from "../../../components";
+import { useGetAllDevicesQuery } from "../../../services/devices";
+import { useDeleteGroupMutation, useGetAllGroupsQuery } from "../../../services/groups";
 
 const Devices = () => {
   const [search, setSearch] = useState("");
@@ -27,12 +30,12 @@ const Devices = () => {
   const [activeTab, setActiveTab] = useState();
   const tab = searchParams.get("tab");
   const [data, setData] = useState([]);
-  const [deviceEditModal, setDeviceEditModal] = useState(false);
-  const [editDevicevalues, setEditDeviceValues] = useState({});
+  const [editDeviceValues, setEditDeviceValues] = useState({});
+  const [deviceData, setDeviceData] = useState([]);
+  const [deviceGroupData, setDeviceGroupData] = useState([]);
   const [deviceDelete, setDeviceDelete] = useState(false);
-  const [addDeviceModal, setAddDeviceModal] = useState(false);
-  const [addGroup, setAddGroup] = useState(false);
-  const [editGroup, setEditGroup] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState(null);
+  const [openEditModal, setOpenEditModal] = useState(null);
   const [importDeviceModal, setImportDeviceModal] = useState(false);
 
   useEffect(() => {
@@ -51,25 +54,98 @@ const Devices = () => {
     }
   }, [activeTab]);
 
-  const handleView = (item) => {
-    console.log(item, "view");
-  };
+  const {
+    data: devicesData,
+    isLoading: deviceLoading,
+    isError: isGroupError,
+    error: groupError,
+  } = useGetAllDevicesQuery();
+
+  const {
+    data: groupData,
+    isLoading: groupLoading,
+    isError,
+    error,
+  } = useGetAllGroupsQuery();
+
+  useEffect(() => {
+    if (isError && error) {
+      toast.error(error?.data?.message);
+      return
+    }
+    const deviceData = devicesData?.data?.map(item => {
+      return {
+        ...item,
+        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+        deviceId: item?.device_uuid || "-",
+        deviceName: item?.deviceName || "-",
+        label: item?.label || "-",
+        userName: item?.userName || "-",
+        group: item?.group || "-",
+        status: {
+          label: item?.mqtt_status ? "Active" : "Inactive",
+          variant: item?.mqtt_status ? "green" : "red"
+        }
+      }
+    }) || []
+    setDeviceData(deviceData)
+    if (activeTab === 0) {
+      setData(deviceData);
+    }
+  }, [isError, error, devicesData]);
+
+  useEffect(() => {
+    if (isGroupError && groupError) {
+      toast.error(groupError?.data?.message);
+      return
+    }
+    const deviceGroupData = groupData?.data?.map(item => {
+      return {
+        ...item,
+        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+        deviceId: item?.device_uuid
+      }
+    }) || []
+    setDeviceGroupData(deviceGroupData)
+    if (activeTab === 1) {
+      setData(deviceGroupData);
+    }
+  }, [isGroupError, groupError, groupData]);
 
   const handleEdit = (item) => {
     setEditDeviceValues(item);
-    if (activeTab === 0) {
-      setDeviceEditModal(true);
-    } else {
-      setEditGroup(true);
-    }
+    setOpenEditModal(activeTab);
   };
 
   const handleDelete = (item) => {
-    console.log(item, "delete");
+    setDeviceDelete(item);
+  };
+
+  const handleDeleteDevice = (id) => {
+    console.log(id, "delete device")
+  }
+
+  const [deleteGroup, { isLoading: deleteGroupLoading }] = useDeleteGroupMutation();
+
+  const handleDeleteGroup = (id) => {
+    deleteGroup(id)
+      .then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to delete group");
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "Group deleted successfully");
+          setDeviceDelete(false)
+        }
+      })
+  }
+
+  const handleDeleteAction = () => {
     if (activeTab === 0) {
-      setDeviceDelete(true);
+      handleDeleteDevice(deviceDelete?._id);
     } else {
-      setDeviceDelete(true);
+      handleDeleteGroup(deviceDelete?._id);
     }
   };
 
@@ -78,25 +154,8 @@ const Devices = () => {
   };
 
   const handleSubHeaderClick = () => {
-    if (activeTab === 0) {
-      setAddDeviceModal(true);
-    } else {
-      setAddGroup(true);
-    }
+    setOpenAddModal(activeTab)
   };
-
-  useEffect(() => {
-    const filtered =
-      activeTab === 0
-        ? deviceData
-        : deviceGroupData.filter((item) =>
-            Object.values(item).some((val) =>
-              String(val).toLowerCase().includes(search.toLowerCase())
-            )
-          );
-    setData(filtered);
-    setPage(1);
-  }, [search, activeTab, deviceData, deviceGroupData]);
 
   const tabs = [
     { label: "All", component: <></> },
@@ -104,7 +163,6 @@ const Devices = () => {
   ];
 
   const handleAddDeviceAccept = () => {
-    setAddDeviceModal(false);
     setImportDeviceModal(true);
   };
 
@@ -132,8 +190,7 @@ const Devices = () => {
       <DynamicTable
         data={data}
         columns={activeTab === 0 ? columns() : deviceGroupColumns()}
-        isLoading={false}
-        handleView={handleView}
+        isLoading={deviceLoading || groupLoading}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
         page={page}
@@ -143,8 +200,8 @@ const Devices = () => {
         hideView={true}
       />
       <DynamicModal
-        open={deviceEditModal}
-        handleClose={() => setDeviceEditModal(false)}
+        open={openEditModal === 0}
+        handleClose={() => setOpenEditModal(false)}
         sx={{
           width: {
             xs: "95%",
@@ -155,27 +212,27 @@ const Devices = () => {
         heading={"Edit Device ’s Details"}
       >
         <EditDeviceModal
-          values={editDevicevalues}
-          handleModalClose={() => setDeviceEditModal(false)}
-          handleCancel={() => setDeviceEditModal(false)}
+          values={openEditModal === 0}
+          handleModalClose={() => setOpenEditModal(false)}
+          handleCancel={() => setOpenEditModal(false)}
         />
       </DynamicModal>
 
       <DeleteModal
         open={deviceDelete}
         handleClose={() => setDeviceDelete(false)}
-        heading={"Are you sure you want to Delete?"}
-        handleAccept={() => setDeviceDelete(false)}
+        heading={"Delete"}
+        handleAccept={handleDeleteAction}
         handleCancel={() => setDeviceDelete(false)}
+        loading={deleteGroupLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          Delete is permanent and your Details will automatically be deleted
-          after 30 days if you do not log in again.
+          {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"}`}
         </Typography>
       </DeleteModal>
       <DynamicModal
-        open={addDeviceModal}
-        handleClose={() => setAddDeviceModal(false)}
+        open={openAddModal === 0}
+        handleClose={() => setOpenAddModal(false)}
         acceptButtonText={"Next"}
         heading={"Add New Device"}
         handleAccept={handleAddDeviceAccept}
@@ -183,18 +240,17 @@ const Devices = () => {
         <AddDeviceModal />
       </DynamicModal>
       <DynamicModal
-        open={addGroup}
-        handleClose={() => setAddGroup(false)}
+        open={openAddModal === 1}
+        handleClose={() => setOpenAddModal(null)}
         heading={"Add Entity Group"}
       >
         <AddGroupModal
-          handleCancel={() => setAddGroup(false)}
-          handleAccept={() => setAddGroup(false)}
+          handleCancel={() => setOpenAddModal(null)}
         />
       </DynamicModal>
       <DynamicModal
-        open={editGroup}
-        handleClose={() => setEditGroup(false)}
+        open={openEditModal === 1}
+        handleClose={() => setOpenEditModal(false)}
         heading={"Edit Entity Groups"}
         sx={{
           width: {
@@ -205,9 +261,8 @@ const Devices = () => {
         }}
       >
         <EditGroupModal
-          values={editDevicevalues}
-          handleModalClose={() => setEditGroup(false)}
-          handleCancel={() => setEditGroup(false)}
+          data={editDeviceValues}
+          handleCancel={() => setOpenEditModal(false)}
         />
       </DynamicModal>
       <DynamicModal

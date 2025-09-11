@@ -98,7 +98,7 @@ const Header = ({ open, setOpen }) => {
             sx={{ cursor: "pointer" }}
             alt="User"
             onClick={handleAvatarClick}
-            src={user?.profile_image || null}
+            src={`${import.meta.env.VITE_IMAGE_BASE_URL}${user?.profile_image}` || null}
 
           />
         </Box>

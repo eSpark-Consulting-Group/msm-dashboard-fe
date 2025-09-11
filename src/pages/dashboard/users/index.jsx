@@ -120,6 +120,11 @@ const Users = () => {
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error) return <Typography>Error loading users: {error.message}</Typography>;
 
+  const handleUserClick = (item) => {
+    console.log(item);
+    navigate(`/user/${item?.id}?name=${item?.userName?.name}`);
+  };
+
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "20px" }}>
@@ -144,6 +149,7 @@ const Users = () => {
           handleView={handleView}
           handlePageChange={handlePageChange}
           hideView={true}
+          onRowClick={handleUserClick}
         />
       </Box>
       

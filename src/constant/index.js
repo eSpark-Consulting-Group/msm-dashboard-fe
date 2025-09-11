@@ -61,6 +61,7 @@ export const sidebarTabs = (role) => {
 
 export const userTableData = [
   {
+    id: 1,
     userName: {
       image: user,
       name: "Kacey",
@@ -78,6 +79,7 @@ export const userTableData = [
     costumerName: "Cemeron",
   },
   {
+    id: 2,
     userName: {
       image: user,
       name: "Kacey",
@@ -95,6 +97,7 @@ export const userTableData = [
     costumerName: "Cemeron",
   },
   {
+    id: 3,
     userName: {
       image: user,
       name: "Kacey",
@@ -112,6 +115,7 @@ export const userTableData = [
     costumerName: "Cemeron",
   },
   {
+    id: 4,
     userName: {
       image: user,
       name: "Kacey",
@@ -129,6 +133,7 @@ export const userTableData = [
     costumerName: "Cemeron",
   },
   {
+    id: 5,
     userName: {
       image: user,
       name: "Kacey",
@@ -146,6 +151,7 @@ export const userTableData = [
     costumerName: "Cemeron",
   },
   {
+    id: 6,
     userName: {
       image: user,
       name: "Kacey",
@@ -163,6 +169,7 @@ export const userTableData = [
     costumerName: "Cemeron",
   },
   {
+    id: 7,
     userName: {
       image: user,
       name: "Kacey",
@@ -765,5 +772,47 @@ export const mqttTableData = [
     "S1 V_R": "",
     S1_B: "",
     S1: "",
+  },
+];
+
+export const userDetails = [
+  {
+    id: 1,
+    createdTime: "2025-05-09 18:52:32",
+    deviceId: "IND1254..",
+    deviceName: "Temp Sen..",
+    label: "Bus",
+    customerName: "Customers  D",
+    group: "Bus Device",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+  },
+  {
+    id: 2,
+    createdTime: "2025-05-09 18:52:32",
+    deviceId: "IND1254..",
+    deviceName: "Temp Sen..",
+    label: "Bus",
+    customerName: "Customers  D",
+    group: "Bus Device",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
+  },
+  {
+    id: 3,
+    createdTime: "2025-05-09 18:52:32",
+    deviceId: "IND1254..",
+    deviceName: "Temp Sen..",
+    label: "Bus",
+    customerName: "Customers  D",
+    group: "Bus Device",
+    status: {
+      label: "In active",
+      variant: "red",
+    },
   },
 ];

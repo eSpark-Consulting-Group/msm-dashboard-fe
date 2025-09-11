@@ -13,6 +13,7 @@ import {
   DashboardHome,
   ChannelInfo,
   MqttProtocol,
+  UserDetails,
 } from "./pages";
 import DashboardInfo from "./pages/dashboard/dashboardInfo";
 
@@ -38,6 +39,7 @@ const Router = () => {
             path="/dashboard/:id/info/:channelId"
             element={<ChannelInfo />}
           />
+          <Route path="/user/:id" element={<UserDetails />} />
           <Route path="/dashboard/:mqttName" element={<MqttProtocol />} />
         </Route>
 

@@ -50,3 +50,58 @@ export const profileSchema = Yup.object({
   phone: Yup.string()
     .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
 });
+
+export const userSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("User name is required")
+    .min(2, "User name must be at least 2 characters"),
+  label: Yup.string()
+    .required("Label is required")
+    .min(2, "Label must be at least 2 characters"),
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Invalid email address"
+    )
+    .required("Email is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(12, "Password must be at least 12 characters long.")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .matches(/[0-9]/, "Password must contain at least one number."),
+  phoneNumber: Yup.string()
+    .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
+  description: Yup.string()
+    .nullable()
+    .max(255, "Description cannot exceed 255 characters"),
+  method: Yup.string()
+    .required("Method is required"),
+  owners: Yup.string()
+    .required("Owners field is required"),
+  groups: Yup.array()
+    .of(Yup.string().required())
+    .min(1, "Select at least one group")
+    .required("Groups are required"),
+  customerName: Yup.string()
+    .required("Customer name is required"),
+  role: Yup.string()
+    .required("Role is required"),
+});
+
+export const editUserSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("User name is required")
+    .min(2, "Name must be at least 2 characters"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(12, "Password must be at least 12 characters long.")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .matches(/[0-9]/, "Password must contain at least one number."),
+  phone_number: Yup.string()
+    .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
+  customer_name: Yup.string()
+    .required("Customer name is required"),
+});
+

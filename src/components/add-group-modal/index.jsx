@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import {
   Box,
   Checkbox,
@@ -8,6 +9,7 @@ import {
 import { useFormik } from "formik";
 import OutlinedInput from "../input";
 import Button from "../buttons";
+import { useCreateGroupMutation } from "../../services/groups";
 
 const sharedInputStyles = {
   "& .MuiOutlinedInput-root": {
@@ -25,20 +27,32 @@ const sharedInputStyles = {
   },
 };
 
-const AddGroupModal = ({ handleCancel, handleAccept }) => {
+const AddGroupModal = ({ handleCancel }) => {
+  const [createGroup, { isLoading }] = useCreateGroupMutation();
+
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
-      share: false,
-      customer: "",
-      alluser: false,
+      share_entity_group: false,
+      customer_name: "",
+      all_user: false,
     },
     onSubmit: (values) => {
-      console.log(values);
-      handleAccept();
+      createGroup(values)
+        .then((res) => {
+          if (res?.error) {
+            toast.error(res?.error?.data?.message || "Failed to create group");
+            return;
+          }
+          if (res?.data) {
+            toast.success(res?.data?.message || "Group created successfully");
+            handleCancel()
+          }
+        })
     },
   });
+
   return (
     <Box
       sx={{
@@ -100,9 +114,9 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
         }}
         control={
           <Checkbox
-            checked={formik.values.share}
+            checked={formik.values.share_entity_group}
             onChange={formik.handleChange}
-            name="share"
+            name="share_entity_group"
             sx={{ color: "#0C89E2", "&.Mui-checked": { color: "#0C89E2" } }}
           />
         }
@@ -113,12 +127,12 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
         placeholder={"Enter name"}
         type={"text"}
         sx={sharedInputStyles}
-        name={"customer"}
-        value={formik.values.customer}
+        name={"customer_name"}
+        value={formik.values.customer_name}
         onInputChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        error={formik.touched.customer && Boolean(formik.errors.customer)}
-        helperText={formik.touched.customer && formik.errors.customer}
+        error={formik.touched.customer_name && Boolean(formik.errors.customer_name)}
+        helperText={formik.touched.customer_name && formik.errors.customer_name}
       />
       <FormControlLabel
         sx={{
@@ -131,13 +145,13 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
         }}
         control={
           <Checkbox
-            checked={formik.values.alluser}
+            checked={formik.values.all_user}
             onChange={formik.handleChange}
-            name="alluser"
+            name="all_user"
             sx={{ color: "#0C89E2", "&.Mui-checked": { color: "#0C89E2" } }}
           />
         }
-        label="Add end date and time"
+        label="All Users"
       />
       <RadioGroup
         sx={{
@@ -146,13 +160,13 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
           columnGap: "80px",
           pl: "35px",
         }}
-        name="permission"
-        value={formik.values.permission}
+        name="permissions"
+        value={formik.values.permissions}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
       >
         <FormControlLabel
-          value="Read"
+          value="read"
           control={
             <Radio
               sx={{ color: "#0C89E2", "&.Mui-checked": { color: "#0C89E2" } }}
@@ -161,7 +175,7 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
           label="Read"
         />
         <FormControlLabel
-          value="Write"
+          value="write"
           control={
             <Radio
               sx={{ color: "#0C89E2", "&.Mui-checked": { color: "#0C89E2" } }}
@@ -170,7 +184,7 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
           label="Write"
         />
         <FormControlLabel
-          value="Others"
+          value="others"
           control={
             <Radio
               sx={{ color: "#0C89E2", "&.Mui-checked": { color: "#0C89E2" } }}
@@ -190,11 +204,11 @@ const AddGroupModal = ({ handleCancel, handleAccept }) => {
       >
         <Box sx={{ width: "203.70px", height: "50px" }}>
           <Button variant="outlined" disableRipple onClick={handleCancel}>
-            Confirm
+            Cancel
           </Button>
         </Box>
         <Box sx={{ width: "203.70px", height: "50px" }}>
-          <Button variant="contained" disableRipple type="submit">
+          <Button disabled={isLoading} loading={isLoading} variant="contained" disableRipple type="submit">
             Add
           </Button>
         </Box>

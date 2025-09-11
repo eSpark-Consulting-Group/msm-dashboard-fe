@@ -1,8 +1,10 @@
 import { Box } from "@mui/material";
+import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import { pencil } from "../../assets";
 import OutlinedInput from "../input";
 import Button from "../buttons";
+import { useUpdateGroupMutation } from "../../services/groups";
 
 const sharedInputStyles = {
   "& .MuiOutlinedInput-root": {
@@ -17,16 +19,27 @@ const sharedInputStyles = {
   },
 };
 
-const EditGroupModal = ({ values, handleModalClose, handleCancel }) => {
+const EditGroupModal = ({ data, handleCancel }) => {
+  const [updateGroup, { isLoading }] = useUpdateGroupMutation();
+
   const formik = useFormik({
     initialValues: {
-      name: values?.name || "",
-      description: values?.description || "",
+      name: data?.name || "",
+      description: data?.description || "",
     },
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(values);
-      handleModalClose();
+      updateGroup({ id: data?._id, formData: values })
+        .then((res) => {
+          if (res?.error) {
+            toast.error(res?.error?.data?.message || "Failed to update group");
+            return;
+          }
+          if (res?.data) {
+            toast.success(res?.data?.message || "Group updated successfully");
+            handleCancel()
+          }
+        })
     },
   });
   return (
@@ -67,7 +80,7 @@ const EditGroupModal = ({ values, handleModalClose, handleCancel }) => {
             borderRadius: "6.92px",
             p: "15px",
             minHeight: "150px",
-            alignItem: "flex-start",
+            alignItems: "flex-start",
           },
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none !important",
@@ -91,11 +104,11 @@ const EditGroupModal = ({ values, handleModalClose, handleCancel }) => {
       >
         <Box sx={{ width: "203.70px", height: "50px" }}>
           <Button variant="outlined" disableRipple onClick={handleCancel}>
-            Confirm
+            Cancel
           </Button>
         </Box>
         <Box sx={{ width: "203.70px", height: "50px" }}>
-          <Button variant="contained" disableRipple type="submit">
+          <Button disabled={isLoading} loading={isLoading} variant="contained" disableRipple type="submit">
             Save
           </Button>
         </Box>

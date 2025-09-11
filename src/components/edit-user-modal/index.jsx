@@ -1,50 +1,41 @@
-import { Box, Menu, MenuItem } from "@mui/material";
+import { Box } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
 import { pencil } from "../../assets";
 import Button from "../buttons";
 import Dropdown from "../drop-down";
 import OutlinedInput from "../input";
+import { toast } from "react-toastify";
+import { useUpdateUserMutation } from "../../services/users";
+import { editUserSchema } from "../../schemas";
 
- 
-
-const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const dropdownOptions = ["Active", "In active"];
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = (event) => {
-    event.stopPropagation();
-    setAnchorEl(null);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const handleOption = (value) => {
-    formik.setFieldValue("status", value);
-    handleCloseMenu();
-  };
+const EditUserModal = ({ user, handleCancel }) => {
+  const [editUser, { isLoading }] = useUpdateUserMutation();
 
   const formik = useFormik({
     initialValues: {
-      firstName: values?.userName?.name || "",
-      lastName: values?.costumerName || "",
-      email: values?.email || "",
-      devices: values?.deviceId?.label || "",
-      status: values?.status?.label || "Active",
+      name: user?.name || "",
+      email: user?.email || "",
+      phone_number: user?.phone_number,
+      customer_name: user?.customer_name,
+      status: user?.status?.label === "Active" ? "active" : "inactive" || "inactive",
     },
     enableReinitialize: true,
+    validationSchema: editUserSchema,
     onSubmit: (values) => {
-      console.log("Updated User:", values);
-      handleModalClose();
+      editUser({ id: user?._id, formData: values })
+        .then((res) => {
+          if (res?.error) {
+            toast.error(res?.error?.data?.message || "Failed to update user");
+            return;
+          }
+          if (res?.data) {
+            toast.success(res?.data?.message || "User updated successfully");
+            handleCancel();
+          }
+        })
     },
   });
+
 
   return (
     <Box
@@ -58,102 +49,78 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
       }}
     >
       <OutlinedInput
-        label={"First Name"}
-        placeholder={"Enter First Name"}
+        label={"User Name"}
+        placeholder={"Enter User Name"}
         endAdornment={pencil}
-        name={"firstName"}
-        value={formik.values.firstName}
+        name={"name"}
+        value={formik.values.name}
         onInputChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-        helperText={formik.touched.firstName && formik.errors.firstName}
-      />
-
-      <OutlinedInput
-        label={"Last Name"}
-        placeholder={"Enter Last Name"}
-        endAdornment={pencil}
-        name={"lastName"}
-        value={formik.values.lastName}
-        onInputChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-        helperText={formik.touched.lastName && formik.errors.lastName}
+        error={formik.touched.name && Boolean(formik.errors.name)}
+        helperText={formik.touched.name && formik.errors.name}
       />
 
       <OutlinedInput
         label={"Email"}
         placeholder={"Enter Email"}
-        endAdornment={pencil}
         name={"email"}
         value={formik.values.email}
-        onInputChange={formik.handleChange}
         onBlur={formik.handleBlur}
         error={formik.touched.email && Boolean(formik.errors.email)}
         helperText={formik.touched.email && formik.errors.email}
       />
 
       <OutlinedInput
-        label={"No. of Devices"}
-        placeholder={"Enter Device Count"}
+        label={"Phone No"}
+        placeholder={"Enter Phone No"}
         endAdornment={pencil}
-        name={"devices"}
-        value={formik.values.devices}
+        name={"phone_number"}
+        value={formik.values.phone_number}
         onInputChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        error={formik.touched.devices && Boolean(formik.errors.devices)}
-        helperText={formik.touched.devices && formik.errors.devices}
+        error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
+        helperText={formik.touched.phone_number && formik.errors.phone_number}
+      />
+
+      <OutlinedInput
+        label={"Customer Name"}
+        placeholder={"Enter Customer Name"}
+        endAdornment={pencil}
+        name={"customer_name"}
+        value={formik.values.customer_name}
+        onInputChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.customer_name && Boolean(formik.errors.customer_name)}
+        helperText={formik.touched.customer_name && formik.errors.customer_name}
       />
 
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
-        
         <Dropdown
           name="status"
           customLabel="Status"
           variant="filled"
+          placeholder="Select Status"
+          noLabel
           options={[
-            { label: "Active", value: "Active" },
-            { label: "In active", value: "In active" },
+            { label: "Active", value: "active" },
+            { label: "In active", value: "inactive" },
           ]}
           value={formik.values.status}
           handleChange={formik.handleChange}
+          error={formik.touched.status && Boolean(formik.errors.status)}
+          helperText={formik.touched.status && formik.errors.status}
           renderValueSx={{
-            color: formik.values.status === "Active" ? "#35B21C" : "#EB1B1B",
+            color: formik.values.status === "active" ? "#35B21C" : "#EB1B1B",
             fontWeight: 600,
           }}
           selectSx={{
             backgroundColor:
-              formik.values.status === "Active" ? "#EFEFEF" : "#FDE8E8",
+              formik.values.status === "active" ? "#EFEFEF" : "#FDE8E8",
             border: "1.38px solid #DBD6D6",
             borderRadius: "6.92px",
           }}
         />
       </Box>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "left" }}
-        PaperProps={{
-          sx: {
-            borderRadius: "8px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            mt: 1,
-            px: 1,
-            minWidth: "150px",
-          },
-        }}
-      >
-        {dropdownOptions
-          .filter((item) => item !== formik.values.status)
-          .map((item, index) => (
-            <MenuItem key={index} onClick={() => handleOption(item)}>
-              {item}
-            </MenuItem>
-          ))}
-      </Menu>
 
       <Box
         sx={{
@@ -169,7 +136,7 @@ const EditUserModal = ({ values, handleModalClose, handleCancel }) => {
           </Button>
         </Box>
         <Box sx={{ width: "203.70px", height: "50px" }}>
-          <Button variant="contained" disableRipple type="submit">
+          <Button disabled={isLoading} loading={isLoading} variant="contained" disableRipple type="submit">
             Save
           </Button>
         </Box>

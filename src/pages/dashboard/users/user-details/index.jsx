@@ -72,7 +72,7 @@ const UserDetails = () => {
       <SubHeader
         userDetails={true}
         subHeading="Here’s what’s happening with your device and users"
-        userName={searchQuery?.split("=")[1]}
+        userName={searchQuery?.split("=")[1]?.replaceAll("%20", " ")}
       />
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
         <SearchBar value={search} onChange={(val) => setSearch(val)} />

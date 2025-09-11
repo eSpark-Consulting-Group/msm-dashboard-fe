@@ -6,8 +6,10 @@ import {
   FormHelperText,
   Stack,
   Typography,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DropDownIcon } from "../../assets";
 
 const CustomIcon = (props) => (
@@ -27,6 +29,7 @@ const Dropdown = ({
   customLabel,
   variant,
   noLabel,
+  multiple = false,
   options: dropdownOptions,
   handleChange,
   placeholder,
@@ -36,16 +39,16 @@ const Dropdown = ({
   renderValueSx = {},
   selectSx = {},
 }) => {
-  const [options] = useState(
-    noLabel
-      ? [{ label: placeholder, value: placeholder }, ...dropdownOptions]
-      : dropdownOptions
-  );
+  const [options, setOptions] = useState(dropdownOptions);
 
   const defaultRenderValueStyle = {
     color: "#A1A1AA",
     ...renderValueSx,
   };
+
+  useEffect(() => {
+    setOptions(dropdownOptions);
+  }, [dropdownOptions]);
 
   return (
     <>
@@ -63,19 +66,21 @@ const Dropdown = ({
 
       <FormControl sx={{ width: "100%" }} variant="filled" error={error}>
         {!noLabel && (
-          <InputLabel id="demo-simple-select-filled-label">
+          <InputLabel id={`${name}-label`}>
             {placeholder}
           </InputLabel>
         )}
 
         <Select
+          multiple={multiple}
           name={name}
           variant={variant}
           disabled={disabled}
-          labelId="demo-simple-select-filled-label"
-          id="demo-simple-select-filled"
+          labelId={`${name}-label`}
+          id={`${name}-select`}
           onChange={handleChange}
-          value={value || options[0]?.value}
+          value={value || (multiple ? [] : "")}
+          displayEmpty
           sx={{
             color: "#A1A1AA",
             ...selectSx,
@@ -86,36 +91,51 @@ const Dropdown = ({
               borderBottom: "none",
             },
             "&:hover::before": {
-              borderBottom: "none !important", 
+              borderBottom: "none !important",
             },
           }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {
-            if (!selected) {
+            if (!selected || (Array.isArray(selected) && selected.length === 0)) {
               return (
                 <span style={{ color: "#aaa", ...renderValueSx }}>
                   {placeholder}
                 </span>
               );
             }
-            const selectedOption = options?.find(
-              (opt) => opt.value === selected
-            );
-            return (
-              <span style={defaultRenderValueStyle}>
-                {selectedOption ? selectedOption.label : selected}
-              </span>
-            );
+
+            if (multiple) {
+              return (
+                <span style={defaultRenderValueStyle}>
+                  {options
+                    .filter((opt) => selected.includes(opt.value))
+                    .map((opt) => opt.label)
+                    .join(", ")}
+                </span>
+              );
+            } else {
+              const selectedOption = options.find((opt) => opt.value === selected);
+              return (
+                <span style={defaultRenderValueStyle}>
+                  {selectedOption ? selectedOption.label : selected}
+                </span>
+              );
+            }
           }}
         >
+          <MenuItem disabled value="">
+            <em>{placeholder}</em>
+          </MenuItem>
+
           {options?.map(
-            (item, index) =>
-              index !== 0 && (
-                <MenuItem value={item?.value} key={index}>
-                  {item?.label}
-                </MenuItem>
-              )
-          )}
+            (item, index) => (
+              <MenuItem value={item?.value} key={index}>
+                {multiple && (
+                  <Checkbox checked={value?.includes(item?.value)} />
+                )}
+                <ListItemText primary={item?.label} />
+              </MenuItem>
+            ))}
         </Select>
 
         {error && <FormHelperText>{helperText}</FormHelperText>}

@@ -2,6 +2,7 @@ import { Box, Button, Modal, Typography } from "@mui/material";
 import { deleteInfo, modalClose } from "../../assets";
 
 const DeleteModal = ({
+  loading,
   open,
   handleClose,
   sx,
@@ -96,7 +97,7 @@ const DeleteModal = ({
             </Button>
           </Box>
           <Box sx={{ width: { xs: "100%", md: "47%" }, height: "44px" }}>
-            <Button variant="delete" disableRipple onClick={handleAccept}>
+            <Button loading={loading} disabled={loading} variant="delete" disableRipple onClick={handleAccept}>
               Delete
             </Button>
           </Box>

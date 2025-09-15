@@ -6,7 +6,6 @@ import OutlinedInput from "../input";
 import Button from "../buttons";
 import Dropdown from "../drop-down";
 import { useGetAllRolesQuery } from "../../services/roles";
-import { useGetAllGroupsQuery } from "../../services/groups";
 import { useCreateUserMutation } from "../../services/users";
 import { userSchema } from "../../schemas";
 
@@ -36,7 +35,6 @@ const fields = [
 
 const AddUserModal = ({ onCancel }) => {
   const [roleOptions, setRoleOptions] = useState([]);
-  const [groupOptions, setGroupOptions] = useState([]);
 
   const {
     data: rolesData,
@@ -54,31 +52,11 @@ const AddUserModal = ({ onCancel }) => {
     }
   }, [rolesData]);
 
-
-  const {
-    data: groupsData,
-    isLoading: groupsLoading,
-    error: groupsError,
-  } = useGetAllGroupsQuery();
-
-  useEffect(() => {
-    if (groupsData?.data) {
-      const options = groupsData.data.map((group) => ({
-        label: group.name,
-        value: group._id,
-      }));
-      setGroupOptions(options);
-    }
-  }, [groupsData]);
-
   useEffect(() => {
     if (rolesError) {
       toast.error(rolesError?.data?.message || "Failed to fetch roles")
     }
-    if (groupsError) {
-      toast.error(groupsError?.data?.message || "Failed to fetch groups")
-    }
-  }, [rolesError, groupsError])
+  }, [rolesError])
 
   const [createUser, { isLoading }] = useCreateUserMutation();
 
@@ -92,7 +70,6 @@ const AddUserModal = ({ onCancel }) => {
       description: "",
       method: "",
       owners: "",
-      groups: "",
       customerName: "",
       role: "",
     },
@@ -107,7 +84,6 @@ const AddUserModal = ({ onCancel }) => {
         description: values?.description,
         method: values?.method,
         owner: values?.owners,
-        groups: values?.groups,
         customer_name: values?.customerName,
         role_id: values?.role,
         status: "active"
@@ -142,7 +118,7 @@ const AddUserModal = ({ onCancel }) => {
     </Box>
   );
 
-  if (groupsLoading || rolesLoading) {
+  if (rolesLoading) {
     return <Stack justifyContent="center" alignItems="center" ><CircularProgress /></Stack>
   }
 
@@ -159,31 +135,6 @@ const AddUserModal = ({ onCancel }) => {
       >
         {fields.map(renderInput)}
 
-        <Box sx={{ width: { xs: "100%", md: "46%", lg: "47%" } }}>
-          <Dropdown
-            multiple
-            name="groups"
-            customLabel="Group"
-            variant="outlined"
-            placeholder="Select Group"
-            noLabel
-            options={groupOptions}
-            value={formik.values.groups}
-            handleChange={formik.handleChange}
-            error={formik.touched.groups && Boolean(formik.errors.groups)}
-            helperText={formik.touched.groups && formik.errors.groups}
-            renderValueSx={{
-              color: "#000",
-              fontWeight: 400,
-            }}
-            selectSx={{
-              backgroundColor: "#FFF",
-              border: "1.38px solid #DBD6D6",
-              borderRadius: "6.92px",
-              height: "56px",
-            }}
-          />
-        </Box>
         <Box sx={{ width: { xs: "100%", md: "46%", lg: "47%" } }}>
           <Dropdown
             name="role"

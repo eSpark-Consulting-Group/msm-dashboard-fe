@@ -52,6 +52,8 @@ const Devices = () => {
     } else {
       setData(deviceGroupData);
     }
+    setPage(1);
+    setSearch("");
   }, [activeTab]);
 
   const {
@@ -59,14 +61,14 @@ const Devices = () => {
     isLoading: deviceLoading,
     isError: isGroupError,
     error: groupError,
-  } = useGetAllDevicesQuery();
+  } = useGetAllDevicesQuery({ page, limit: pageSize, search }, { skip: activeTab !== 0 });
 
   const {
     data: groupData,
     isLoading: groupLoading,
     isError,
     error,
-  } = useGetAllGroupsQuery();
+  } = useGetAllGroupsQuery({ page, limit: pageSize, search }, { skip: activeTab !== 1 });
 
   useEffect(() => {
     if (isError && error) {

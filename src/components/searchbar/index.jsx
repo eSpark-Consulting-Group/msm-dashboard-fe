@@ -1,13 +1,18 @@
 import { TextField, InputAdornment } from "@mui/material";
 import { searchIcon } from "../../assets";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function SearchBar({
+  value,
   onChange,
   placeholder = "Type to search",
 }) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(value || "");
   const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    setSearch(value);
+  }, [value])
 
   const handleChange = (e) => {
     const val = e.target.value;

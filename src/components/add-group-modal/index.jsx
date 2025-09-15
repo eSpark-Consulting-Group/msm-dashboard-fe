@@ -34,9 +34,9 @@ const AddGroupModal = ({ handleCancel }) => {
     initialValues: {
       name: "",
       description: "",
-      share_entity_group: false,
-      customer_name: "",
-      all_user: false,
+      // share_entity_group: false,
+      // customer_name: "",
+      // all_user: false,
     },
     onSubmit: (values) => {
       createGroup(values)
@@ -103,7 +103,7 @@ const AddGroupModal = ({ handleCancel }) => {
           />
         </Box>
       </Box>
-      <FormControlLabel
+      {/* <FormControlLabel
         sx={{
           width: "100%",
           alignItems: "flex-start",
@@ -192,7 +192,7 @@ const AddGroupModal = ({ handleCancel }) => {
           }
           label="Others"
         />
-      </RadioGroup>
+      </RadioGroup> */}
 
       <Box
         sx={{

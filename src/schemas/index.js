@@ -79,10 +79,6 @@ export const userSchema = Yup.object().shape({
     .required("Method is required"),
   owners: Yup.string()
     .required("Owners field is required"),
-  groups: Yup.array()
-    .of(Yup.string().required())
-    .min(1, "Select at least one group")
-    .required("Groups are required"),
   customerName: Yup.string()
     .required("Customer name is required"),
   role: Yup.string()

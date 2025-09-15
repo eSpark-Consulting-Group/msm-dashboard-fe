@@ -3,8 +3,8 @@ import { api } from "./rtk";
 export const groupApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllGroups: builder.query({
-      query: () => ({
-        url: "/groups",
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/groups?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
       providesTags: ["Groups"],

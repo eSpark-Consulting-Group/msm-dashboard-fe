@@ -31,7 +31,7 @@ const Users = () => {
     isLoading,
     isError,
     error,
-  } = useGetAllUsersQuery();
+  } = useGetAllUsersQuery({ page: 1, limit: 10, search });
 
   useEffect(() => {
     if (isError && error) {

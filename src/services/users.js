@@ -3,8 +3,8 @@ import { api } from "./rtk";
 export const userApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getAllUsers: builder.query({
-            query: () => ({
-                url: "/users",
+            query: ({ page = 1, limit = 10, search = "" }) => ({
+                url: `/users?page=${page}&limit=${limit}&search=${search}`,
                 method: "GET",
             }),
             providesTags: ["Users"],

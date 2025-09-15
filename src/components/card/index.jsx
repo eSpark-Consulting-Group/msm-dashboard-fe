@@ -1,24 +1,22 @@
 import { Box, Button, Card, Typography } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavigateHeader from "../navigate-header";
 import DynamicTabs2 from "../dynamic-tabs2";
 import { useState } from "react";
 
 const DashboardWrapper = ({ children }) => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const path = location.pathname.split("/");
-  const dynamicId = path[2];
   const [activeTab, setActiveTab] = useState(1);
 
   const handleHome = () => {
-    navigate(`/dashboard/${dynamicId}/home`);
+    navigate(`/dashboard/${id}/home`);
   };
 
   const handleTabChange = (newIndex) => {
     setActiveTab(newIndex);
     if (newIndex == 0) {
-      navigate(`/dashboard/123`);
+      navigate(`/dashboard/${id}`, { state: { myVar: "info" } });
     }
   };
 
@@ -27,10 +25,10 @@ const DashboardWrapper = ({ children }) => {
       <NavigateHeader />
       <DynamicTabs2
         tabs={[
-          { id: 1, label: "MQTT", content: <></> },
+          { id: 1, label: "Dashboard 1", content: <></> },
           {
             id: 2,
-            label: "INFO",
+            label: "Dashboard 2",
             content: <></>,
           },
         ]}
@@ -58,6 +56,10 @@ const DashboardWrapper = ({ children }) => {
             position: "relative",
             overflow: "visible",
             textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "center",
           }}
         >
           <Box

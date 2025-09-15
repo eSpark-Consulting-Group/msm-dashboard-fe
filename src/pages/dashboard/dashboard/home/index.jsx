@@ -1,28 +1,51 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { info } from "../../../../assets";
 import { homeFlashCards } from "../../../../constant";
-import { NavigateHeader, Channels } from "../../../../components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavigateHeader, Channels, DynamicTabs2 } from "../../../../components";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 
 const DashboardHome = () => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const newLocation = location.pathname
-    .split("/")
-    .filter((item) => item !== "");
 
-  const handleNavigate = (id) => {
+  const handleNavigate = (channelId) => {
     navigate(
-      `/dashboard/${newLocation[1]}/info/channel-${id > 9 ? "" : "0"}${id}`
+      `/dashboard/${id}/info/channel-${channelId}`
     );
   };
 
   const handleInfo = () => {
-    navigate(`/dashboard/${newLocation[1]}/info`);
+    navigate(`/dashboard/${id}/info`);
   };
+
+  const [activeTab, setActiveTab] = useState(1);
+
+  const handleTabChange = (newIndex) => {
+    setActiveTab(newIndex);
+    if (newIndex == 0) {
+      navigate(`/dashboard/${id}`, { state: { myVar: "home" } });
+    } else {
+      navigate(`/dashboard/${id}/home`);
+    }
+  };
+
   return (
     <Box>
       <NavigateHeader />
+      <DynamicTabs2
+        tabs={[
+          { id: 1, label: "Dashboard 1", content: <></> },
+          {
+            id: 2,
+            label: "Dashboard 2",
+            content: <></>,
+          },
+        ]}
+        linksTab={true}
+        defaultActive={activeTab}
+        onTabChange={handleTabChange}
+      />
       <Box
         sx={{
           background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",

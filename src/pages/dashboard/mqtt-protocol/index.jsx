@@ -9,9 +9,11 @@ import {
 import { useState } from "react";
 import { columns } from "../../../columns/mqtt";
 import { mqttTableData } from "../../../constant";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const MqttProtocol = () => {
+  const { state } = useLocation();
+  const { id } = useParams();
   const [page, setPage] = useState(1);
   const [pageSize] = useState(13);
   const [total] = useState(13);
@@ -28,7 +30,7 @@ const MqttProtocol = () => {
   const handleTabChange = (newIndex) => {
     setActiveTab(newIndex);
     if (newIndex == 1) {
-      navigate(`/dashboard/123/info`);
+      navigate(`/dashboard/${id}/${state?.myVar || "info"}`);
     }
   };
 
@@ -37,16 +39,20 @@ const MqttProtocol = () => {
   return (
     <>
       <NavigateHeader />
+      <DynamicTabs2
+        tabs={[
+          { id: 1, label: "Dashboard 1", content: <></> },
+          {
+            id: 2,
+            label: "Dashboard 2",
+            content: <></>,
+          },
+        ]}
+        linksTab={true}
+        defaultActive={activeTab}
+        onTabChange={handleTabChange}
+      />
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "3px" }}>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            sx={{ width: "max-content", minWidth: "160px" }}
-            variant={"contained"}
-            disableRipple
-          >
-            Add New Dashoard
-          </Button>
-        </Box>
         <Typography sx={{ fontSize: "18px", fontWeight: "700" }}>
           MQTT PROTOCOL
         </Typography>
@@ -56,20 +62,6 @@ const MqttProtocol = () => {
           Realtime - last 30 minutes
         </Typography>
       </Box>
-
-      <DynamicTabs2
-        tabs={[
-          { id: 1, label: "MQTT", content: <></> },
-          {
-            id: 2,
-            label: "INFO",
-            content: <></>,
-          },
-        ]}
-        linksTab={true}
-        defaultActive={activeTab}
-        onTabChange={handleTabChange}
-      />
       <Box
         sx={{
           backgroundColor: "#E9EFF6",

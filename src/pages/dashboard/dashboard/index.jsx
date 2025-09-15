@@ -75,7 +75,7 @@ const Dashboard = () => {
 
   const handleRowClick = (item) => {
     // navigate(`/dashboard/${item?._id}/info`);
-    navigate(`/dashboard/${item?.title}`);
+    navigate(`/dashboard/${item?._id}`);
   };
 
   return (

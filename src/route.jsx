@@ -40,7 +40,7 @@ const Router = () => {
             element={<ChannelInfo />}
           />
           <Route path="/users/:id" element={<UserDetails />} />
-          <Route path="/dashboard/:mqttName" element={<MqttProtocol />} />
+          <Route path="/dashboard/:id" element={<MqttProtocol />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

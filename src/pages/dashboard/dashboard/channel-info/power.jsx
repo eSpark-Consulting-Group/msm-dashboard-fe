@@ -1,23 +1,54 @@
-import { Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { powerCards } from "../../../../constant";
-import { PhaseCards } from "../../../../components";
+import { DynamicTabs2, PhaseCards } from "../../../../components";
 
 const Power = () => {
+  const tabs = [
+    {
+      id: 1,
+      label: "Real Time",
+      content: (
+        <Grid container spacing={2}>
+          {powerCards?.map((item, index) => (
+            <PhaseCards
+              color={item?.color}
+              heading={item?.heading}
+              icon={item?.icon}
+              time={item?.time}
+              value={item?.value}
+              valueColor={item?.valueColor}
+              headingSize={item?.headingSize}
+              key={index}
+            />
+          ))}
+        </Grid>
+      ),
+    },
+    {
+      id: 2,
+      label: "Average value ",
+      content: (
+        <Grid container spacing={2}>
+          {powerCards?.map((item, index) => (
+            <PhaseCards
+              color={item?.color}
+              heading={item?.heading}
+              icon={item?.icon}
+              time={item?.time}
+              value={item?.value}
+              valueColor={item?.valueColor}
+              headingSize={item?.headingSize}
+              key={index}
+            />
+          ))}
+        </Grid>
+      ),
+    },
+  ];
   return (
-    <Grid container spacing={2}>
-      {powerCards?.map((item, index) => (
-        <PhaseCards
-          color={item?.color}
-          heading={item?.heading}
-          icon={item?.icon}
-          time={item?.time}
-          value={item?.value}
-          valueColor={item?.valueColor}
-          headingSize={item?.headingSize}
-          key={index}
-        />
-      ))}
-    </Grid>
+    <>
+      <DynamicTabs2 tabs={tabs} defaultActive={0} />
+    </>
   );
 };
 

@@ -1,19 +1,43 @@
-import { Box, Button, Card } from "@mui/material";
+import { Box, Button, Card, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavigateHeader from "../navigate-header";
+import DynamicTabs2 from "../dynamic-tabs2";
+import { useState } from "react";
 
 const DashboardWrapper = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname.split("/");
   const dynamicId = path[2];
+  const [activeTab, setActiveTab] = useState(1);
 
   const handleHome = () => {
     navigate(`/dashboard/${dynamicId}/home`);
   };
+
+  const handleTabChange = (newIndex) => {
+    setActiveTab(newIndex);
+    if (newIndex == 0) {
+      navigate(`/dashboard/123`);
+    }
+  };
+
   return (
     <>
       <NavigateHeader />
+      <DynamicTabs2
+        tabs={[
+          { id: 1, label: "MQTT", content: <></> },
+          {
+            id: 2,
+            label: "INFO",
+            content: <></>,
+          },
+        ]}
+        linksTab={true}
+        defaultActive={activeTab}
+        onTabChange={handleTabChange}
+      />
       <Box
         sx={{
           bgcolor: "#f9f5f3",

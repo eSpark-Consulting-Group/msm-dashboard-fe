@@ -22,13 +22,13 @@ const Dashboard = () => {
   const [total] = useState(11);
   const [deviceDelete, setDeviceDelete] = useState(false);
 
-  const {
-    isLoading,
-    isError,
-    error,
-  } = useGetAllDevicesQuery({ page, limit: pageSize, search });
+  const { isLoading, isError, error } = useGetAllDevicesQuery({
+    page,
+    limit: pageSize,
+    search,
+  });
 
-  const { devices: dashboardData } = useSelector(state => state.devices);
+  const { devices: dashboardData } = useSelector((state) => state.devices);
 
   // const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDashboardMutation();
 
@@ -43,22 +43,24 @@ const Dashboard = () => {
     //     setDeviceDelete(false);
     //   }
     // })
-  }
+  };
 
   useEffect(() => {
     if (isError && error) {
       toast.error(error?.data?.message);
-      return
+      return;
     }
-    setData(dashboardData?.map(item => {
-      return {
-        ...item,
-        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        title: item?.name || "-",
-        customer_name: item?.customer_name || "-",
-        group: item?.groups || "-",
-      }
-    }) || [])
+    setData(
+      dashboardData?.map((item) => {
+        return {
+          ...item,
+          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          title: item?.name || "-",
+          customer_name: item?.customer_name || "-",
+          group: item?.groups || "-",
+        };
+      }) || []
+    );
   }, [isError, error, dashboardData]);
 
   const navigate = useNavigate();
@@ -72,8 +74,8 @@ const Dashboard = () => {
   };
 
   const handleRowClick = (item) => {
-    navigate(`/dashboard/${item?.id}/info`);
-    // navigate(`/dashboard/${item?.title}`);
+    // navigate(`/dashboard/${item?._id}/info`);
+    navigate(`/dashboard/${item?.title}`);
   };
 
   return (
@@ -81,9 +83,9 @@ const Dashboard = () => {
       <SubHeader
         heading="Dashboard"
         subHeading="Here’s what’s happening with your device and users"
-      // buttonText="Add New Dashoard"
-      // onClick={() => setOpen(true)}
-      // variant="contained"
+        // buttonText="Add New Dashoard"
+        // onClick={() => setOpen(true)}
+        // variant="contained"
       />
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
         <SearchBar value={search} onChange={(val) => setSearch(val)} />
@@ -113,7 +115,7 @@ const Dashboard = () => {
         heading={"Delete"}
         handleAccept={handleDeleteDashboard}
         handleCancel={() => setDeviceDelete(false)}
-      // loading={deleteLoading}
+        // loading={deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?

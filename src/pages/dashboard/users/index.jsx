@@ -13,7 +13,10 @@ import {
 } from "../../../components";
 import AddUserModal from "../../../components/add-user-modal";
 import EditUserModal from "../../../components/edit-user-modal";
-import { useDeleteUserMutation, useGetAllUsersQuery } from "../../../services/users";
+import {
+  useDeleteUserMutation,
+  useGetAllUsersQuery,
+} from "../../../services/users";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -36,39 +39,44 @@ const Users = () => {
   useEffect(() => {
     if (isError && error) {
       toast.error(error?.data?.message);
-      return
+      return;
     }
-    setData(userData?.data?.map(item => {
-      return {
-        ...item,
-        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"), customer_name: item?.customer_name || "-",
-        userName: {
-          image: `${import.meta.env.VITE_IMAGE_BASE_URL}${item?.profile_image}`,
-          name: item?.name,
-        },
-        status: {
-          label: item?.status === "active" ? "Active" : "Inactive",
-          variant: item?.status === "active" ? "green" : "red",
-        },
-        deviceId: "-",
-      }
-    }) || [])
+    setData(
+      userData?.data?.map((item) => {
+        return {
+          ...item,
+          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          customer_name: item?.customer_name || "-",
+          userName: {
+            image: `${import.meta.env.VITE_IMAGE_BASE_URL}${
+              item?.profile_image
+            }`,
+            name: item?.name,
+          },
+          status: {
+            label: item?.status === "active" ? "Active" : "Inactive",
+            variant: item?.status === "active" ? "green" : "red",
+          },
+          deviceId: "-",
+        };
+      }) || []
+    );
   }, [isError, error, userData]);
 
   const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
 
   const handleDeleteUser = () => {
-    deleteUser(selectedUserToDelete?._id).then(res => {
+    deleteUser(selectedUserToDelete?._id).then((res) => {
       if (res?.error) {
         toast.error(res?.error?.data?.message || "Failed to delete user");
         return;
       }
       if (res?.data) {
-        toast.success(res?.data?.message || "User deleted successfully")
+        toast.success(res?.data?.message || "User deleted successfully");
         setSelectedUserToDelete(null);
       }
-    })
-  }
+    });
+  };
 
   const handleEdit = (item) => {
     setEditUserValues(item);
@@ -84,7 +92,7 @@ const Users = () => {
 
   const handleUserClick = (item) => {
     console.log(item);
-    navigate(`/user/${item?.id}?name=${item?.userName?.name}`);
+    navigate(`/users/${item?.id}?name=${item?.userName?.name}`);
   };
 
   return (

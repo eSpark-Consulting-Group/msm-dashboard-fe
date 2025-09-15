@@ -21,6 +21,8 @@ import EditGroupModal from "./edit-group-modal";
 import ImportDeviceModal from "./import-device-modal";
 import ProfileModal from "./profile-modal";
 import LogoutModal from "./logout-modal";
+import DynamicTabs2 from "./dynamic-tabs2";
+import EnergyCards from "./channel-energy-cards";
 
 export {
   Button,
@@ -46,4 +48,6 @@ export {
   ImportDeviceModal,
   ProfileModal,
   LogoutModal,
+  DynamicTabs2,
+  EnergyCards,
 };

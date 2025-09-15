@@ -23,7 +23,7 @@ const NavigateHeader = () => {
   return (
     <Box
       sx={{
-        ml: "30px",
+        // ml: "30px",
         display: "flex",
         columnGap: "7.02px",
         alignItems: "center",

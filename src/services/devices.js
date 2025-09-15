@@ -4,7 +4,7 @@ export const deviceApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getAllDevices: builder.query({
             query: ({ page = 1, limit = 10, search = "" }) => ({
-                url: `/devices?page=${page}&limit=${limit}&search=${search}`,
+                url: `/devices/user?page=${page}&limit=${limit}&search=${search}`,
                 method: "GET",
             }),
             providesTags: ["Devices"],
@@ -12,10 +12,19 @@ export const deviceApi = api.injectEndpoints({
 
         getDeviceById: builder.query({
             query: (id) => ({
-                url: `/devices?id=${id}`,
+                url: `/devices/user/${id}`,
                 method: "GET",
             }),
             providesTags: (result, error, id) => [{ type: "Devices", id }],
+        }),
+
+        addDevice: builder.mutation({
+            query: (body) => ({
+                url: "/devices/user",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: ["Devices"],
         }),
     }),
 });
@@ -23,4 +32,5 @@ export const deviceApi = api.injectEndpoints({
 export const {
     useGetAllDevicesQuery,
     useGetDeviceByIdQuery,
+    useAddDeviceMutation,
 } = deviceApi;

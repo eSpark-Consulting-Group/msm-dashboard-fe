@@ -11,6 +11,7 @@ import {
 import { columns } from "../../../columns/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useGetAllDevicesQuery } from "../../../services/devices";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
   // const [open, setOpen] = useState(false);
@@ -22,11 +23,12 @@ const Dashboard = () => {
   const [deviceDelete, setDeviceDelete] = useState(false);
 
   const {
-    data: dashboardData,
     isLoading,
     isError,
     error,
   } = useGetAllDevicesQuery({ page, limit: pageSize, search });
+
+  const { devices: dashboardData } = useSelector(state => state.devices);
 
   // const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDashboardMutation();
 
@@ -48,13 +50,13 @@ const Dashboard = () => {
       toast.error(error?.data?.message);
       return
     }
-    setData(dashboardData?.data?.map(item => {
+    setData(dashboardData?.map(item => {
       return {
         ...item,
         createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        title: item?.title || "-",
+        title: item?.name || "-",
         customer_name: item?.customer_name || "-",
-        group: item?.customer_name || "-",
+        group: item?.groups || "-",
       }
     }) || [])
   }, [isError, error, dashboardData]);
@@ -111,7 +113,7 @@ const Dashboard = () => {
         heading={"Delete"}
         handleAccept={handleDeleteDashboard}
         handleCancel={() => setDeviceDelete(false)}
-        // loading={deleteLoading}
+      // loading={deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?

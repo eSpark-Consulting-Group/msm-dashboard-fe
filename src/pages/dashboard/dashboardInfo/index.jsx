@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import DashboardWrapper from "../../../components/card";
 import InfoCard from "../../../components/info-card";
 import DynamicTabs from "../../../components/tabs";
@@ -9,6 +10,7 @@ import {
 } from "../../../constant";
 
 const DashboardInfo = () => {
+  const { user } = useSelector(state => state.auth); 
   const tabs = [
     {
       label: "INFO",
@@ -18,6 +20,7 @@ const DashboardInfo = () => {
           title="Device Info"
           buttonLabel="Reboot"
           onButtonClick={() => console.log("Button clicked")}
+          role={user?.role?.name}
         />
       ),
     },
@@ -31,6 +34,7 @@ const DashboardInfo = () => {
           onButtonClick={() => console.log("Button clicked")}
           date="2025-07-09"
           time="14:45 PM"
+          role={user?.role?.name}
         />
       ),
     },
@@ -42,6 +46,7 @@ const DashboardInfo = () => {
           title="MQTT Protocol"
           buttonLabel="Refresh"
           onButtonClick={() => console.log("Button clicked")}
+          role={user?.role?.name}
         />
       ),
     },
@@ -53,6 +58,7 @@ const DashboardInfo = () => {
           title="SFTP"
           buttonLabel="Refresh"
           onButtonClick={() => console.log("Button clicked")}
+          role={user?.role?.name}
         />
       ),
     },

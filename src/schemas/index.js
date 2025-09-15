@@ -101,3 +101,44 @@ export const editUserSchema = Yup.object().shape({
     .required("Customer name is required"),
 });
 
+export const deviceSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Name is required")
+    .min(2, "Name must be at least 2 characters"),
+
+  label: Yup.string()
+    .required("Label is required"),
+
+  deviceProfile: Yup.string()
+    .required("Device profile is required"),
+
+  description: Yup.string()
+    .required("Description is required"),
+
+  owners: Yup.string()
+    .required("Owner is required"),
+
+  groups: Yup.string()
+    .required("Please select a group"),
+
+  accessToken: Yup.string()
+    .required("Access token is required"),
+
+  x509: Yup.string()
+    .required("X.509 certificate is required"),
+
+  clientId: Yup.string()
+    .required("MQTT Client ID is required"),
+
+  user: Yup.string()
+    .required("MQTT User is required"),
+
+  userName: Yup.string()
+    .required("MQTT Username is required"),
+
+  password: Yup.string()
+    .required("MQTT Password is required"),
+});
+
+
+

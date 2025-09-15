@@ -4,8 +4,10 @@ import { Box, Typography } from "@mui/material";
 import { Logo } from "../../components";
 import { sidebarTabs } from "../../constant";
 import { useClickOutside } from "../../utils";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ open, setOpen }) => {
+  const { user } = useSelector(state => state.auth);
   const { pathname: path } = useLocation();
   let pathname = `/${path?.split("/")[1]}`;
   if (pathname[0] === "/") {
@@ -61,7 +63,7 @@ const Sidebar = ({ open, setOpen }) => {
           },
         }}
       >
-        {sidebarTabs("admin").map((item) => (
+        {sidebarTabs(user?.role?.name).map((item) => (
           <Box
             onClick={() => handleNavigate(item.link)}
             sx={{

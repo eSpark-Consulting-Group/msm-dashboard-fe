@@ -20,6 +20,7 @@ import { deviceGroupColumns } from "../../../columns/deviceGroupColumns";
 import { EditDeviceModal } from "../../../components";
 import { useGetAllDevicesQuery } from "../../../services/devices";
 import { useDeleteGroupMutation, useGetAllGroupsQuery } from "../../../services/groups";
+import { useSelector } from "react-redux";
 
 const Devices = () => {
   const [search, setSearch] = useState("");
@@ -57,11 +58,13 @@ const Devices = () => {
   }, [activeTab]);
 
   const {
-    data: devicesData,
     isLoading: deviceLoading,
     isError: isGroupError,
     error: groupError,
   } = useGetAllDevicesQuery({ page, limit: pageSize, search }, { skip: activeTab !== 0 });
+
+    const { devices: devicesData } = useSelector(state => state.devices);
+
 
   const {
     data: groupData,
@@ -75,7 +78,7 @@ const Devices = () => {
       toast.error(error?.data?.message);
       return
     }
-    const deviceData = devicesData?.data?.map(item => {
+    const deviceData = devicesData?.map(item => {
       return {
         ...item,
         createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
@@ -105,7 +108,6 @@ const Devices = () => {
       return {
         ...item,
         createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        deviceId: item?.device_uuid
       }
     }) || []
     setDeviceGroupData(deviceGroupData)
@@ -235,11 +237,11 @@ const Devices = () => {
       <DynamicModal
         open={openAddModal === 0}
         handleClose={() => setOpenAddModal(false)}
-        acceptButtonText={"Next"}
+        // acceptButtonText={"Next"}
         heading={"Add New Device"}
-        handleAccept={handleAddDeviceAccept}
+      // handleAccept={handleAddDeviceAccept}
       >
-        <AddDeviceModal />
+        <AddDeviceModal onCancel={() => setOpenAddModal(false)} />
       </DynamicModal>
       <DynamicModal
         open={openAddModal === 1}

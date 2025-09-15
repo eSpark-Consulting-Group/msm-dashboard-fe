@@ -75,7 +75,7 @@ const Dashboard = () => {
 
   const handleRowClick = (item) => {
     // navigate(`/dashboard/${item?._id}/info`);
-    navigate(`/dashboard/${item?._id}`);
+    item?.device_data?.device_uuid && navigate(`/dashboard/${item?.device_data?.device_uuid}/info`);
   };
 
   return (

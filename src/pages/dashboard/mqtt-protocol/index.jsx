@@ -54,7 +54,7 @@ const MqttProtocol = () => {
       />
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "3px" }}>
         <Typography sx={{ fontSize: "18px", fontWeight: "700" }}>
-          MQTT PROTOCOL
+          MQTTS PROTOCOL
         </Typography>
         <Typography
           sx={{ fontSize: "12.28px", fontWeight: "400", color: "#667085" }}

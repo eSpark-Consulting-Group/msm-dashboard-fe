@@ -39,11 +39,11 @@ const DashboardInfo = () => {
       ),
     },
     {
-      label: "MQTT",
+      label: "MQTTS",
       component: (
         <InfoCard
           info={mqttProtocol}
-          title="MQTT Protocol"
+          title="MQTTS Protocol"
           buttonLabel="Refresh"
           onButtonClick={() => console.log("Button clicked")}
           role={user?.role?.name}

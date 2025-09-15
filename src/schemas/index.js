@@ -128,16 +128,16 @@ export const deviceSchema = Yup.object().shape({
     .required("X.509 certificate is required"),
 
   clientId: Yup.string()
-    .required("MQTT Client ID is required"),
+    .required("MQTTS Client ID is required"),
 
   user: Yup.string()
-    .required("MQTT User is required"),
+    .required("MQTTS User is required"),
 
   userName: Yup.string()
-    .required("MQTT Username is required"),
+    .required("MQTTS Username is required"),
 
   password: Yup.string()
-    .required("MQTT Password is required"),
+    .required("MQTTS Password is required"),
 });
 
 

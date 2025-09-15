@@ -635,7 +635,7 @@ export const infoData = [
   { label: "DEVICE ID", value: "IND10000480" },
   { label: "DEVICE IMEI", value: "865788062393172" },
   { label: "DEVICE IP", value: "183.171.213.34" },
-  { label: "MQTT STATUS", value: "Server Connected" },
+  { label: "MQTTS STATUS", value: "Server Connected" },
   { label: "SFTP STATUS", value: "No Connection" },
 ];
 
@@ -651,7 +651,7 @@ export const mqttProtocol = [
   { label: "BROKER-USER", value: "OFP-INDKOM", showIcon: true },
   { label: "BROKER-PASS", value: "IND10", showIcon: true },
   { label: "DATA-INTERVAL", value: "60 SEC", showIcon: true },
-  { label: "MQTT_TOPIC", value: "v1/devices/me/telemetry", showIcon: true },
+  { label: "MQTTS_TOPIC", value: "v1/devices/me/telemetry", showIcon: true },
 ];
 
 export const sftp = [

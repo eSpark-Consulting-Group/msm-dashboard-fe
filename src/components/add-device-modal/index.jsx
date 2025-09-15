@@ -42,12 +42,12 @@ const fields = [
 const credentials = [
   { name: "accessToken", label: "Access Token", placeholder: "Owners" },
   { name: "x509", label: "X.509", placeholder: "Certificate in PEM format" },
-  { name: "clientId", label: "MQTT Client ID", placeholder: "ID" },
-  { name: "user", label: "MQTT User", placeholder: "User" },
-  { name: "userName", label: "MQTT User Name", placeholder: "User Name" },
+  { name: "clientId", label: "MQTTS Client ID", placeholder: "ID" },
+  { name: "user", label: "MQTTS User", placeholder: "User" },
+  { name: "userName", label: "MQTTS User Name", placeholder: "User Name" },
   {
     name: "password",
-    label: "MQTT Password",
+    label: "MQTTS Password",
     placeholder: "Password",
     type: "password",
   },

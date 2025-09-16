@@ -12,7 +12,10 @@ import {
   networkProtocol,
   sftp,
 } from "../../../constant";
-import { useGetDeviceByIdQuery } from "../../../services/devices";
+import {
+  useGetDeviceByIdQuery,
+  useRebootDeviceMutation,
+} from "../../../services/devices";
 import { useGetNtpDevicesByIdQuery } from "../../../services/ntp";
 import { useGetSftpDevicesByIdQuery } from "../../../services/sftp";
 import { useGetMqttByDeviceIdQuery } from "../../../services/mqtt";
@@ -20,11 +23,54 @@ import { useGetMqttByDeviceIdQuery } from "../../../services/mqtt";
 const DashboardInfo = () => {
   const { id } = useParams();
 
-  const { user } = useSelector(state => state.auth);
-  const { data: deviceData, isLoading: deviceLoading, isError: isDeviceError, error: deviceError } = useGetDeviceByIdQuery(id, { skip: !id });
-  const { data: ntpData, isLoading: ntpLoading, isError: isNtpError, error: ntpError } = useGetNtpDevicesByIdQuery(id, { skip: !id });
-  const { data: mqttData, isLoading: mqttLoading, isError: isMqttError, error: mqttError } = useGetMqttByDeviceIdQuery(id, { skip: !id });
-  const { data: sftpData, isLoading: sftpLoading, isError: isSftpError, error: sftpError } = useGetSftpDevicesByIdQuery(id, { skip: !id });
+  const { user } = useSelector((state) => state.auth);
+  const {
+    data: deviceData,
+    isLoading: deviceLoading,
+    isError: isDeviceError,
+    error: deviceError,
+  } = useGetDeviceByIdQuery(id, { skip: !id });
+  const {
+    data: ntpData,
+    isLoading: ntpLoading,
+    isError: isNtpError,
+    error: ntpError,
+    refetch,
+    isFetching: ntpFetching,
+  } = useGetNtpDevicesByIdQuery(id, { skip: !id });
+  const {
+    data: mqttData,
+    isLoading: mqttLoading,
+    isError: isMqttError,
+    error: mqttError,
+    refetch: mqttRefetch,
+    isFetching: mqttFetching,
+  } = useGetMqttByDeviceIdQuery(id, { skip: !id });
+  const {
+    data: sftpData,
+    isLoading: sftpLoading,
+    isError: isSftpError,
+    error: sftpError,
+    refetch: sftpRefetch,
+    isFetching: sftpFetching,
+  } = useGetSftpDevicesByIdQuery(id, { skip: !id });
+
+  const [reboot] = useRebootDeviceMutation();
+
+  const handleReboot = async () => {
+    try {
+      const res = await reboot(id);
+      if (res?.data) {
+        toast.success(res?.data?.message);
+      }
+      if (res?.error) {
+        toast.error("Reboot Error");
+        console.log(res?.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (isDeviceError) {
@@ -39,7 +85,18 @@ const DashboardInfo = () => {
     if (isSftpError) {
       toast.error(sftpError?.data?.message);
     }
-  }, [isDeviceError, deviceError, isNtpError, ntpError, isMqttError, mqttError, isSftpError, sftpError])
+  }, [
+    isDeviceError,
+    deviceError,
+    isNtpError,
+    ntpError,
+    isMqttError,
+    mqttError,
+    isSftpError,
+    sftpError,
+  ]);
+
+  console.log(sftpData);
 
   const tabs = [
     {
@@ -49,8 +106,9 @@ const DashboardInfo = () => {
           info={infoData(deviceData?.data?.device_data)}
           title="Device Info"
           buttonLabel="Reboot"
-          onButtonClick={() => console.log("Button clicked")}
+          onButtonClick={handleReboot}
           role={user?.role?.name}
+          type={"INFO"}
         />
       ),
     },
@@ -61,10 +119,13 @@ const DashboardInfo = () => {
           info={networkProtocol(ntpData?.data)}
           title="Network Time Protocol"
           buttonLabel="Refresh"
-          onButtonClick={() => console.log("Button clicked")}
+          onButtonClick={() => refetch()}
           date={dayjs(ntpData?.data?.createdAt).format("YYYY-MM-DD")}
           time={dayjs(ntpData?.data?.createdAt).format("hh:mm A")}
           role={user?.role?.name}
+          id={ntpData?.data?._id}
+          buttonLoading={ntpFetching}
+          type={"NTP"}
         />
       ),
     },
@@ -75,8 +136,11 @@ const DashboardInfo = () => {
           info={mqttProtocol(mqttData?.data)}
           title="MQTTS Protocol"
           buttonLabel="Refresh"
-          onButtonClick={() => console.log("Button clicked")}
+          onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}
+          buttonLoading={mqttFetching}
+          type={"MQTTS"}
+          id={mqttData?.data[0]?._id}
         />
       ),
     },
@@ -87,15 +151,20 @@ const DashboardInfo = () => {
           info={sftp(sftpData?.data)}
           title="SFTP"
           buttonLabel="Refresh"
-          onButtonClick={() => console.log("Button clicked")}
+          onButtonClick={() => sftpRefetch()}
           role={user?.role?.name}
+          buttonLoading={sftpFetching}
+          type={"SFTP"}
+          id={sftpData?.data?._id}
         />
       ),
     },
   ];
 
   return (
-    <DashboardWrapper loading={deviceLoading || ntpLoading || mqttLoading || sftpLoading}>
+    <DashboardWrapper
+      loading={deviceLoading || ntpLoading || mqttLoading || sftpLoading}
+    >
       <DynamicTabs tabs={tabs} />
     </DashboardWrapper>
   );

@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import React from "react";
 
 const StackedBarChart = ({ data, barKeys, colors, height = 145 }) => {
   return (
@@ -13,7 +14,7 @@ const StackedBarChart = ({ data, barKeys, colors, height = 145 }) => {
             width={"13px"}
           >
             {barKeys?.map((key, i) => (
-              <>
+              <React.Fragment key={i}>
                 <Box
                   key={i}
                   sx={{
@@ -23,7 +24,7 @@ const StackedBarChart = ({ data, barKeys, colors, height = 145 }) => {
                     marginBottom: i < barKeys.length - 1 ? "2px" : 0,
                   }}
                 />
-              </>
+              </React.Fragment>
             ))}
             <Typography sx={{ fontSize: "7px", mt: "0px" }} align="center">
               {item.name}

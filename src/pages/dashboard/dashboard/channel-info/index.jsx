@@ -1,26 +1,53 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, LinearProgress, Paper, Typography } from "@mui/material";
 import {
   ChannelPagination,
   DynamicTabs,
   NavigateHeader,
 } from "../../../../components";
-import { backIcon } from "../../../../assets";
+import { backIcon, energy, flashBlack } from "../../../../assets";
 import General from "./general";
 import Power from "./power";
 import Energy from "./energy";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useGetTelemetryByDeviceAndChannelQuery } from "../../../../services/telemetry";
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { mapEnergyData, mapGeneralData, mapPowerData } from "../../../../utils";
+
+dayjs.extend(relativeTime);
 
 const ChannelInfo = () => {
+  const [generalData, setGeneralData] = useState([]);
+  const [powerData, setPowerData] = useState([]);
+  const [energyData, setEnergyData] = useState([]);
+
   const tabs = [
-    { label: "General", component: <General /> },
-    { label: "Power", component: <Power /> },
-    { label: "Energy", component: <Energy /> },
+    { label: "General", component: <General data={generalData} /> },
+    { label: "Power", component: <Power data={powerData} /> },
+    { label: "Energy", component: <Energy data={energyData} /> },
   ];
+
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname.split("/");
   const channelName = path[path.length - 1];
+  const channelId = channelName?.split("-");
   const dynamicId = path[2];
+
+  const {
+    data: telemetryData,
+    isLoading: telemetryLoading,
+    isError: isTelemetryError,
+    error: telemetryError,
+    isFetching: telemetryFetching,
+  } = useGetTelemetryByDeviceAndChannelQuery(
+    {
+      device_uuid: dynamicId,
+      channel_id: channelId[1],
+    },
+    { skip: !dynamicId || !channelId[1] }
+  );
 
   const handleBack = () => {
     navigate(`/dashboard/${dynamicId}/home`);
@@ -47,6 +74,54 @@ const ChannelInfo = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (telemetryData) {
+      let data = telemetryData?.data || [];
+      console.log(data);
+      setGeneralData(mapGeneralData(data));
+      setPowerData(mapPowerData(data));
+      setEnergyData(mapEnergyData(data));
+    }
+  }, [telemetryData]);
+
+  useEffect(() => {
+    if (isTelemetryError && telemetryError) {
+      console.log(telemetryError);
+    }
+  }, [isTelemetryError, telemetryError]);
+
+  if (isTelemetryError && telemetryError) {
+    return (
+      <>
+        <Typography>{telemetryError?.data?.message}</Typography>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <ChannelPagination
+            channelName={channelName}
+            handlePageBack={handlePageBack}
+            handlePageForward={handlePageForward}
+          />
+        </Box>
+      </>
+    );
+  }
+
+  if (telemetryLoading || telemetryFetching) {
+    return (
+      <Box>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <NavigateHeader />

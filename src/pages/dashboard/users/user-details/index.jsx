@@ -11,18 +11,14 @@ import { userDetails } from "../../../../constant";
 import { columns } from "../../../../columns/userDetails";
 import { useGetUserByIdQuery } from "../../../../services/users";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import { useDeleteUserDeviceMutation } from "../../../../services/devices";
 
 const UserDetails = () => {
   const [search, setSearch] = useState("");
   const params = useParams();
   const { search: searchQuery } = useLocation();
-
-  const [allData, setAllData] = useState(userDetails || []);
-  const [data, setData] = useState(userDetails || []);
-
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(7);
-  const [total, setTotal] = useState(userDetails?.length || 0);
+  const [data, setData] = useState([]);
   const [deviceDelete, setDeviceDelete] = useState(false);
 
   const {
@@ -33,12 +29,22 @@ const UserDetails = () => {
   } = useGetUserByIdQuery(params?.id, { skip: !params?.id });
 
   const handleDelete = (item) => {
-    console.log(item);
-    setDeviceDelete(true);
+    setDeviceDelete(item);
   };
 
-  const handlePageChange = (page) => {
-    setPage(page);
+  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteUserDeviceMutation();
+
+  const handleDeleteDevice = () => {
+    deleteDashboard({ id: deviceDelete?.device_data?.device_uuid, userId: params?.id }).then(res => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to delete device");
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device deleted successfully")
+        setDeviceDelete(false);
+      }
+    })
   };
 
   useEffect(() => {
@@ -49,23 +55,24 @@ const UserDetails = () => {
 
   useEffect(() => {
     if (userDetailsData) {
-      console.log("API data:", userDetailsData);
+      const deviceData = userDetailsData?.data?.map(item => {
+        return {
+          ...item,
+          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          deviceId: item?.device_data?.device_uuid || "-",
+          deviceName: item?.deviceName || "-",
+          label: item?.label || "-",
+          mqtt_username: item?.mqtt_user || "-",
+          groups: item?.groups_data?.name || "-",
+          status: {
+            label: item?.device_data?.mqtt_status ? "Active" : "Inactive",
+            variant: item?.device_data?.mqtt_status ? "green" : "red"
+          }
+        }
+      }) || []
+      setData(deviceData)
     }
   }, [userDetailsData]);
-
-  useEffect(() => {
-    if (!search.trim()) {
-      setData(allData);
-    } else {
-      const filtered = allData.filter((item) =>
-        Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(search.toLowerCase())
-        )
-      );
-      setData(filtered);
-    }
-    setPage(1);
-  }, [search, allData]);
 
   return (
     <>
@@ -80,11 +87,7 @@ const UserDetails = () => {
       <DynamicTable
         data={data}
         columns={columns()}
-        page={page}
-        pageSize={pageSize}
-        total={total}
         handleDelete={handleDelete}
-        handlePageChange={handlePageChange}
         hideView={true}
         hideEdit={true}
         isLoading={isLoading}
@@ -93,13 +96,13 @@ const UserDetails = () => {
       <DeleteModal
         open={deviceDelete}
         handleClose={() => setDeviceDelete(false)}
-        heading={"Are you sure you want to Delete?"}
-        handleAccept={() => setDeviceDelete(false)}
+        heading={"Delete"}
+        handleAccept={handleDeleteDevice}
         handleCancel={() => setDeviceDelete(false)}
+        loading={deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          Delete is permanent and your Details will automatically be deleted
-          after 30 days if you do not log in again.
+          Are you sure you want to Delete this device?
         </Typography>
       </DeleteModal>
     </>

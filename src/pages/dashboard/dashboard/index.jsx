@@ -10,7 +10,7 @@ import {
 } from "../../../components";
 import { columns } from "../../../columns/dashboard";
 import { useNavigate } from "react-router-dom";
-import { useGetAllDevicesQuery } from "../../../services/devices";
+import { useDeleteDeviceMutation, useGetAllDevicesQuery } from "../../../services/devices";
 import { useSelector } from "react-redux";
 
 const Dashboard = () => {
@@ -30,19 +30,19 @@ const Dashboard = () => {
 
   const { devices: dashboardData } = useSelector((state) => state.devices);
 
-  // const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDashboardMutation();
+  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDeviceMutation();
 
   const handleDeleteDashboard = () => {
-    // deleteDashboard(deviceDelete?._id).then(res => {
-    //   if (res?.error) {
-    //     toast.error(res?.error?.data?.message || "Failed to delete user");
-    //     return;
-    //   }
-    //   if (res?.data) {
-    //     toast.success(res?.data?.message || "User deleted successfully")
-    //     setDeviceDelete(false);
-    //   }
-    // })
+    deleteDashboard(deviceDelete?.device_data?.device_uuid).then(res => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to delete device");
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device deleted successfully")
+        setDeviceDelete(false);
+      }
+    })
   };
 
   useEffect(() => {
@@ -115,7 +115,7 @@ const Dashboard = () => {
         heading={"Delete"}
         handleAccept={handleDeleteDashboard}
         handleCancel={() => setDeviceDelete(false)}
-        // loading={deleteLoading}
+        loading={deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?

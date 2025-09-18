@@ -18,7 +18,7 @@ import { columns } from "../../../columns/devices";
 import { useSearchParams } from "react-router-dom";
 import { deviceGroupColumns } from "../../../columns/deviceGroupColumns";
 import { EditDeviceModal } from "../../../components";
-import { useGetAllDevicesQuery } from "../../../services/devices";
+import { useDeleteDeviceMutation, useGetAllDevicesQuery } from "../../../services/devices";
 import { useDeleteGroupMutation, useGetAllGroupsQuery } from "../../../services/groups";
 import { useSelector } from "react-redux";
 
@@ -63,8 +63,7 @@ const Devices = () => {
     error: groupError,
   } = useGetAllDevicesQuery({ page, limit: pageSize, search }, { skip: activeTab !== 0 });
 
-    const { devices: devicesData } = useSelector(state => state.devices);
-
+  const { devices: devicesData } = useSelector(state => state.devices);
 
   const {
     data: groupData,
@@ -82,14 +81,14 @@ const Devices = () => {
       return {
         ...item,
         createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        deviceId: item?.device_uuid || "-",
-        deviceName: item?.deviceName || "-",
+        deviceId: item?.device_data?.device_uuid || "-",
+        deviceName: item?.name || "-",
         label: item?.label || "-",
         userName: item?.userName || "-",
-        group: item?.group || "-",
+        groups: item?.groups_data?.name || "-",
         status: {
-          label: item?.mqtt_status ? "Active" : "Inactive",
-          variant: item?.mqtt_status ? "green" : "red"
+          label: item?.device_data?.mqtt_status ? "Active" : "Inactive",
+          variant: item?.device_data?.mqtt_status ? "green" : "red"
         }
       }
     }) || []
@@ -125,9 +124,20 @@ const Devices = () => {
     setDeviceDelete(item);
   };
 
+  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDeviceMutation();
+
   const handleDeleteDevice = (id) => {
-    console.log(id, "delete device")
-  }
+    deleteDashboard(id).then(res => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to delete device");
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device deleted successfully")
+        setDeviceDelete(false);
+      }
+    })
+  };
 
   const [deleteGroup, { isLoading: deleteGroupLoading }] = useDeleteGroupMutation();
 
@@ -147,7 +157,7 @@ const Devices = () => {
 
   const handleDeleteAction = () => {
     if (activeTab === 0) {
-      handleDeleteDevice(deviceDelete?._id);
+      handleDeleteDevice(deviceDelete?.device_data?.device_uuid);
     } else {
       handleDeleteGroup(deviceDelete?._id);
     }
@@ -216,7 +226,7 @@ const Devices = () => {
         heading={"Edit Device ’s Details"}
       >
         <EditDeviceModal
-          values={openEditModal === 0}
+          data={editDeviceValues}
           handleModalClose={() => setOpenEditModal(false)}
           handleCancel={() => setOpenEditModal(false)}
         />
@@ -228,7 +238,7 @@ const Devices = () => {
         heading={"Delete"}
         handleAccept={handleDeleteAction}
         handleCancel={() => setDeviceDelete(false)}
-        loading={deleteGroupLoading}
+        loading={deleteGroupLoading || deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"}`}

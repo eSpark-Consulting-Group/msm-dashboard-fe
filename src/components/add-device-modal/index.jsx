@@ -118,7 +118,7 @@ const AddDeviceModal = ({ onCancel }) => {
             return;
           }
           if (res?.data) {
-            toast.success(res?.data?.message || "Device addedd successfully");
+            toast.success(res?.data?.message || "Device added successfully");
             onCancel()
           }
         })

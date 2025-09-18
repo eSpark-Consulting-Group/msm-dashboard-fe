@@ -12,7 +12,7 @@ export const userApi = api.injectEndpoints({
 
         getUserById: builder.query({
             query: (id) => ({
-                url: `/users/${id}`,
+                url: `/devices/user/id/${id}`,
                 method: "GET",
             }),
             providesTags: (result, error, id) => [{ type: "Users", id }],

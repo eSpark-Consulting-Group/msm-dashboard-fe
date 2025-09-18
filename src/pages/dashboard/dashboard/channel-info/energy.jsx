@@ -1,16 +1,16 @@
 import { DynamicTabs2, EnergyCards } from "../../../../components";
 
-const Energy = () => {
+const Energy = ({ data }) => {
   const tabs = [
     {
       id: 1,
       label: "Real Time",
-      content: <EnergyCards />,
+      content: <EnergyCards energyData={data} />,
     },
     {
       id: 2,
       label: "Average value ",
-      content: <EnergyCards />,
+      content: <EnergyCards energyData={data} />,
     },
   ];
   return (

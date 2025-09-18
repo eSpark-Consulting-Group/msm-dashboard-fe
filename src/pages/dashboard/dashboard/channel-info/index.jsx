@@ -34,6 +34,7 @@ const ChannelInfo = () => {
   const channelName = path[path.length - 1];
   const channelId = channelName?.split("-");
   const dynamicId = path[2];
+  const [totalCHannel, setTotalCHannel] = useState(null);
 
   const {
     data: telemetryData,
@@ -56,11 +57,13 @@ const ChannelInfo = () => {
   const handlePageForward = () => {
     const number = channelName.split("-");
     const newNumber = Number(number[1]);
-    navigate(
-      `/dashboard/${dynamicId}/info/channel-${newNumber + 1 > 9 ? "" : "0"}${
-        newNumber + 1
-      }${location?.search}`
-    );
+    if (newNumber + 1 <= totalCHannel) {
+      navigate(
+        `/dashboard/${dynamicId}/info/channel-${newNumber + 1 > 9 ? "" : "0"}${
+          newNumber + 1
+        }${location?.search}`
+      );
+    }
   };
 
   const handlePageBack = () => {
@@ -78,7 +81,7 @@ const ChannelInfo = () => {
   useEffect(() => {
     if (telemetryData) {
       let data = telemetryData?.data || [];
-      console.log(data);
+      setTotalCHannel(data?.length);
       setGeneralData(mapGeneralData(data));
       setPowerData(mapPowerData(data));
       setEnergyData(mapEnergyData(data));

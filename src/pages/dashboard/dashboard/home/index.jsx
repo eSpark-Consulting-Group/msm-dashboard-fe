@@ -1,18 +1,30 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, CircularProgress, Paper, Stack, Typography } from "@mui/material";
 import { info } from "../../../../assets";
 import { homeFlashCards } from "../../../../constant";
 import { NavigateHeader, Channels, DynamicTabs2 } from "../../../../components";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGetTelemetryByDeviceQuery } from "../../../../services/telemetry";
 
 const DashboardHome = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [channelsData, setChannelsData] = useState([]);
+
+  const {
+    data: telemetryData,
+    isLoading: telemetryLoading,
+    isError: isTelemetryError,
+    error: telemetryError,
+  } = useGetTelemetryByDeviceQuery({
+    device_uuid: id,
+    page: 1,
+    limit: 12,
+  });
+
   const handleNavigate = (channelId) => {
-    navigate(
-      `/dashboard/${id}/info/channel-${channelId}`
-    );
+    navigate(`/dashboard/${id}/info/channel-${channelId}`);
   };
 
   const handleInfo = () => {
@@ -29,6 +41,38 @@ const DashboardHome = () => {
       navigate(`/dashboard/${id}/home`);
     }
   };
+
+  useEffect(() => {
+    if (telemetryData) {
+      const myMap = {};
+      const unique = [];
+
+      for (const item of telemetryData?.data) {
+        if (!myMap[item.channel_id]) {
+          myMap[item.channel_id] = true;
+          unique.push(item);
+        }
+      }
+      console.log(telemetryData);
+
+      const data = unique?.map((item) => ({
+        id: item?.channel_id,
+        variant: item?.channel_status ? "connected" : "disable",
+        name: `Channel ${
+          item?.channel_id > 9 ? item?.channel_id : `0${item?.channel_id}`
+        }`,
+      }));
+      setChannelsData(data);
+    }
+  }, [telemetryData]);
+
+  if (telemetryLoading) {
+    return (
+      <Stack justifyContent="center" alignItems="center">
+        <CircularProgress />
+      </Stack>
+    );
+  }
 
   return (
     <Box>
@@ -79,14 +123,16 @@ const DashboardHome = () => {
             columnGap: "40px",
           }}
         >
-          {homeFlashCards?.map((item, index) => (
-            <Channels
-              variant={item?.variant}
-              name={item?.name}
-              key={index}
-              onClick={() => handleNavigate(item?.id)}
-            />
-          ))}
+          {channelsData &&
+            Array.isArray(channelsData) &&
+            channelsData?.map((item, index) => (
+              <Channels
+                variant={item?.variant}
+                name={item?.name}
+                key={index}
+                onClick={() => handleNavigate(item?.id)}
+              />
+            ))}
         </Box>
       </Paper>
     </Box>

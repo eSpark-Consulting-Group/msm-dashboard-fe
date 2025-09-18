@@ -53,18 +53,20 @@ const Power = ({ data }) => {
       label: "Average value ",
       content: (
         <Grid container spacing={2}>
-          {powerCards?.map((item, index) => (
-            <PhaseCards
-              color={item?.color}
-              heading={item?.heading}
-              icon={item?.icon}
-              time={item?.time}
-              value={item?.value}
-              valueColor={item?.valueColor}
-              headingSize={item?.headingSize}
-              key={index}
-            />
-          ))}
+          {data &&
+            Array.isArray(data) &&
+            data?.map((item, index) => (
+              <PhaseCards
+                color={item?.color}
+                heading={item?.heading}
+                icon={item?.icon}
+                time={item?.time}
+                value={item?.value}
+                valueColor={item?.valueColor}
+                headingSize={item?.headingSize}
+                key={index}
+              />
+            ))}
         </Grid>
       ),
     },

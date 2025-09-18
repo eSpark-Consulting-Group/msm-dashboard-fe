@@ -631,40 +631,58 @@ export const energyCards = [
     headingSize: "19.5px",
   },
 ];
-export const infoData = [
-  { label: "DEVICE ID", value: "IND10000480" },
-  { label: "DEVICE IMEI", value: "865788062393172" },
-  { label: "DEVICE IP", value: "183.171.213.34" },
-  { label: "MQTTS STATUS", value: "Server Connected" },
-  { label: "SFTP STATUS", value: "No Connection" },
-];
+export const infoData = (realData) => {
+  return [
+    { label: "DEVICE ID", value: realData?.device_uuid, key: "device_uuid" },
+    { label: "DEVICE IMEI", value: realData?.device_imei, key: "device_imei" },
+    { label: "DEVICE IP", value: realData?.device_ip, key: "device_ip" },
+    { label: "MQTTS STATUS", value: realData?.mqtt_status ? "Server Connected" : "No Connection", key: "mqtt_status" },
+    { label: "SFTP STATUS", value: realData?.sftp_status ? "Server Connected" : "No Connection", key: "sftp_status" },
+  ]
+};
 
-export const networkProtocol = [
-  { label: "IND10000570-2", value: "SERVER 01", showIcon: true },
-  { label: "IND10000570-2", value: "SERVER 02", showIcon: true },
-  { label: "IND10000570-2", value: "SERVER 03", showIcon: true },
-];
+export const networkProtocol = (realData) => {
+  return [
+    { label: realData?.device_uuid, value: realData?.data?.server_1, key: "server_1", showIcon: true },
+    { label: realData?.device_uuid, value: realData?.data?.server_2, key: "server_2", showIcon: true },
+    { label: realData?.device_uuid, value: realData?.data?.server_3, key: "server_3", showIcon: true },
+  ]
+};
 
-export const mqttProtocol = [
-  { label: "BROKER-IP", value: "Things Board", showIcon: true },
-  { label: "BROKER-PORT", value: "1883", showIcon: true },
-  { label: "BROKER-USER", value: "OFP-INDKOM", showIcon: true },
-  { label: "BROKER-PASS", value: "IND10", showIcon: true },
-  { label: "DATA-INTERVAL", value: "60 SEC", showIcon: true },
-  { label: "MQTTS_TOPIC", value: "v1/devices/me/telemetry", showIcon: true },
-];
+export const mqttProtocol = (realData) => {
+  const mainData = realData?.length > 0 ? realData[0] : {}
+  return [
+    { label: "BROKER-IP", value: mainData?.broker_ip, key: "broker_ip", showIcon: true },
+    { label: "BROKER-PORT", value: mainData?.broker_port, key: "broker_port", showIcon: true },
+    { label: "BROKER-USER", value: mainData?.broker_user, key: "broker_user", showIcon: true },
+    { label: "BROKER-PASS", value: mainData?.broker_pass, key: "broker_pass", showIcon: true },
+    { label: "DATA-INTERVAL", value: mainData?.data_interval, key: "data_interval", showIcon: true },
+    { label: "MQTTS_TOPIC", value: mainData?.mqtt_topic, key: "mqtt_topic", showIcon: true },
+  ]
+};
 
-export const sftp = [
-  {
-    label: "SERVER_IP",
-    value: "ap-southeast-1.sftpcloud.io",
-    showIcon: true,
-  },
-  { label: "SERVER_PORT", value: "22", showIcon: true },
-  { label: "USERNAME", value: "ofp-msm", showIcon: true },
-  { label: "PASSWORD", value: "root123456", showIcon: true },
-  { label: "DATA INTERVAL", value: "900", showIcon: true },
-];
+export const sftp = (realData) => {
+  return [
+    {
+      label: "SERVER_IP",
+      value: realData?.server_ip,
+      showIcon: true,
+      key: "server_ip",
+    },
+    {
+      label: "SERVER_PORT", value: realData?.server_port, showIcon: true, key: "server_port",
+    },
+    {
+      label: "USERNAME", value: realData?.username, showIcon: true, key: "username",
+    },
+    {
+      label: "PASSWORD", value: realData?.password, showIcon: true, key: "password",
+    },
+    {
+      label: "DATA INTERVAL", value: realData?.data_interval, showIcon: true, key: "data_interval",
+    },
+  ]
+};
 
 export const dashboardData = [
   {

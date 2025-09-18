@@ -2,7 +2,7 @@ import { Grid, Box, Typography } from "@mui/material";
 import { PhaseCards, StackedBarChart } from "../../components";
 import { energyCards } from "../../constant";
 
-const EnergyCards = () => {
+const EnergyCards = ({ energyData }) => {
   const data = [
     { name: "1", A: 0.5, B: 0.5 },
     { name: "2", A: 0.2, B: 0.8 },
@@ -18,18 +18,20 @@ const EnergyCards = () => {
   return (
     <>
       <Grid container spacing={2} sx={{ width: "100%" }}>
-        {energyCards?.map((item, index) => (
-          <PhaseCards
-            color={item?.color}
-            heading={item?.heading}
-            icon={item?.icon}
-            time={item?.time}
-            value={item?.value}
-            valueColor={item?.valueColor}
-            headingSize={item?.headingSize}
-            key={index}
-          />
-        ))}
+        {energyData &&
+          Array.isArray(energyData) &&
+          energyData?.map((item, index) => (
+            <PhaseCards
+              color={item?.color}
+              heading={item?.heading}
+              icon={item?.icon}
+              time={item?.time}
+              value={item?.value}
+              valueColor={item?.valueColor}
+              headingSize={item?.headingSize}
+              key={index}
+            />
+          ))}
         {[...Array(3)].map((_, i) => (
           <Grid item size={{ xs: 12, md: 6, lg: 4 }} key={i}>
             <Box p={2} border="0.64px solid #000000" borderRadius={"7px"}>

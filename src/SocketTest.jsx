@@ -16,7 +16,7 @@ export function useSocket() {
 
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io("http://51.20.89.127:5000", {
+      socketRef.current = io(import.meta.env.VITE_SOCKET_URL, {
         transports: ["websocket"],
       });
       socketInstance = socketRef.current;

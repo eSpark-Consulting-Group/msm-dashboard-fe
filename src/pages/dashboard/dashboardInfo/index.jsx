@@ -96,8 +96,6 @@ const DashboardInfo = () => {
     sftpError,
   ]);
 
-  console.log(sftpData);
-
   const tabs = [
     {
       label: "INFO",

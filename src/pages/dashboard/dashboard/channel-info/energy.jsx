@@ -48,7 +48,7 @@ const Energy = ({ data }) => {
     } else {
       setRealTimeData(energyData);
     }
-  }, [isSocketHasEnergy]);
+  }, [isSocketHasEnergy, data]);
 
   useEffect(() => {
     if (isSocketHasEnergy) {

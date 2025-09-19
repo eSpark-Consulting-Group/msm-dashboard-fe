@@ -2,17 +2,21 @@ import {
   Box,
   Button,
   Card,
+  CircularProgress,
   Grid,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import DynamicModal from "../modal";
-import NtpEditModal from "../ntp-edit-modal";
-import EditMqtt from "../edit-mqtt-modal";
-import SftpEditModal from "../sftp-edit-modal";
-import { editPencil } from "../../assets";
+import OutlinedInput from "../input";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
+import { useUpdateNtpMutation } from "../../services/ntp";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useUpdateMqttMutation } from "../../services/mqtt";
+import { useUpdateSftpMutation } from "../../services/sftp";
 
 const InfoCard = ({
   title,
@@ -28,34 +32,53 @@ const InfoCard = ({
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [editModal, setEditModal] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [editMqtt, setEditMqtt] = useState(false);
-  const [editSFTP, setEditSFTP] = useState(false);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editId, setEditId] = useState("");
+  const [newVal, setNewVal] = useState("");
+  const [ntpData, { isLoading }] = useUpdateNtpMutation();
+  const [mqtt, { isLoading: mqttLoading }] = useUpdateMqttMutation();
+  const [sftp, { isLoading: sftpLoading }] = useUpdateSftpMutation();
 
   const handleEdit = (info) => {
+    setEditId(info?.key);
+    setIsEditMode(true);
+    setNewVal(info?.value);
+  };
+
+  const handleFinalEdit = async () => {
+    const objToSend = { [editId]: newVal };
+
+    const apiMap = {
+      NTP: ntpData,
+      MQTTS: mqtt,
+      SFTP: sftp,
+    };
+
+    const apiFn = apiMap[type];
+    if (!apiFn) return;
+
+    let formData;
     if (type === "NTP") {
-      const obj = info.reduce((acc, item) => {
-        acc[item.key] = item.value;
-        return acc;
-      }, {});
-      setEditData({ ...obj, id });
-      setEditModal(true);
-    } else if (type === "MQTTS") {
-      const obj = info.reduce((acc, item) => {
-        acc[item.key] = item.value;
-        return acc;
-      }, {});
-      setEditData({ ...obj, id });
-      setEditMqtt(true);
-    } else if (type === "SFTP") {
-      const obj = info.reduce((acc, item) => {
-        acc[item.key] = item.value;
-        return acc;
-      }, {});
-      setEditData({ ...obj, id });
-      setEditSFTP(true);
+      formData = { data: objToSend };
+    } else {
+      formData = objToSend;
     }
+
+    const res = await apiFn({
+      formData,
+      id,
+    });
+
+    if (res?.data) {
+      toast.success(`${type} Configuration updated successfully`);
+    }
+    if (res?.error) {
+      console.error(res?.error);
+    }
+    setEditId("");
+    setIsEditMode(false);
+    setNewVal("");
   };
 
   return (
@@ -147,21 +170,60 @@ const InfoCard = ({
                     justifyContent={isSmallScreen ? "center" : "flex-start"}
                     sx={{ wordBreak: "break-word" }}
                   >
-                    <Typography
-                      variant="body1"
-                      fontWeight="medium"
-                      fontSize="20px"
-                    >
-                      {item.value}
-                    </Typography>
-                    {item.showIcon && role !== "user" && (
-                      <img
-                        src={editPencil}
-                        alt="icon"
-                        style={{ width: 18, height: 18, cursor: "pointer" }}
-                        onClick={() => handleEdit(info)}
+                    {isEditMode && item?.key === editId ? (
+                      <OutlinedInput
+                        name={item?.key}
+                        value={newVal}
+                        onInputChange={(e) => setNewVal(e.target.value)}
+                        sx={{ width: "350px" }}
                       />
+                    ) : (
+                      <Typography
+                        variant="body1"
+                        fontWeight="medium"
+                        fontSize="20px"
+                      >
+                        {item.value}
+                      </Typography>
                     )}
+                    {item.showIcon &&
+                      role !== "user" &&
+                      editId !== item?.key && (
+                        <img
+                          src="/src/assets/icons/Ruler Cross Pen.svg"
+                          alt="icon"
+                          style={{ width: 18, height: 18, cursor: "pointer" }}
+                          // onClick={() => handleEdit(info)}
+                          onClick={() => handleEdit(item)}
+                        />
+                      )}
+                    {item.showIcon &&
+                      role !== "user" &&
+                      editId === item?.key &&
+                      !isLoading &&
+                      !mqttLoading &&
+                      !sftpLoading && (
+                        <Box sx={{ display: "flex", columnGap: "10px" }}>
+                          <CloseIcon
+                            sx={{ color: "red", cursor: "pointer" }}
+                            onClick={() => {
+                              setEditId("");
+                              setIsEditMode(false);
+                              setNewValue("");
+                            }}
+                          />
+                          <CheckIcon
+                            sx={{ color: "green", cursor: "pointer" }}
+                            onClick={handleFinalEdit}
+                          />
+                        </Box>
+                      )}
+                    {item.showIcon &&
+                      role !== "user" &&
+                      editId === item?.key &&
+                      (isLoading || mqttLoading || sftpLoading) && (
+                        <CircularProgress size={15} />
+                      )}
                   </Box>
                 </Box>
               </Card>
@@ -217,51 +279,6 @@ const InfoCard = ({
           )}
         </Box>
       )}
-      <DynamicModal
-        open={editModal}
-        handleClose={() => {
-          setEditModal(false);
-          setEditData({});
-        }}
-      >
-        <NtpEditModal
-          data={editData}
-          handleCancel={() => {
-            setEditModal(false);
-            setEditData({});
-          }}
-        />
-      </DynamicModal>
-      <DynamicModal
-        open={editMqtt}
-        handleClose={() => {
-          setEditMqtt(false);
-          setEditData({});
-        }}
-      >
-        <EditMqtt
-          data={editData}
-          handleCancel={() => {
-            setEditMqtt(false);
-            setEditData({});
-          }}
-        />
-      </DynamicModal>
-      <DynamicModal
-        open={editSFTP}
-        handleClose={() => {
-          setEditSFTP(false);
-          setEditData({});
-        }}
-      >
-        <SftpEditModal
-          data={editData}
-          handleCancel={() => {
-            setEditSFTP(false);
-            setEditData({});
-          }}
-        />
-      </DynamicModal>
     </>
   );
 };

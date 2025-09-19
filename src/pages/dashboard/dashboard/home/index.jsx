@@ -24,6 +24,7 @@ const DashboardHome = () => {
     isLoading: telemetryLoading,
     isError: isTelemetryError,
     error: telemetryError,
+    isSuccess,
   } = useGetTelemetryByDeviceQuery({
     device_uuid: id,
     page: 1,
@@ -86,65 +87,69 @@ const DashboardHome = () => {
       <DynamicTabs2
         tabs={[
           { id: 1, label: "Dashboard 1", content: <></> },
-          {
-            id: 2,
-            label: "Dashboard 2",
-            content: <></>,
-          },
+          { id: 2, label: "Dashboard 2", content: <></> },
         ]}
         linksTab={true}
         defaultActive={activeTab}
         onTabChange={handleTabChange}
       />
-      <Box
-        sx={{
-          background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",
-          borderTopLeftRadius: "8px",
-          borderTopRightRadius: "8px",
-          p: "6px 20px",
-          display: "flex",
-          columnGap: "10px",
-          width: "fit-content",
-          ml: "30px",
-          border: "1px solid #0077FF",
-          mt: "30px",
-          cursor: "pointer",
-        }}
-        onClick={handleInfo}
-      >
-        <img src={info} alt="Icon" />
-        <Typography
-          sx={{ fontSize: "21px", fontWeight: "500", color: "#ffffff" }}
-        >
-          Info
+
+      {telemetryLoading ? (
+        <LinearProgress />
+      ) : telemetryData?.data?.length === 0 ? (
+        <Typography sx={{ fontSize: "25.19px", fontWeight: "700" }}>
+          No Channels Found
         </Typography>
-      </Box>
-      <Paper sx={{ padding: "30px" }}>
-        {telemetryLoading ? (
-          <LinearProgress />
-        ) : (
+      ) : (
+        <>
+          {/* Info Button */}
           <Box
             sx={{
+              background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",
+              borderTopLeftRadius: "8px",
+              borderTopRightRadius: "8px",
+              p: "6px 20px",
               display: "flex",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              rowGap: "35px",
-              columnGap: "40px",
+              columnGap: "10px",
+              width: "fit-content",
+              ml: "30px",
+              border: "1px solid #0077FF",
+              mt: "30px",
+              cursor: "pointer",
             }}
+            onClick={handleInfo}
           >
-            {channelsData &&
-              Array.isArray(channelsData) &&
-              channelsData?.map((item, index) => (
+            <img src={info} alt="Icon" />
+            <Typography
+              sx={{ fontSize: "21px", fontWeight: "500", color: "#ffffff" }}
+            >
+              Info
+            </Typography>
+          </Box>
+
+          {/* Channels */}
+          <Paper sx={{ padding: "30px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                rowGap: "35px",
+                columnGap: "40px",
+              }}
+            >
+              {channelsData?.map((item) => (
                 <Channels
+                  key={item?.id}
                   variant={item?.variant}
                   name={item?.name}
-                  key={index}
                   onClick={() => handleNavigate(item?.id)}
                 />
               ))}
-          </Box>
-        )}
-      </Paper>
+            </Box>
+          </Paper>
+        </>
+      )}
     </Box>
   );
 };

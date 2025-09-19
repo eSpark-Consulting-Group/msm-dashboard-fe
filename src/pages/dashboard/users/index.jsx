@@ -92,7 +92,7 @@ const Users = () => {
 
   const handleUserClick = (item) => {
     console.log(item);
-    navigate(`/users/${item?.id}?name=${item?.userName?.name}`);
+    navigate(`/users/${item?._id}?name=${item?.userName?.name}`);
   };
 
   return (

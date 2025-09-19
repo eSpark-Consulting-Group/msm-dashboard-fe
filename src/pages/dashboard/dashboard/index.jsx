@@ -55,9 +55,8 @@ const Dashboard = () => {
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-          title: item?.name || "-",
-          customer_name: item?.customer_name || "-",
-          group: item?.groups || "-",
+          deviceId: item?.device_data?.device_uuid || "-",
+          group: item?.groups_data?.name || "-",
         };
       }) || []
     );
@@ -83,9 +82,9 @@ const Dashboard = () => {
       <SubHeader
         heading="Dashboard"
         subHeading="Here’s what’s happening with your device and users"
-        // buttonText="Add New Dashoard"
-        // onClick={() => setOpen(true)}
-        // variant="contained"
+      // buttonText="Add New Dashoard"
+      // onClick={() => setOpen(true)}
+      // variant="contained"
       />
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
         <SearchBar value={search} onChange={(val) => setSearch(val)} />

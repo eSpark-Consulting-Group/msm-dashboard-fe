@@ -83,9 +83,9 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
     enableReinitialize: true,
     onSubmit: (values) => {
       const bodyToSend = {
+        device_uuid: values?.data?.device_data?.device_uuid,
         name: values?.deviceName,
-        label: values?.label,
-        groups: values?.groups,
+        group_id: values?.groups,
       }
       editDevice({ id: data?.device_data?.device_uuid, formData: bodyToSend })
         .then((res) => {
@@ -166,7 +166,7 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
         error={formik.touched.group && Boolean(formik.errors.group)}
         helperText={formik.touched.group && formik.errors.group}
       /> */}
-      <OutlinedInput
+      {/* <OutlinedInput
         label={"Label"}
         placeholder={"Label"}
         sx={sharedInputStyles}
@@ -179,7 +179,7 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
           formik.touched.label && Boolean(formik.errors.label)
         }
         helperText={formik.touched.label && formik.errors.label}
-      />
+      /> */}
       <Dropdown
         name="groups"
         customLabel="Group"

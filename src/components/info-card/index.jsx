@@ -12,6 +12,7 @@ import DynamicModal from "../modal";
 import NtpEditModal from "../ntp-edit-modal";
 import EditMqtt from "../edit-mqtt-modal";
 import SftpEditModal from "../sftp-edit-modal";
+import { editPencil } from "../../assets";
 
 const InfoCard = ({
   title,
@@ -155,7 +156,7 @@ const InfoCard = ({
                     </Typography>
                     {item.showIcon && role !== "user" && (
                       <img
-                        src="/src/assets/icons/Ruler Cross Pen.svg"
+                        src={editPencil}
                         alt="icon"
                         style={{ width: 18, height: 18, cursor: "pointer" }}
                         onClick={() => handleEdit(info)}

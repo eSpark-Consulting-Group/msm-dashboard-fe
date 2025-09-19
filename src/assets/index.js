@@ -28,6 +28,7 @@ import flashUnfilled from "./icons/flash_unfilled.svg";
 import flashFilled from "./icons/flash_filled.svg";
 import blueShadow from "./icons/blue_shadow.svg";
 import home from "./icons/home.svg";
+import editPencil from "./icons/Ruler Cross Pen.svg";
 import file from "./icons/file.svg";
 import nextArrow from "./icons/next_arrow.svg";
 import backIcon from "./icons/Back.svg";
@@ -80,6 +81,7 @@ export {
   flashUnfilled,
   blueShadow,
   home,
+  editPencil,
   file,
   nextArrow,
   backIcon,

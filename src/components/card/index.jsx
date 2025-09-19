@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import NavigateHeader from "../navigate-header";
 import DynamicTabs2 from "../dynamic-tabs2";
 import { useState } from "react";
+import { home } from "../../assets";
 
 const DashboardWrapper = ({ loading, children }) => {
   const { id } = useParams();
@@ -85,7 +86,7 @@ const DashboardWrapper = ({ loading, children }) => {
               onClick={handleHome}
             >
               <img
-                src="/src/assets/icons/home.svg"
+                src={home}
                 alt="Home"
                 width={18}
                 height={18}

@@ -7,6 +7,11 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { useState } from "react";
+import DynamicModal from "../modal";
+import NtpEditModal from "../ntp-edit-modal";
+import EditMqtt from "../edit-mqtt-modal";
+import SftpEditModal from "../sftp-edit-modal";
 
 const InfoCard = ({
   title,
@@ -16,9 +21,41 @@ const InfoCard = ({
   date,
   time,
   role,
+  id,
+  buttonLoading,
+  type,
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [editModal, setEditModal] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [editMqtt, setEditMqtt] = useState(false);
+  const [editSFTP, setEditSFTP] = useState(false);
+
+  const handleEdit = (info) => {
+    if (type === "NTP") {
+      const obj = info.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {});
+      setEditData({ ...obj, id });
+      setEditModal(true);
+    } else if (type === "MQTTS") {
+      const obj = info.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {});
+      setEditData({ ...obj, id });
+      setEditMqtt(true);
+    } else if (type === "SFTP") {
+      const obj = info.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {});
+      setEditData({ ...obj, id });
+      setEditSFTP(true);
+    }
+  };
 
   return (
     <>
@@ -46,6 +83,7 @@ const InfoCard = ({
             variant="outlined"
             size="small"
             onClick={onButtonClick}
+            loading={buttonLoading}
           >
             {buttonLabel}
           </Button>
@@ -119,7 +157,8 @@ const InfoCard = ({
                       <img
                         src="/src/assets/icons/Ruler Cross Pen.svg"
                         alt="icon"
-                        style={{ width: 18, height: 18 }}
+                        style={{ width: 18, height: 18, cursor: "pointer" }}
+                        onClick={() => handleEdit(info)}
                       />
                     )}
                   </Box>
@@ -177,6 +216,51 @@ const InfoCard = ({
           )}
         </Box>
       )}
+      <DynamicModal
+        open={editModal}
+        handleClose={() => {
+          setEditModal(false);
+          setEditData({});
+        }}
+      >
+        <NtpEditModal
+          data={editData}
+          handleCancel={() => {
+            setEditModal(false);
+            setEditData({});
+          }}
+        />
+      </DynamicModal>
+      <DynamicModal
+        open={editMqtt}
+        handleClose={() => {
+          setEditMqtt(false);
+          setEditData({});
+        }}
+      >
+        <EditMqtt
+          data={editData}
+          handleCancel={() => {
+            setEditMqtt(false);
+            setEditData({});
+          }}
+        />
+      </DynamicModal>
+      <DynamicModal
+        open={editSFTP}
+        handleClose={() => {
+          setEditSFTP(false);
+          setEditData({});
+        }}
+      >
+        <SftpEditModal
+          data={editData}
+          handleCancel={() => {
+            setEditSFTP(false);
+            setEditData({});
+          }}
+        />
+      </DynamicModal>
     </>
   );
 };

@@ -27,6 +27,6 @@ export const api = createApi({
     prepareHeaders,
   }),
   baseQuery: customBaseQuery,
-  tagTypes: ["auth"],
+  tagTypes: ["auth", "mqtt"],
   endpoints: () => ({}),
 });

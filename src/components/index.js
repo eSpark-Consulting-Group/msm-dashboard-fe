@@ -23,6 +23,9 @@ import ProfileModal from "./profile-modal";
 import LogoutModal from "./logout-modal";
 import DynamicTabs2 from "./dynamic-tabs2";
 import EnergyCards from "./channel-energy-cards";
+import NtpEditModal from "./ntp-edit-modal";
+import EditMqtt from "./edit-mqtt-modal";
+import SftpEditModal from "./sftp-edit-modal";
 
 export {
   Button,
@@ -50,4 +53,7 @@ export {
   LogoutModal,
   DynamicTabs2,
   EnergyCards,
+  NtpEditModal,
+  EditMqtt,
+  SftpEditModal,
 };

@@ -1,10 +1,10 @@
-import { Box, Button, Card, Typography } from "@mui/material";
+import { Box, Button, Card, LinearProgress, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import NavigateHeader from "../navigate-header";
 import DynamicTabs2 from "../dynamic-tabs2";
 import { useState } from "react";
 
-const DashboardWrapper = ({ children }) => {
+const DashboardWrapper = ({ loading, children }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
@@ -95,7 +95,7 @@ const DashboardWrapper = ({ children }) => {
             </Button>
           </Box>
 
-          {children}
+          {loading ? <LinearProgress sx={{ width: "100%" }} /> : children}
         </Card>
       </Box>
     </>

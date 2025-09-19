@@ -26,6 +26,12 @@ export const telemetryApi = api.injectEndpoints({
         method: "GET",
       }),
     }),
+    getLastTenTelemetry: builder.query({
+      query: ({ device_uuid, channel_id }) => ({
+        url: `/telemetry/device/${device_uuid}/channel/${channel_id}/latestten`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -34,4 +40,5 @@ export const {
   useGetTelemetryByDeviceAndChannelQuery,
   useGetTelemetryByIdQuery,
   useGetTelemetryByDeviceQuery,
+  useGetLastTenTelemetryQuery,
 } = telemetryApi;

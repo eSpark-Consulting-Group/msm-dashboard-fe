@@ -113,7 +113,7 @@ export const mapPowerData = (telemetryData) => {
       // color: "green",
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.apparent_power}KVA`,
+      value: `${item?.avg_apparent_power}KVA`,
       // valueColor: "green",
       headingSize: "18.05px",
     };
@@ -124,7 +124,7 @@ export const mapPowerData = (telemetryData) => {
     return {
       icon: energy,
       heading,
-      value: `${item?.active_power}KW`,
+      value: `${item?.avg_active_power}KW`,
       // valueColor: "green",
       headingSize: "19.5px",
     };
@@ -137,7 +137,7 @@ export const mapPowerData = (telemetryData) => {
       // color: "green",
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.reactive_power}KVAR`,
+      value: `${item?.avg_reactive_power}KVAR`,
       // valueColor: "green",
       headingSize: "19.5px",
     };
@@ -150,7 +150,7 @@ export const mapPowerData = (telemetryData) => {
       // color: "green",
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.power_factor}%`,
+      value: `${item?.avg_power_factor}%`,
       // valueColor: "green",
       headingSize: "19.5px",
     };
@@ -172,7 +172,7 @@ export const mapEnergyData = (telemetryData) => {
     return {
       icon: energy,
       heading,
-      value: `${item?.active_energy_positive}KWh`,
+      value: `${item?.avg_active_energy_positive}KWh`,
       // valueColor: "green",
       headingSize: "19.5px",
     };
@@ -183,7 +183,7 @@ export const mapEnergyData = (telemetryData) => {
     return {
       icon: energy,
       heading,
-      value: `${item?.active_energy_negative}KWh`,
+      value: `${item?.avg_active_energy_negative}KWh`,
       // valueColor: "green",
       headingSize: "19.5px",
     };

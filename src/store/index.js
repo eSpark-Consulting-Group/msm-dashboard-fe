@@ -4,6 +4,7 @@ import users from "./slices/users";
 import groups from "./slices/group";
 import dashboards from "./slices/dashboard";
 import devices from "./slices/devices";
+import telemetry from "./slices/telemetry";
 import { authApi } from "../services/auth";
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
     groups,
     dashboards,
     devices,
+    telemetry,
     [authApi.reducerPath]: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

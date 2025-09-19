@@ -107,7 +107,7 @@ const AddUserModal = ({ onCancel }) => {
       <OutlinedInput
         label={label}
         placeholder={placeholder}
-        type={type || "text"}
+        type={name === "password" ? "password" : type || "text"}
         name={name}
         value={formik.values[name]}
         onInputChange={formik.handleChange}

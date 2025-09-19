@@ -26,12 +26,44 @@ export const deviceApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Devices"],
     }),
+
     rebootDevice: builder.mutation({
       query: (id) => ({
         url: `/devices/${id}/reboot`,
         method: "POST",
       }),
     }),
+
+    updateDevice: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/devices/user/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        "Devices",
+        { type: "Devices", id },
+      ],
+    }),
+
+    deleteDevice: builder.mutation({
+      query: (id) => ({
+        url: `/devices/user/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [
+        "Devices",
+        { type: "Devices", id },
+      ],
+    }),
+
+    deleteUserDevice: builder.mutation({
+      query: ({ id, userId }) => ({
+        url: `/devices/user/${id}/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Users"],
+    })
   }),
 });
 
@@ -39,5 +71,8 @@ export const {
   useGetAllDevicesQuery,
   useGetDeviceByIdQuery,
   useAddDeviceMutation,
+  useUpdateDeviceMutation,
+  useDeleteDeviceMutation,
+  useDeleteUserDeviceMutation,
   useRebootDeviceMutation,
 } = deviceApi;

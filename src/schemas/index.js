@@ -89,12 +89,6 @@ export const editUserSchema = Yup.object().shape({
   name: Yup.string()
     .required("User name is required")
     .min(2, "Name must be at least 2 characters"),
-  password: Yup.string()
-    .required("Password is required")
-    .min(12, "Password must be at least 12 characters long.")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .matches(/[0-9]/, "Password must contain at least one number."),
   phone_number: Yup.string()
     .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
   customer_name: Yup.string()
@@ -106,35 +100,38 @@ export const deviceSchema = Yup.object().shape({
     .required("Name is required")
     .min(2, "Name must be at least 2 characters"),
 
-  label: Yup.string()
-    .required("Label is required"),
+  device_uuid: Yup.string()
+    .required("Device Id is required"),
 
-  deviceProfile: Yup.string()
-    .required("Device profile is required"),
+  // label: Yup.string()
+  //   .required("Label is required"),
 
-  description: Yup.string()
-    .required("Description is required"),
+  // deviceProfile: Yup.string()
+  //   .required("Device profile is required"),
 
-  owners: Yup.string()
-    .required("Owner is required"),
+  // description: Yup.string()
+  //   .required("Description is required"),
+
+  // owners: Yup.string()
+  //   .required("Owner is required"),
 
   groups: Yup.string()
     .required("Please select a group"),
 
-  accessToken: Yup.string()
-    .required("Access token is required"),
+  // accessToken: Yup.string()
+  //   .required("Access token is required"),
 
-  x509: Yup.string()
-    .required("X.509 certificate is required"),
+  // x509: Yup.string()
+  //   .required("X.509 certificate is required"),
 
-  clientId: Yup.string()
-    .required("MQTTS Client ID is required"),
+  // clientId: Yup.string()
+  //   .required("MQTTS Client ID is required"),
 
-  user: Yup.string()
-    .required("MQTTS User is required"),
+  // user: Yup.string()
+  //   .required("MQTTS User is required"),
 
-  userName: Yup.string()
-    .required("MQTTS Username is required"),
+  // userName: Yup.string()
+  //   .required("MQTTS Username is required"),
 
   password: Yup.string()
     .required("MQTTS Password is required"),

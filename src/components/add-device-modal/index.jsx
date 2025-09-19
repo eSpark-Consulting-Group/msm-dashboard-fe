@@ -29,22 +29,23 @@ const sharedInputStyles = {
 
 const fields = [
   { name: "name", label: "Name", placeholder: "Enter Name" },
-  { name: "label", label: "Label", placeholder: "Description" },
-  {
-    name: "deviceProfile",
-    label: "Device Profile",
-    placeholder: "Device profile",
-  },
-  { name: "description", label: "Description", placeholder: "Description" },
-  { name: "owners", label: "Owner", placeholder: "Owners" },
+  // { name: "label", label: "Label", placeholder: "Description" },
+  // {
+  //   name: "deviceProfile",
+  //   label: "Device Profile",
+  //   placeholder: "Device profile",
+  // },
+  // { name: "description", label: "Description", placeholder: "Description" },
+  // { name: "owners", label: "Owner", placeholder: "Owners" },
 ];
 
 const credentials = [
-  { name: "accessToken", label: "Access Token", placeholder: "Owners" },
-  { name: "x509", label: "X.509", placeholder: "Certificate in PEM format" },
-  { name: "clientId", label: "MQTTS Client ID", placeholder: "ID" },
-  { name: "user", label: "MQTTS User", placeholder: "User" },
-  { name: "userName", label: "MQTTS User Name", placeholder: "User Name" },
+  // { name: "accessToken", label: "Access Token", placeholder: "Owners" },
+  // { name: "x509", label: "X.509", placeholder: "Certificate in PEM format" },
+  // { name: "clientId", label: "MQTTS Client ID", placeholder: "ID" },
+  // { name: "user", label: "MQTTS User", placeholder: "User" },
+  // { name: "userName", label: "MQTTS User Name", placeholder: "User Name" },
+  { name: "device_uuid", label: "Device ID", placeholder: "device Id" },
   {
     name: "password",
     label: "MQTTS Password",
@@ -83,32 +84,34 @@ const AddDeviceModal = ({ onCancel }) => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      label: "",
-      deviceProfile: "",
-      description: "",
-      owners: "",
+      // label: "",
+      // deviceProfile: "",
+      // description: "",
+      // owners: "",
       groups: "",
+      device_uuid: "",
       password: "",
-      user: "",
-      userName: "",
-      clientId: "",
-      x509: "",
-      accessToken: "",
+      // user: "",
+      // userName: "",
+      // clientId: "",
+      // x509: "",
+      // accessToken: "",
     },
     validationSchema: deviceSchema,
     onSubmit: (values) => {
       const bodyToSend = {
         name: values?.name,
-        label: values?.label,
-        groups: values?.groups,
-        device_profile: values?.deviceProfile,
-        description: values?.description,
-        owner: values?.owners,
-        access_token: values?.accessToken,
-        z509: values?.x509,
-        mqtt_client_id: values?.clientId,
-        mqtt_user: values?.user,
-        mqtt_username: values?.userName,
+        device_uuid: values?.device_uuid,
+        // label: values?.label,
+        group_id: values?.groups,
+        // device_profile: values?.deviceProfile,
+        // description: values?.description,
+        // owner: values?.owners,
+        // access_token: values?.accessToken,
+        // z509: values?.x509,
+        // mqtt_client_id: values?.clientId,
+        // mqtt_user: values?.user,
+        // mqtt_username: values?.userName,
         mqtt_password: values?.password
       }
       addDevice(bodyToSend)
@@ -118,7 +121,7 @@ const AddDeviceModal = ({ onCancel }) => {
             return;
           }
           if (res?.data) {
-            toast.success(res?.data?.message || "Device addedd successfully");
+            toast.success(res?.data?.message || "Device added successfully");
             onCancel()
           }
         })
@@ -198,6 +201,7 @@ const AddDeviceModal = ({ onCancel }) => {
           display: "flex",
           justifyContent: "flex-end",
           columnGap: "20px",
+          width: "100%",
         }}
       >
         <Box sx={{ width: "203.70px", height: "50px" }}>

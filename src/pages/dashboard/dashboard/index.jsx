@@ -10,7 +10,7 @@ import {
 } from "../../../components";
 import { columns } from "../../../columns/dashboard";
 import { useNavigate } from "react-router-dom";
-import { useGetAllDevicesQuery } from "../../../services/devices";
+import { useDeleteDeviceMutation, useGetAllDevicesQuery } from "../../../services/devices";
 import { useSelector } from "react-redux";
 
 const Dashboard = () => {
@@ -30,19 +30,19 @@ const Dashboard = () => {
 
   const { devices: dashboardData } = useSelector((state) => state.devices);
 
-  // const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDashboardMutation();
+  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDeviceMutation();
 
   const handleDeleteDashboard = () => {
-    // deleteDashboard(deviceDelete?._id).then(res => {
-    //   if (res?.error) {
-    //     toast.error(res?.error?.data?.message || "Failed to delete user");
-    //     return;
-    //   }
-    //   if (res?.data) {
-    //     toast.success(res?.data?.message || "User deleted successfully")
-    //     setDeviceDelete(false);
-    //   }
-    // })
+    deleteDashboard(deviceDelete?.device_data?.device_uuid).then(res => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to delete device");
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device deleted successfully")
+        setDeviceDelete(false);
+      }
+    })
   };
 
   useEffect(() => {
@@ -55,9 +55,8 @@ const Dashboard = () => {
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-          title: item?.name || "-",
-          customer_name: item?.customer_name || "-",
-          group: item?.groups || "-",
+          deviceId: item?.device_data?.device_uuid || "-",
+          group: item?.groups_data?.name || "-",
         };
       }) || []
     );
@@ -83,9 +82,9 @@ const Dashboard = () => {
       <SubHeader
         heading="Dashboard"
         subHeading="Here’s what’s happening with your device and users"
-        // buttonText="Add New Dashoard"
-        // onClick={() => setOpen(true)}
-        // variant="contained"
+      // buttonText="Add New Dashoard"
+      // onClick={() => setOpen(true)}
+      // variant="contained"
       />
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
         <SearchBar value={search} onChange={(val) => setSearch(val)} />
@@ -115,7 +114,7 @@ const Dashboard = () => {
         heading={"Delete"}
         handleAccept={handleDeleteDashboard}
         handleCancel={() => setDeviceDelete(false)}
-        // loading={deleteLoading}
+        loading={deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?

@@ -109,11 +109,18 @@ const DynamicTabs = ({ tabs, onTabChange }) => {
       </Box>
 
       <Box marginY={2} paddingX={2} sx={{ width: "100%" }}>
-        {typeof selectedTab.component === "function" ? (
-          <selectedTab.component {...(selectedTab.props || {})} />
-        ) : (
-          selectedTab.component
-        )}
+        {tabs.map((tab, index) => (
+          <Box
+            key={tab.id || index}
+            sx={{ display: selectedIndex === index ? "block" : "none" }}
+          >
+            {typeof tab.component === "function" ? (
+              <tab.component {...(tab.props || {})} />
+            ) : (
+              tab.component
+            )}
+          </Box>
+        ))}
       </Box>
     </>
   );

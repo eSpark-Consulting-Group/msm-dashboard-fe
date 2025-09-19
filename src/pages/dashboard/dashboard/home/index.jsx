@@ -1,4 +1,11 @@
-import { Box, CircularProgress, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  LinearProgress,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { info } from "../../../../assets";
 import { homeFlashCards } from "../../../../constant";
 import { NavigateHeader, Channels, DynamicTabs2 } from "../../../../components";
@@ -53,7 +60,6 @@ const DashboardHome = () => {
           unique.push(item);
         }
       }
-      console.log(telemetryData);
 
       const data = unique?.map((item) => ({
         id: item?.channel_id,
@@ -66,13 +72,13 @@ const DashboardHome = () => {
     }
   }, [telemetryData]);
 
-  if (telemetryLoading) {
-    return (
-      <Stack justifyContent="center" alignItems="center">
-        <CircularProgress />
-      </Stack>
-    );
-  }
+  // if (telemetryLoading) {
+  //   return (
+  //     <Stack justifyContent="center" alignItems="center">
+  //       <CircularProgress />
+  //     </Stack>
+  //   );
+  // }
 
   return (
     <Box>
@@ -114,26 +120,30 @@ const DashboardHome = () => {
         </Typography>
       </Box>
       <Paper sx={{ padding: "30px" }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            rowGap: "35px",
-            columnGap: "40px",
-          }}
-        >
-          {channelsData &&
-            Array.isArray(channelsData) &&
-            channelsData?.map((item, index) => (
-              <Channels
-                variant={item?.variant}
-                name={item?.name}
-                key={index}
-                onClick={() => handleNavigate(item?.id)}
-              />
-            ))}
-        </Box>
+        {telemetryLoading ? (
+          <LinearProgress />
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              rowGap: "35px",
+              columnGap: "40px",
+            }}
+          >
+            {channelsData &&
+              Array.isArray(channelsData) &&
+              channelsData?.map((item, index) => (
+                <Channels
+                  variant={item?.variant}
+                  name={item?.name}
+                  key={index}
+                  onClick={() => handleNavigate(item?.id)}
+                />
+              ))}
+          </Box>
+        )}
       </Paper>
     </Box>
   );

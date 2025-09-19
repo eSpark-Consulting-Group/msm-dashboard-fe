@@ -160,7 +160,7 @@ const telemetrySlice = createSlice({
   initialState,
   reducers: {
     addPowerData: (state, action) => {
-      const d = action.payload;
+      const d = action.payload?.data;
 
       const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
       if (phaseIndex === undefined) return;
@@ -185,7 +185,7 @@ const telemetrySlice = createSlice({
       ).fromNow()}`;
     },
     addEnergyData: (state, action) => {
-      const d = action.payload;
+      const d = action.payload?.data;
 
       const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
       if (phaseIndex === undefined) return;
@@ -195,8 +195,13 @@ const telemetrySlice = createSlice({
       state.energyData[phaseIndex].value = `${d.active_energy_positive}KWh`;
       state.energyData[3 + phaseIndex].value = `${d.active_energy_negative}KWh`;
     },
+    handleUnsubscribe: (state) => {
+      state.isSocketHasEnergy = false;
+      state.isSocketHasPower = false;
+    },
   },
 });
 
-export const { addPowerData, addEnergyData } = telemetrySlice.actions;
+export const { addPowerData, addEnergyData, handleUnsubscribe } =
+  telemetrySlice.actions;
 export default telemetrySlice.reducer;

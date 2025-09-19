@@ -117,13 +117,13 @@ const ChannelInfo = () => {
     );
   }
 
-  if (telemetryLoading || telemetryFetching) {
-    return (
-      <Box>
-        <LinearProgress />
-      </Box>
-    );
-  }
+  // if (telemetryLoading || telemetryFetching) {
+  //   return (
+  //     <Box>
+  //       <LinearProgress />
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box>
@@ -147,22 +147,26 @@ const ChannelInfo = () => {
         </Typography>
       </Box>
       <Paper sx={{ padding: { xs: "10px 0px", lg: "30px" } }}>
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <DynamicTabs tabs={tabs} />
-          <ChannelPagination
-            channelName={channelName}
-            handlePageBack={handlePageBack}
-            handlePageForward={handlePageForward}
-          />
-        </Box>
+        {telemetryLoading || telemetryFetching ? (
+          <LinearProgress />
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <DynamicTabs tabs={tabs} />
+            <ChannelPagination
+              channelName={channelName}
+              handlePageBack={handlePageBack}
+              handlePageForward={handlePageForward}
+            />
+          </Box>
+        )}
       </Paper>
     </Box>
   );

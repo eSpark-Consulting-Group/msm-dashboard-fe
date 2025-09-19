@@ -1,42 +1,59 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+// useSocket.js
+import { useEffect, useRef, useCallback } from "react";
 import { io } from "socket.io-client";
-import { addEnergyData, addPowerData } from "./store/slices/telemetry";
+import { useDispatch } from "react-redux";
+import {
+  addEnergyData,
+  addPowerData,
+  handleUnsubscribe,
+} from "./store/slices/telemetry";
 
-export default function SocketTest() {
+let socketInstance = null; // 🔑 global singleton socket
+
+export function useSocket() {
   const dispatch = useDispatch();
+  const socketRef = useRef(socketInstance);
+
   useEffect(() => {
-    const socket = io("http://51.20.89.127:5000", {
-      transports: ["websocket"],
-    });
+    if (!socketRef.current) {
+      socketRef.current = io("http://51.20.89.127:5000", {
+        transports: ["websocket"],
+      });
+      socketInstance = socketRef.current;
 
-    socket.on("connect", () => {
-      console.log("✅ Connected:", socket.id);
-      socket.emit("hello", { msg: "Hi from React FE!" });
-    });
+      socketRef.current.on("connect", () => {
+        console.log("✅ Connected:", socketRef.current.id);
+      });
 
-    socket.on("connect_error", (err) => {
-      console.error("❌ Connection Error:", err.message);
-    });
-
-    socket.on("disconnect", (reason) => {
-      console.warn("❌ Disconnected:", reason);
-    });
-
-    socket.on("telemetry", (data) => {
-      // console.log("📡 telemetry:", data?.data);
-      dispatch(addPowerData(data?.data));
-      dispatch(addEnergyData(data?.data));
-    });
-
-    socket.onAny((event, ...args) => {
-      // console.log("🌐 [ANY EVENT]", event, args);
-    });
+      // if you want global telemetry
+      // socketRef.current.on("telemetry", (data) => {
+      //   dispatch(addPowerData(data?.data));
+      //   dispatch(addEnergyData(data?.data));
+      // });
+    }
 
     return () => {
-      socket.disconnect();
+      // don't disconnect globally unless app fully unmounts
     };
+  }, [dispatch]);
+
+  // ✅ stable subscribe/unsubscribe with useCallback
+  const subscribeToTelemetry = useCallback(
+    (deviceId, channelId) => {
+      const eventName = `telemetry:${deviceId}:channel:${channelId}`;
+      socketRef.current?.on(eventName, (data) => {
+        dispatch(addPowerData(data));
+        dispatch(addEnergyData(data));
+      });
+    },
+    [dispatch]
+  );
+
+  const unsubscribeFromTelemetry = useCallback((deviceId, channelId) => {
+    const eventName = `telemetry:${deviceId}:channel:${channelId}`;
+    dispatch(handleUnsubscribe());
+    socketRef.current?.off(eventName);
   }, []);
 
-  return null;
+  return { subscribeToTelemetry, unsubscribeFromTelemetry };
 }

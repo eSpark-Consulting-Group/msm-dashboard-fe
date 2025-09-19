@@ -17,6 +17,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { useUpdateSftpMutation } from "../../services/sftp";
+import { pen } from "../../assets";
 
 const InfoCard = ({
   title,
@@ -190,7 +191,7 @@ const InfoCard = ({
                       role !== "user" &&
                       editId !== item?.key && (
                         <img
-                          src="/src/assets/icons/Ruler Cross Pen.svg"
+                          src={pen}
                           alt="icon"
                           style={{ width: 18, height: 18, cursor: "pointer" }}
                           // onClick={() => handleEdit(info)}

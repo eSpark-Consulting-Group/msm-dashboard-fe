@@ -28,7 +28,7 @@ import flashUnfilled from "./icons/flash_unfilled.svg";
 import flashFilled from "./icons/flash_filled.svg";
 import blueShadow from "./icons/blue_shadow.svg";
 import home from "./icons/home.svg";
-import editPencil from "./icons/Ruler Cross Pen.svg";
+// import editPencil from "./icons/Ruler Cross Pen.svg";
 import file from "./icons/file.svg";
 import nextArrow from "./icons/next_arrow.svg";
 import backIcon from "./icons/Back.svg";
@@ -45,6 +45,7 @@ import pencilWhite from "./icons/pencil-white.svg";
 import userAvatar from "./icons/userAvatar.svg";
 import uploadIcon2 from "./icons/uploadIcon.svg";
 import gtIcon from "./icons/gtIcon.svg";
+import pen from "./icons/pen.svg";
 
 import avatar from "./images/avatar.png";
 import loginFrame from "./images/login_image.png";
@@ -81,7 +82,7 @@ export {
   flashUnfilled,
   blueShadow,
   home,
-  editPencil,
+  // editPencil,
   file,
   nextArrow,
   backIcon,
@@ -99,4 +100,5 @@ export {
   userAvatar,
   uploadIcon2,
   gtIcon,
+  pen,
 };

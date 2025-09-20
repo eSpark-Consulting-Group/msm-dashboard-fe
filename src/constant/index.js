@@ -636,29 +636,82 @@ export const infoData = (realData) => {
     { label: "DEVICE ID", value: realData?.device_uuid, key: "device_uuid" },
     { label: "DEVICE IMEI", value: realData?.device_imei, key: "device_imei" },
     { label: "DEVICE IP", value: realData?.device_ip, key: "device_ip" },
-    { label: "MQTTS STATUS", value: realData?.mqtt_status ? "Server Connected" : "No Connection", key: "mqtt_status" },
-    { label: "SFTP STATUS", value: realData?.sftp_status ? "Server Connected" : "No Connection", key: "sftp_status" },
-  ]
+    {
+      label: "MQTTS STATUS",
+      value: realData?.mqtt_status ? "Server Connected" : "No Connection",
+      key: "mqtt_status",
+    },
+    {
+      label: "SFTP STATUS",
+      value: realData?.sftp_status ? "Server Connected" : "No Connection",
+      key: "sftp_status",
+    },
+  ];
 };
 
 export const networkProtocol = (realData) => {
   return [
-    { label: realData?.device_uuid, value: realData?.data?.server_1, key: "server_1", showIcon: true },
-    { label: realData?.device_uuid, value: realData?.data?.server_2, key: "server_2", showIcon: true },
-    { label: realData?.device_uuid, value: realData?.data?.server_3, key: "server_3", showIcon: true },
-  ]
+    {
+      label: realData?.device_uuid,
+      value: realData?.data?.server_1,
+      key: "server_1",
+      showIcon: true,
+    },
+    {
+      label: realData?.device_uuid,
+      value: realData?.data?.server_2,
+      key: "server_2",
+      showIcon: true,
+    },
+    {
+      label: realData?.device_uuid,
+      value: realData?.data?.server_3,
+      key: "server_3",
+      showIcon: true,
+    },
+  ];
 };
 
 export const mqttProtocol = (realData) => {
-  const mainData = realData?.length > 0 ? realData[0] : {}
+  const mainData = realData?.length > 0 ? realData[0] : {};
   return [
-    { label: "BROKER-IP", value: mainData?.broker_ip, key: "broker_ip", showIcon: true },
-    { label: "BROKER-PORT", value: mainData?.broker_port, key: "broker_port", showIcon: true },
-    { label: "BROKER-USER", value: mainData?.broker_user, key: "broker_user", showIcon: true },
-    { label: "BROKER-PASS", value: mainData?.broker_pass, key: "broker_pass", showIcon: true },
-    { label: "DATA-INTERVAL", value: mainData?.data_interval, key: "data_interval", showIcon: true },
-    { label: "MQTTS_TOPIC", value: mainData?.mqtt_topic, key: "mqtt_topic", showIcon: true },
-  ]
+    {
+      label: "BROKER-IP",
+      value: mainData?.broker_ip,
+      key: "broker_ip",
+      showIcon: true,
+    },
+    {
+      label: "BROKER-PORT",
+      value: mainData?.broker_port,
+      key: "broker_port",
+      showIcon: true,
+    },
+    {
+      label: "BROKER-USER",
+      value: mainData?.broker_user,
+      key: "broker_user",
+      showIcon: true,
+    },
+    {
+      label: "BROKER-PASS",
+      value: mainData?.broker_pass,
+      key: "broker_pass",
+      showIcon: true,
+    },
+    {
+      label: "DATA-INTERVAL (Seconds)",
+      value: mainData?.data_interval,
+      key: "data_interval",
+      showIcon: true,
+    },
+    {
+      label: "MQTTS_TOPIC",
+      value: mainData?.mqtt_topic,
+      key: "mqtt_topic",
+      showIcon: true,
+    },
+  ];
 };
 
 export const sftp = (realData) => {
@@ -670,18 +723,30 @@ export const sftp = (realData) => {
       key: "server_ip",
     },
     {
-      label: "SERVER_PORT", value: realData?.server_port, showIcon: true, key: "server_port",
+      label: "SERVER_PORT",
+      value: realData?.server_port,
+      showIcon: true,
+      key: "server_port",
     },
     {
-      label: "USERNAME", value: realData?.username, showIcon: true, key: "username",
+      label: "USERNAME",
+      value: realData?.username,
+      showIcon: true,
+      key: "username",
     },
     {
-      label: "PASSWORD", value: realData?.password, showIcon: true, key: "password",
+      label: "PASSWORD",
+      value: realData?.password,
+      showIcon: true,
+      key: "password",
     },
     {
-      label: "DATA INTERVAL", value: realData?.data_interval, showIcon: true, key: "data_interval",
+      label: "DATA INTERVAL (Seconds)",
+      value: realData?.data_interval,
+      showIcon: true,
+      key: "data_interval",
     },
-  ]
+  ];
 };
 
 export const dashboardData = [

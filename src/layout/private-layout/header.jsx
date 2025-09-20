@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Avatar, Box, Menu, MenuItem } from "@mui/material";
-import { DynamicModal, LogoutModal, ProfileModal, SearchBar } from "../../components";
+import {
+  DynamicModal,
+  LogoutModal,
+  ProfileModal,
+  SearchBar,
+} from "../../components";
 import { messageIcon, bellIcon, avatar, hamburger } from "../../assets";
 
 const Notifications = ({ icon, count }) => {
@@ -91,14 +96,16 @@ const Header = ({ open, setOpen }) => {
             gap: "16px",
           }}
         >
-          <Notifications icon={messageIcon} count={2} />
-          <Notifications icon={bellIcon} count={6} />
+          {/* <Notifications icon={messageIcon} count={2} />
+          <Notifications icon={bellIcon} count={6} /> */}
           <Avatar
             sx={{ cursor: "pointer" }}
             alt="User"
             onClick={handleAvatarClick}
-            src={`${import.meta.env.VITE_IMAGE_BASE_URL}${user?.profile_image}` || null}
-
+            src={
+              `${import.meta.env.VITE_IMAGE_BASE_URL}${user?.profile_image}` ||
+              null
+            }
           />
         </Box>
       </Box>
@@ -117,10 +124,14 @@ const Header = ({ open, setOpen }) => {
         }}
       >
         <MenuItem onClick={handleProfile}>Profile</MenuItem>
-        <MenuItem onClick={() => {
-          setLogoutModal(true)
-          handleMenuClose()
-        }}>Logout</MenuItem>
+        <MenuItem
+          onClick={() => {
+            setLogoutModal(true);
+            handleMenuClose();
+          }}
+        >
+          Logout
+        </MenuItem>
       </Menu>
 
       <DynamicModal
@@ -136,8 +147,7 @@ const Header = ({ open, setOpen }) => {
       <LogoutModal
         open={logoutModal}
         handleClose={() => setLogoutModal(false)}
-      >
-      </LogoutModal>
+      ></LogoutModal>
     </>
   );
 };

@@ -120,9 +120,10 @@ export const mapPowerData = (telemetryData) => {
   });
   const active_power = data?.map((item) => {
     let phase = item?.phase?.toUpperCase() || "";
-    let heading = `PHASE ${phase}-Apparent Power`;
+    let heading = `PHASE ${phase}-Aactive Power`;
     return {
       icon: energy,
+      time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       heading,
       value: `${item?.avg_active_power}KW`,
       // valueColor: "green",
@@ -172,6 +173,7 @@ export const mapEnergyData = (telemetryData) => {
     return {
       icon: energy,
       heading,
+      time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_active_energy_positive}KWh`,
       // valueColor: "green",
       headingSize: "19.5px",
@@ -183,6 +185,7 @@ export const mapEnergyData = (telemetryData) => {
     return {
       icon: energy,
       heading,
+      time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_active_energy_negative}KWh`,
       // valueColor: "green",
       headingSize: "19.5px",

@@ -30,7 +30,7 @@ const Login = () => {
           >
             <Logo bigLogo />
           </Box>
-          
+
           <Typography
             variant="h5"
             mt={2}
@@ -42,7 +42,7 @@ const Login = () => {
           >
             Welcome Back! 👋
           </Typography>
-          <Typography
+          {/* <Typography
             variant="body2"
             color="#a1a1aa"
             mt={1}
@@ -51,7 +51,7 @@ const Login = () => {
           >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
             gravida, metus nec malesuada pulvinar.
-          </Typography>
+          </Typography> */}
           <LoginForm />
         </Box>
       </Grid>

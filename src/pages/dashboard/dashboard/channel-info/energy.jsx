@@ -64,8 +64,8 @@ const Energy = ({ data }) => {
           .filter((d) => d.phase === phase)
           .map((item, idx) => ({
             name: (idx + 1).toString(),
-            A: item?.avg_active_energy_positive ?? 0,
-            B: item?.avg_active_energy_negative ?? 0,
+            A: item?.active_energy_positive ?? 0,
+            B: item?.active_energy_negative ?? 0,
           }));
       };
 

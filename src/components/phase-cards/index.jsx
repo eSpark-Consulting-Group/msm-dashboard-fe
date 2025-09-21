@@ -9,6 +9,7 @@ const PhaseCards = ({
   value,
   valueColor,
   headingSize,
+  phase,
 }) => {
   const showBackdrop = color === "red" || color === "green";
 
@@ -73,7 +74,13 @@ const PhaseCards = ({
             }}
           />
         </Box>
-        <Typography sx={{ fontSize: headingSize, fontWeight: "700" }}>
+        <Typography
+          sx={{
+            fontSize: headingSize,
+            fontWeight: "700",
+            color: phase === "A" ? "red" : phase === "B" ? "#9d9d14" : "blue",
+          }}
+        >
           {heading}
         </Typography>
       </Box>
@@ -96,7 +103,17 @@ const PhaseCards = ({
             color: getValueColor(),
           }}
         >
-          {value}
+          {(() => {
+            // extract number and unit
+            const match = String(value).match(/^([\d.]+)([a-zA-Z%]+)?$/);
+
+            if (!match) return value; // fallback if doesn't match
+
+            const num = parseFloat(match[1]);
+            const unit = match[2] || "";
+
+            return `${num.toFixed(2)}${unit}`;
+          })()}
         </Typography>
       </Box>
     </Grid>

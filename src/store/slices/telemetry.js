@@ -12,6 +12,7 @@ const initialState = {
       value: "0KVA",
       // valueColor: "green",
       headingSize: "18.05px",
+      phase: "A",
     },
     {
       icon: flashBlack,
@@ -21,6 +22,7 @@ const initialState = {
       value: "0KVA",
       // valueColor: "green",
       headingSize: "18.05px",
+      phase: "B",
     },
     {
       icon: flashBlack,
@@ -30,6 +32,7 @@ const initialState = {
       value: "0KVA",
       // valueColor: "green",
       headingSize: "18.05px",
+      phase: "C",
     },
     {
       icon: energy,
@@ -37,6 +40,7 @@ const initialState = {
       value: "0KW",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "A",
     },
     {
       icon: energy,
@@ -44,6 +48,7 @@ const initialState = {
       value: "0KW",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "B",
     },
     {
       icon: energy,
@@ -51,6 +56,7 @@ const initialState = {
       value: "0KW",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "C",
     },
     {
       icon: flashBlack,
@@ -60,6 +66,7 @@ const initialState = {
       value: "0KVAR",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "A",
     },
     {
       icon: flashBlack,
@@ -69,6 +76,7 @@ const initialState = {
       value: "0KVAR",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "B",
     },
     {
       icon: flashBlack,
@@ -78,6 +86,7 @@ const initialState = {
       value: "0KVAR",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "C",
     },
     {
       icon: flashBlack,
@@ -87,6 +96,7 @@ const initialState = {
       value: "0%",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "A",
     },
     {
       icon: flashBlack,
@@ -96,6 +106,7 @@ const initialState = {
       value: "0%",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "B",
     },
     {
       icon: flashBlack,
@@ -105,6 +116,7 @@ const initialState = {
       value: "0%",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "C",
     },
   ],
   energyData: [
@@ -114,6 +126,7 @@ const initialState = {
       value: "0KWh",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "A",
     },
     {
       icon: energy,
@@ -121,6 +134,7 @@ const initialState = {
       value: "0KWh",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "B",
     },
     {
       icon: energy,
@@ -128,6 +142,7 @@ const initialState = {
       value: "0KWh",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "C",
     },
     {
       icon: energy,
@@ -135,6 +150,7 @@ const initialState = {
       value: "0KWh",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "A",
     },
     {
       icon: energy,
@@ -142,6 +158,7 @@ const initialState = {
       value: "0KWh",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "B",
     },
     {
       icon: energy,
@@ -149,6 +166,7 @@ const initialState = {
       value: "0KWh",
       // valueColor: "green",
       headingSize: "19.5px",
+      phase: "C",
     },
   ],
   isSocketHasPower: false,

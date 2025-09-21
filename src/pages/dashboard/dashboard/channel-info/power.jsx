@@ -54,6 +54,7 @@ const Power = ({ data }) => {
               value={item?.value}
               valueColor={item?.valueColor}
               headingSize={item?.headingSize}
+              phase={item?.phase}
             />
           ))}
         </Grid>
@@ -74,6 +75,7 @@ const Power = ({ data }) => {
               value={item?.value}
               valueColor={item?.valueColor}
               headingSize={item?.headingSize}
+              phase={item?.phase}
             />
           ))}
         </Grid>

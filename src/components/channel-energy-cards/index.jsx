@@ -43,6 +43,7 @@ const EnergyCards = ({
               valueColor={item?.valueColor}
               headingSize={item?.headingSize}
               key={index}
+              phase={item?.phase}
             />
           ))}
         {[...Array(3)].map((_, i) => (
@@ -62,7 +63,7 @@ const EnergyCards = ({
                   <Typography
                     sx={{
                       fontSize: "12px",
-                      color: "#1C1C1E",
+                      color: i === 0 ? "red" : i === 1 ? "#9d9d14" : "blue",
                       fontWeight: "600",
                     }}
                   >

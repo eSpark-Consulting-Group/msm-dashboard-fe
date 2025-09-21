@@ -18,6 +18,7 @@ const General = ({ data }) => {
             valueColor={item?.valueColor}
             headingSize={item?.headingSize}
             key={index}
+            phase={item?.phase}
           />
         ))}
     </Grid>

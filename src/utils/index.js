@@ -60,6 +60,7 @@ export const mapGeneralData = (telemetryData) => {
       value: `${item?.rms_voltage}V`,
       // valueColor: "red",
       headingSize: "20px",
+      phase,
     };
   });
   const line_voltage = data?.map((item) => {
@@ -73,6 +74,7 @@ export const mapGeneralData = (telemetryData) => {
       value: `${item?.line_voltage}V`,
       // valueColor: "red",
       headingSize: "20px",
+      phase,
     };
   });
   const rms_current = data?.map((item) => {
@@ -84,6 +86,7 @@ export const mapGeneralData = (telemetryData) => {
       value: `${item?.rms_voltage}A`,
       // valueColor: "green",
       headingSize: "20px",
+      phase,
     };
   });
   const line_frequency = data?.map((item) => {
@@ -97,6 +100,7 @@ export const mapGeneralData = (telemetryData) => {
       value: `${item?.frequency}Hz`,
       // valueColor: "red",
       headingSize: "17px",
+      phase,
     };
   });
   return [...rme_voltage, ...line_voltage, ...rms_current, ...line_frequency];
@@ -116,6 +120,7 @@ export const mapPowerData = (telemetryData) => {
       value: `${item?.avg_apparent_power}KVA`,
       // valueColor: "green",
       headingSize: "18.05px",
+      phase,
     };
   });
   const active_power = data?.map((item) => {
@@ -128,6 +133,7 @@ export const mapPowerData = (telemetryData) => {
       value: `${item?.avg_active_power}KW`,
       // valueColor: "green",
       headingSize: "19.5px",
+      phase,
     };
   });
   const reactive_power = data?.map((item) => {
@@ -141,6 +147,7 @@ export const mapPowerData = (telemetryData) => {
       value: `${item?.avg_reactive_power}KVAR`,
       // valueColor: "green",
       headingSize: "19.5px",
+      phase,
     };
   });
   const power_factor = data?.map((item) => {
@@ -154,6 +161,7 @@ export const mapPowerData = (telemetryData) => {
       value: `${item?.avg_power_factor}%`,
       // valueColor: "green",
       headingSize: "19.5px",
+      phase,
     };
   });
   return [
@@ -177,6 +185,7 @@ export const mapEnergyData = (telemetryData) => {
       value: `${item?.avg_active_energy_positive}KWh`,
       // valueColor: "green",
       headingSize: "19.5px",
+      phase,
     };
   });
   const active_energyNeg = data?.map((item) => {
@@ -189,6 +198,7 @@ export const mapEnergyData = (telemetryData) => {
       value: `${item?.avg_active_energy_negative}KWh`,
       // valueColor: "green",
       headingSize: "19.5px",
+      phase,
     };
   });
   return [...active_energyPos, ...active_energyNeg];

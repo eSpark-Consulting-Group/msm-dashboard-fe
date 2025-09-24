@@ -1,6 +1,7 @@
 import { Grid, Box, Typography, Skeleton } from "@mui/material";
-import { PhaseCards, StackedBarChart } from "../../components";
+import { PhaseCards } from "../../components";
 import { energyCards } from "../../constant";
+import ActiveEnergyChart from "../stack-chart/index";
 
 const EnergyCards = ({
   energyData,
@@ -8,18 +9,19 @@ const EnergyCards = ({
   phaseBgraph,
   phaseCgraph,
   isLoading,
+  phaseTime,
 }) => {
-  const data = [
-    { name: "1", A: 0.5, B: 0.5 },
-    { name: "2", A: 0.2, B: 0.8 },
-    { name: "3", A: 0.4, B: 0.6 },
-    { name: "4", A: 0.85, B: 0.15 },
-    { name: "5", A: 0.8, B: 0.2 },
-    { name: "6", A: 0.7, B: 0.3 },
-    { name: "7", A: 0.1, B: 0.9 },
-    { name: "8", A: 0.4, B: 0.6 },
-    { name: "9", A: 0.5, B: 0.5 },
-    { name: "10", A: 0.97, B: 0.03 },
+  const sampleData = [
+    { name: "01", activePlus: 10, activeMinus: 5 },
+    { name: "02", activePlus: 12, activeMinus: 7 },
+    { name: "03", activePlus: 15, activeMinus: 9 },
+    { name: "04", activePlus: 20, activeMinus: 12 },
+    { name: "05", activePlus: 18, activeMinus: 14 },
+    { name: "06", activePlus: 25, activeMinus: 16 },
+    { name: "07", activePlus: 30, activeMinus: 20 },
+    { name: "08", activePlus: 28, activeMinus: 18 },
+    { name: "09", activePlus: 35, activeMinus: 22 },
+    { name: "10", activePlus: 32, activeMinus: 25 },
   ];
 
   const getPhaseGraph = (i) => {
@@ -51,7 +53,7 @@ const EnergyCards = ({
             {isLoading ? (
               <Skeleton variant="rectangular" sx={{ height: "200px" }} />
             ) : (
-              <Box p={2} border="0.64px solid #000000" borderRadius={"7px"}>
+              <Box border="0.64px solid #000000" borderRadius={"7px"}>
                 <Box
                   sx={{
                     display: "flex",
@@ -59,6 +61,7 @@ const EnergyCards = ({
                     alignItems: "center",
                     mb: "15px",
                   }}
+                  p={2}
                 >
                   <Typography
                     sx={{
@@ -77,8 +80,12 @@ const EnergyCards = ({
                       fontWeight: "600",
                     }}
                   >
-                    Real time last
-                    <br /> min
+                    {i === 0
+                      ? phaseTime?.a
+                      : i === 1
+                      ? phaseTime?.b
+                      : phaseTime?.c}
+                    <br />
                   </Typography>
                 </Box>
                 <Box
@@ -88,7 +95,7 @@ const EnergyCards = ({
                     alignItems: "flex-start",
                   }}
                 >
-                  <Box
+                  {/* <Box
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -108,13 +115,14 @@ const EnergyCards = ({
                         </Typography>
                       )
                     )}
-                  </Box>
-                  <StackedBarChart
+                  </Box> */}
+                  {/* <StackedBarChart
                     data={getPhaseGraph(i)}
                     barKeys={["A", "B"]}
                     colors={["#5CC8BE", "#357AF6"]}
                     height={200}
-                  />
+                  /> */}
+                  <ActiveEnergyChart data={getPhaseGraph(i)} />
                 </Box>
               </Box>
             )}

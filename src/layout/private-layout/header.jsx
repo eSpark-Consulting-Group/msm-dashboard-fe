@@ -66,7 +66,7 @@ const Header = ({ open, setOpen }) => {
           background: "#fff",
           padding: "12px 24px",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: { xs: "space-between", md: "flex-end" },
           alignItems: "center",
           gap: 5,
         }}
@@ -80,19 +80,19 @@ const Header = ({ open, setOpen }) => {
         >
           <img src={hamburger} alt="menu" />
         </Box>
-        <Box
+        {/* <Box
           sx={{
             display: { xs: "none", md: "block" },
             width: { xs: "220px", md: "300px", lg: "665px" },
           }}
         >
           <SearchBar value={query} onChange={(e) => setQuery(e.target.value)} />
-        </Box>
+        </Box> */}
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: "flex-end",
+            alignItems: "flex-end",
             gap: "16px",
           }}
         >

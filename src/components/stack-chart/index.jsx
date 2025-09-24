@@ -1,48 +1,69 @@
-import { Box, Typography } from "@mui/material";
 import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+import { Box, Typography } from "@mui/material";
 
-const StackedBarChart = ({ data, barKeys, colors, height = 145 }) => {
+const ActiveEnergyChart = ({ data, title }) => {
   return (
-    <Box sx={{ width: "100%", position: "relative" }}>
-      <Box display="flex" justifyContent={"space-between"} sx={{ flex: 1 }}>
-        {data.map((item, index) => (
-          <Box
-            key={index}
-            display="flex"
-            flexDirection="column"
-            height={height}
-            width={"13px"}
-          >
-            {barKeys?.map((key, i) => (
-              <React.Fragment key={i}>
-                <Box
-                  key={i}
-                  sx={{
-                    flexGrow: item[key],
-                    backgroundColor: colors[i],
-                    width: "100%",
-                    marginBottom: i < barKeys.length - 1 ? "2px" : 0,
-                  }}
-                />
-              </React.Fragment>
-            ))}
-            <Typography sx={{ fontSize: "7px", mt: "0px" }} align="center">
-              {item.name}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-      <Box
-        sx={{
-          width: "100%",
-          position: "absolute",
-          height: "1px",
-          backgroundColor: "#C7C7CC",
-          bottom: "10px",
-        }}
-      ></Box>
+    <Box
+      sx={{
+        width: "100%",
+        height: 250,
+        // bgcolor: "white",
+        // borderRadius: 2,
+        // p: 2,
+        // boxShadow: 1,
+      }}
+    >
+      {/* Header */}
+
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={data}
+          margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 10 }}
+            padding={{ left: 0, right: 0 }}
+          />
+          <YAxis tick={{ fontSize: 10 }} />
+          <Tooltip />
+          <Legend wrapperStyle={{ fontSize: "11px" }} />
+
+          {/* Active Energy (+) */}
+          <Line
+            type="monotone"
+            dataKey="activePlus"
+            stroke="#e63946"
+            strokeWidth={2}
+            dot={false}
+            name="Active Energy (+)"
+          />
+
+          {/* Active Energy (-) */}
+          <Line
+            type="monotone"
+            dataKey="activeMinus"
+            stroke="#457b9d"
+            strokeWidth={2}
+            dot={false}
+            name="Active Energy (-)"
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </Box>
   );
 };
 
-export default StackedBarChart;
+export default ActiveEnergyChart;

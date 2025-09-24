@@ -10,7 +10,7 @@ import Channels from "./channels";
 import NavigateHeader from "./navigate-header";
 import DynamicTabs from "./tabs";
 import PhaseCards from "./phase-cards";
-import StackedBarChart from "./stack-chart";
+// import StackedBarChart from "./stack-chart";
 import ChannelPagination from "./channel-pagination";
 import DynamicModal from "./modal";
 import EditDeviceModal from "./edit-device-modal";
@@ -40,7 +40,7 @@ export {
   NavigateHeader,
   DynamicTabs,
   PhaseCards,
-  StackedBarChart,
+  // StackedBarChart,
   ChannelPagination,
   DynamicModal,
   EditDeviceModal,

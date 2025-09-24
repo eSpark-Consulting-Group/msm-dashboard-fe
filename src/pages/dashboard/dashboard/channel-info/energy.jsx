@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetLastTenTelemetryQuery } from "../../../../services/telemetry";
 import { useSocket } from "../../../../SocketTest";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 const Energy = ({ data }) => {
   const { energyData, isSocketHasEnergy } = useSelector(
@@ -17,6 +20,12 @@ const Energy = ({ data }) => {
   const [phaseAGraph, setPhaseAGraph] = useState([]);
   const [phaseBGraph, setPhaseBGraph] = useState([]);
   const [phaseCGraph, setPhaseCGraph] = useState([]);
+  const [phaseTimes, setPhaseTimes] = useState({
+    a: null,
+    b: null,
+    c: null,
+  });
+
   const channelNum = Number(currentChannel);
 
   useEffect(() => {
@@ -60,13 +69,24 @@ const Energy = ({ data }) => {
     if (graphData) {
       const data = graphData?.data;
       const buildPhaseData = (phase) => {
-        return data
-          .filter((d) => d.phase === phase)
-          .map((item, idx) => ({
-            name: (idx + 1).toString(),
-            A: item?.active_energy_positive ?? 0,
-            B: item?.active_energy_negative ?? 0,
+        const filtered = data.filter((d) => d.phase === phase);
+
+        if (filtered.length > 0) {
+          // take the latest time (last entry for example)
+          const latestTime = filtered[filtered.length - 1]?.timestamp ?? null;
+
+          // update state for this phase
+          setPhaseTimes((prev) => ({
+            ...prev,
+            [phase]: `Real Time ${dayjs(latestTime).fromNow()}`,
           }));
+        }
+
+        return filtered.map((item, idx) => ({
+          name: (idx + 1).toString(),
+          activePlus: item?.active_energy_positive ?? 0,
+          activeMinus: item?.active_energy_negative ?? 0,
+        }));
       };
 
       const phaseAData = buildPhaseData("a");
@@ -89,6 +109,7 @@ const Energy = ({ data }) => {
           phaseBgraph={phaseBGraph}
           phaseCgraph={phaseCGraph}
           isLoading={graphLoading}
+          phaseTime={phaseTimes}
         />
       ),
     },
@@ -102,6 +123,7 @@ const Energy = ({ data }) => {
           phaseBgraph={phaseBGraph}
           phaseCgraph={phaseCGraph}
           isLoading={graphLoading}
+          phaseTime={phaseTimes}
         />
       ),
     },

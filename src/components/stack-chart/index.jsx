@@ -49,10 +49,12 @@ const ActiveEnergyChart = ({ data, title }) => {
             strokeWidth={2}
             dot={false}
             name="Active Energy (+)"
+            isAnimationActive={false}
           />
 
           {/* Active Energy (-) */}
           <Line
+            isAnimationActive={false}
             type="monotone"
             dataKey="activeMinus"
             stroke="#457b9d"

@@ -25,6 +25,14 @@ const Energy = ({ data }) => {
     b: null,
     c: null,
   });
+  const [phaseTimesRT, setPhaseTimesRT] = useState({
+    a: null,
+    b: null,
+    c: null,
+  });
+  const [phaseAGraphRT, setPhaseAGraphRt] = useState([]);
+  const [phaseBGraphRT, setPhaseBGraphRt] = useState([]);
+  const [phaseCGraphRT, setPhaseCGraphRt] = useState([]);
 
   const channelNum = Number(currentChannel);
 
@@ -60,12 +68,6 @@ const Energy = ({ data }) => {
   }, [isSocketHasEnergy, data]);
 
   useEffect(() => {
-    if (isSocketHasEnergy) {
-      setRealTimeData(energyData);
-    }
-  }, [energyData, isSocketHasEnergy]);
-
-  useEffect(() => {
     if (graphData) {
       const data = graphData?.data;
       const buildPhaseData = (phase) => {
@@ -95,8 +97,95 @@ const Energy = ({ data }) => {
       setPhaseAGraph(phaseAData);
       setPhaseBGraph(phaseBData);
       setPhaseCGraph(phaseCData);
+      setPhaseAGraphRt(phaseAData);
+      setPhaseBGraphRt(phaseBData);
+      setPhaseCGraphRt(phaseCData);
     }
   }, [graphData]);
+
+  useEffect(() => {
+    if (isSocketHasEnergy) {
+      setRealTimeData(energyData);
+    }
+
+    const parseNumber = (val) => {
+      if (!val) return 0;
+      // Extract digits (with optional decimal) from string
+      const num = parseFloat(val.replace(/[^0-9.-]+/g, ""));
+      return isNaN(num) ? 0 : num;
+    };
+
+    if (isSocketHasEnergy && energyData?.length > 0) {
+      energyData.forEach((socketItem) => {
+        const phase = socketItem?.phase?.toLowerCase();
+        if (!phase) return;
+
+        const numericValue = parseNumber(socketItem?.value);
+        const heading = socketItem?.heading || "";
+
+        const updateGraph = (setGraph, phase) => {
+          setGraph((prev) => {
+            let updated = [...prev];
+
+            // If no points yet, always create a new one
+            if (updated.length === 0) {
+              updated.push({
+                name: "1",
+                activePlus: heading.includes("(+)") ? numericValue : 0,
+                activeMinus: heading.includes("(-)") ? numericValue : 0,
+              });
+            } else {
+              let last = { ...updated[updated.length - 1] };
+
+              // ✅ Check only against last point → skip duplicate
+              if (
+                (heading.includes("(+)") && last.activePlus === numericValue) ||
+                (heading.includes("(-)") && last.activeMinus === numericValue)
+              ) {
+                return prev; // no changes
+              }
+
+              // If last point still has an empty slot → update it
+              if (last.activePlus === 0 && heading.includes("(+)")) {
+                last.activePlus = numericValue;
+                updated[updated.length - 1] = last;
+              } else if (last.activeMinus === 0 && heading.includes("(-)")) {
+                last.activeMinus = numericValue;
+                updated[updated.length - 1] = last;
+              } else {
+                // Otherwise → start a new point
+                const newPoint = {
+                  name: `${updated.length + 1}`,
+                  activePlus: heading.includes("(+)") ? numericValue : 0,
+                  activeMinus: heading.includes("(-)") ? numericValue : 0,
+                };
+                updated.push(newPoint);
+              }
+            }
+
+            // Keep max 10 points
+            if (updated.length > 10) {
+              updated = updated.slice(1);
+              updated = updated.map((point, index) => ({
+                ...point,
+                name: `${index + 1}`,
+              }));
+            }
+
+            return updated;
+          });
+        };
+
+        if (phase === "a") updateGraph(setPhaseAGraphRt, "a");
+        if (phase === "b") updateGraph(setPhaseBGraphRt, "b");
+        if (phase === "c") updateGraph(setPhaseCGraphRt, "c");
+        setPhaseTimesRT((prev) => ({
+          ...prev,
+          [phase]: `Real Time ${dayjs().fromNow()}`,
+        }));
+      });
+    }
+  }, [energyData, isSocketHasEnergy]);
 
   const tabs = [
     {
@@ -105,11 +194,11 @@ const Energy = ({ data }) => {
       content: (
         <EnergyCards
           energyData={realTimeData}
-          phaseAgraph={phaseAGraph}
-          phaseBgraph={phaseBGraph}
-          phaseCgraph={phaseCGraph}
+          phaseAgraph={phaseAGraphRT}
+          phaseBgraph={phaseBGraphRT}
+          phaseCgraph={phaseCGraphRT}
           isLoading={graphLoading}
-          phaseTime={phaseTimes}
+          phaseTime={isSocketHasEnergy ? phaseTimesRT : phaseTimes}
         />
       ),
     },

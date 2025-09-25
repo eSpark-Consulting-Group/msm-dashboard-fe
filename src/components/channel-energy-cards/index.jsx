@@ -11,19 +11,6 @@ const EnergyCards = ({
   isLoading,
   phaseTime,
 }) => {
-  const sampleData = [
-    { name: "01", activePlus: 10, activeMinus: 5 },
-    { name: "02", activePlus: 12, activeMinus: 7 },
-    { name: "03", activePlus: 15, activeMinus: 9 },
-    { name: "04", activePlus: 20, activeMinus: 12 },
-    { name: "05", activePlus: 18, activeMinus: 14 },
-    { name: "06", activePlus: 25, activeMinus: 16 },
-    { name: "07", activePlus: 30, activeMinus: 20 },
-    { name: "08", activePlus: 28, activeMinus: 18 },
-    { name: "09", activePlus: 35, activeMinus: 22 },
-    { name: "10", activePlus: 32, activeMinus: 25 },
-  ];
-
   const getPhaseGraph = (i) => {
     if (i === 0) return phaseAgraph;
     if (i === 1) return phaseBgraph;

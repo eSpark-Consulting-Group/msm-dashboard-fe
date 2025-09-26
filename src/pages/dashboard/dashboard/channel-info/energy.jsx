@@ -20,29 +20,30 @@ const Energy = ({ data }) => {
   const [phaseAGraph, setPhaseAGraph] = useState([]);
   const [phaseBGraph, setPhaseBGraph] = useState([]);
   const [phaseCGraph, setPhaseCGraph] = useState([]);
-  const [phaseTimes, setPhaseTimes] = useState({
-    a: null,
-    b: null,
-    c: null,
-  });
+  const [phaseTimes, setPhaseTimes] = useState({ a: null, b: null, c: null });
   const [phaseTimesRT, setPhaseTimesRT] = useState({
     a: null,
     b: null,
     c: null,
   });
+
   const [phaseAGraphRT, setPhaseAGraphRt] = useState([]);
   const [phaseBGraphRT, setPhaseBGraphRt] = useState([]);
   const [phaseCGraphRT, setPhaseCGraphRt] = useState([]);
+
+  // ✅ NEW: for reactive energy
+  const [phaseAGraphReactive, setPhaseAGraphReactive] = useState([]);
+  const [phaseBGraphReactive, setPhaseBGraphReactive] = useState([]);
+  const [phaseCGraphReactive, setPhaseCGraphReactive] = useState([]);
+  const [phaseAGraphReactiveRT, setPhaseAGraphReactiveRt] = useState([]);
+  const [phaseBGraphReactiveRT, setPhaseBGraphReactiveRt] = useState([]);
+  const [phaseCGraphReactiveRT, setPhaseCGraphReactiveRt] = useState([]);
 
   const channelNum = Number(currentChannel);
 
   useEffect(() => {
     if (!id || !channelNum) return;
-
-    // Subscribe
     subscribeToTelemetry(id, channelNum);
-
-    // Cleanup runs when channelId or id changes too
     return () => {
       unsubscribeFromTelemetry(id, channelNum);
     };
@@ -74,10 +75,7 @@ const Energy = ({ data }) => {
         const filtered = data.filter((d) => d.phase === phase);
 
         if (filtered.length > 0) {
-          // take the latest time (last entry for example)
           const latestTime = filtered[filtered.length - 1]?.timestamp ?? null;
-
-          // update state for this phase
           setPhaseTimes((prev) => ({
             ...prev,
             [phase]: `Real Time ${dayjs(latestTime).fromNow()}`,
@@ -88,18 +86,29 @@ const Energy = ({ data }) => {
           name: (idx + 1).toString(),
           activePlus: item?.active_energy_positive ?? 0,
           activeMinus: item?.active_energy_negative ?? 0,
+          reactivePlus: item?.reactive_energy_positive ?? 0, // ✅ added
+          reactiveMinus: item?.reactive_energy_negative ?? 0, // ✅ added
         }));
       };
 
       const phaseAData = buildPhaseData("a");
       const phaseBData = buildPhaseData("b");
       const phaseCData = buildPhaseData("c");
+
       setPhaseAGraph(phaseAData);
       setPhaseBGraph(phaseBData);
       setPhaseCGraph(phaseCData);
       setPhaseAGraphRt(phaseAData);
       setPhaseBGraphRt(phaseBData);
       setPhaseCGraphRt(phaseCData);
+
+      // ✅ also store for reactive graphs separately (if needed)
+      setPhaseAGraphReactive(phaseAData);
+      setPhaseBGraphReactive(phaseBData);
+      setPhaseCGraphReactive(phaseCData);
+      setPhaseAGraphReactiveRt(phaseAData);
+      setPhaseBGraphReactiveRt(phaseBData);
+      setPhaseCGraphReactiveRt(phaseCData);
     }
   }, [graphData]);
 
@@ -110,7 +119,6 @@ const Energy = ({ data }) => {
 
     const parseNumber = (val) => {
       if (!val) return 0;
-      // Extract digits (with optional decimal) from string
       const num = parseFloat(val.replace(/[^0-9.-]+/g, ""));
       return isNaN(num) ? 0 : num;
     };
@@ -123,50 +131,114 @@ const Energy = ({ data }) => {
         const numericValue = parseNumber(socketItem?.value);
         const heading = socketItem?.heading || "";
 
-        const updateGraph = (setGraph, phase) => {
+        const updateGraph = (setGraph) => {
           setGraph((prev) => {
             let updated = [...prev];
 
-            // If no points yet, always create a new one
+            // Parse heading format: "PHASE A-Active Energy (+)"
+            const [phasePart, energyPart] = heading.split("-");
+            const energyType = energyPart?.toLowerCase().includes("reactive")
+              ? "reactive"
+              : "active";
+            const polarity = energyPart?.includes("(+)") ? "plus" : "minus";
+
             if (updated.length === 0) {
               updated.push({
                 name: "1",
-                activePlus: heading.includes("(+)") ? numericValue : 0,
-                activeMinus: heading.includes("(-)") ? numericValue : 0,
+                activePlus:
+                  energyType === "active" && polarity === "plus"
+                    ? numericValue
+                    : 0,
+                activeMinus:
+                  energyType === "active" && polarity === "minus"
+                    ? numericValue
+                    : 0,
+                reactivePlus:
+                  energyType === "reactive" && polarity === "plus"
+                    ? numericValue
+                    : 0,
+                reactiveMinus:
+                  energyType === "reactive" && polarity === "minus"
+                    ? numericValue
+                    : 0,
               });
             } else {
               let last = { ...updated[updated.length - 1] };
 
-              // ✅ Check only against last point → skip duplicate
+              // ✅ skip duplicates
               if (
-                (heading.includes("(+)") && last.activePlus === numericValue) ||
-                (heading.includes("(-)") && last.activeMinus === numericValue)
+                (energyType === "active" &&
+                  polarity === "plus" &&
+                  last.activePlus === numericValue) ||
+                (energyType === "active" &&
+                  polarity === "minus" &&
+                  last.activeMinus === numericValue) ||
+                (energyType === "reactive" &&
+                  polarity === "plus" &&
+                  last.reactivePlus === numericValue) ||
+                (energyType === "reactive" &&
+                  polarity === "minus" &&
+                  last.reactiveMinus === numericValue)
               ) {
-                return prev; // no changes
+                return prev;
               }
 
-              // If last point still has an empty slot → update it
-              if (last.activePlus === 0 && heading.includes("(+)")) {
+              // If last point has empty slot → fill it
+              if (
+                energyType === "active" &&
+                polarity === "plus" &&
+                last.activePlus === 0
+              ) {
                 last.activePlus = numericValue;
                 updated[updated.length - 1] = last;
-              } else if (last.activeMinus === 0 && heading.includes("(-)")) {
+              } else if (
+                energyType === "active" &&
+                polarity === "minus" &&
+                last.activeMinus === 0
+              ) {
                 last.activeMinus = numericValue;
                 updated[updated.length - 1] = last;
+              } else if (
+                energyType === "reactive" &&
+                polarity === "plus" &&
+                last.reactivePlus === 0
+              ) {
+                last.reactivePlus = numericValue;
+                updated[updated.length - 1] = last;
+              } else if (
+                energyType === "reactive" &&
+                polarity === "minus" &&
+                last.reactiveMinus === 0
+              ) {
+                last.reactiveMinus = numericValue;
+                updated[updated.length - 1] = last;
               } else {
-                // Otherwise → start a new point
-                const newPoint = {
+                // Otherwise → create new point
+                updated.push({
                   name: `${updated.length + 1}`,
-                  activePlus: heading.includes("(+)") ? numericValue : 0,
-                  activeMinus: heading.includes("(-)") ? numericValue : 0,
-                };
-                updated.push(newPoint);
+                  activePlus:
+                    energyType === "active" && polarity === "plus"
+                      ? numericValue
+                      : 0,
+                  activeMinus:
+                    energyType === "active" && polarity === "minus"
+                      ? numericValue
+                      : 0,
+                  reactivePlus:
+                    energyType === "reactive" && polarity === "plus"
+                      ? numericValue
+                      : 0,
+                  reactiveMinus:
+                    energyType === "reactive" && polarity === "minus"
+                      ? numericValue
+                      : 0,
+                });
               }
             }
 
             // Keep max 10 points
             if (updated.length > 10) {
-              updated = updated.slice(1);
-              updated = updated.map((point, index) => ({
+              updated = updated.slice(1).map((point, index) => ({
                 ...point,
                 name: `${index + 1}`,
               }));
@@ -176,9 +248,15 @@ const Energy = ({ data }) => {
           });
         };
 
-        if (phase === "a") updateGraph(setPhaseAGraphRt, "a");
-        if (phase === "b") updateGraph(setPhaseBGraphRt, "b");
-        if (phase === "c") updateGraph(setPhaseCGraphRt, "c");
+        if (phase === "a") updateGraph(setPhaseAGraphRt);
+        if (phase === "b") updateGraph(setPhaseBGraphRt);
+        if (phase === "c") updateGraph(setPhaseCGraphRt);
+
+        // ✅ also update reactive separately (if you want distinct state arrays)
+        if (phase === "a") updateGraph(setPhaseAGraphReactiveRt);
+        if (phase === "b") updateGraph(setPhaseBGraphReactiveRt);
+        if (phase === "c") updateGraph(setPhaseCGraphReactiveRt);
+
         setPhaseTimesRT((prev) => ({
           ...prev,
           [phase]: `Real Time ${dayjs().fromNow()}`,
@@ -197,6 +275,9 @@ const Energy = ({ data }) => {
           phaseAgraph={phaseAGraphRT}
           phaseBgraph={phaseBGraphRT}
           phaseCgraph={phaseCGraphRT}
+          reactivePhaseAgraph={phaseAGraphReactiveRT}
+          reactivePhaseBgraph={phaseBGraphReactiveRT}
+          reactivePhaseCgraph={phaseCGraphReactiveRT}
           isLoading={graphLoading}
           phaseTime={isSocketHasEnergy ? phaseTimesRT : phaseTimes}
         />
@@ -211,17 +292,17 @@ const Energy = ({ data }) => {
           phaseAgraph={phaseAGraph}
           phaseBgraph={phaseBGraph}
           phaseCgraph={phaseCGraph}
+          reactivePhaseAgraph={phaseAGraphReactive}
+          reactivePhaseBgraph={phaseBGraphReactive}
+          reactivePhaseCgraph={phaseCGraphReactive}
           isLoading={graphLoading}
           phaseTime={phaseTimes}
         />
       ),
     },
   ];
-  return (
-    <>
-      <DynamicTabs2 tabs={tabs} defaultActive={0} />
-    </>
-  );
+
+  return <DynamicTabs2 tabs={tabs} defaultActive={0} />;
 };
 
 export default Energy;

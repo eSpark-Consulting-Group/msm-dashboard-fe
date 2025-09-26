@@ -168,6 +168,54 @@ const initialState = {
       headingSize: "19.5px",
       phase: "C",
     },
+    {
+      icon: energy,
+      heading: "PHASE A-Reactive Energy (+)",
+      value: "0KWh",
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase: "A",
+    },
+    {
+      icon: energy,
+      heading: "PHASE B-Reactive Energy (+)",
+      value: "0KWh",
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase: "B",
+    },
+    {
+      icon: energy,
+      heading: "PHASE C-Reactive Energy (+)",
+      value: "0KWh",
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase: "C",
+    },
+    {
+      icon: energy,
+      heading: "PHASE A-Reactive Energy (-)",
+      value: "0KWh",
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase: "A",
+    },
+    {
+      icon: energy,
+      heading: "PHASE B-Reactive Energy (-)",
+      value: "0KWh",
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase: "B",
+    },
+    {
+      icon: energy,
+      heading: "PHASE C-Reactive Energy (-)",
+      value: "0KWh",
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase: "C",
+    },
   ],
   isSocketHasPower: false,
   isSocketHasEnergy: false,
@@ -212,6 +260,12 @@ const telemetrySlice = createSlice({
 
       state.energyData[phaseIndex].value = `${d.active_energy_positive}KWh`;
       state.energyData[3 + phaseIndex].value = `${d.active_energy_negative}KWh`;
+      state.energyData[
+        6 + phaseIndex
+      ].value = `${d.reactive_energy_positive}KWh`;
+      state.energyData[
+        9 + phaseIndex
+      ].value = `${d.reactive_energy_negative}KWh`;
     },
     handleUnsubscribe: (state) => {
       state.isSocketHasEnergy = false;

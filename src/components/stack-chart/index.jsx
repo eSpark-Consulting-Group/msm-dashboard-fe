@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { Box, Typography } from "@mui/material";
 
-const ActiveEnergyChart = ({ data, title }) => {
+const ActiveEnergyChart = ({ data, type }) => {
   return (
     <Box
       sx={{
@@ -44,23 +44,22 @@ const ActiveEnergyChart = ({ data, title }) => {
           {/* Active Energy (+) */}
           <Line
             type="monotone"
-            dataKey="activePlus"
+            dataKey={type === 1 ? "activePlus" : "reactivePlus"}
             stroke="#e63946"
             strokeWidth={2}
             dot={false}
-            name="Active Energy (+)"
+            name={type === 1 ? "Active Energy (+)" : "Reactive Energy (+)"}
             isAnimationActive={false}
           />
 
-          {/* Active Energy (-) */}
           <Line
-            isAnimationActive={false}
             type="monotone"
-            dataKey="activeMinus"
+            dataKey={type === 1 ? "activeMinus" : "reactiveMinus"}
             stroke="#457b9d"
             strokeWidth={2}
             dot={false}
-            name="Active Energy (-)"
+            name={type === 1 ? "Active Energy (-)" : "Reactive Energy (-)"}
+            isAnimationActive={false}
           />
         </LineChart>
       </ResponsiveContainer>

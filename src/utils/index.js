@@ -201,5 +201,36 @@ export const mapEnergyData = (telemetryData) => {
       phase,
     };
   });
-  return [...active_energyPos, ...active_energyNeg];
+  const reactive_energyPos = data?.map((item) => {
+    let phase = item?.phase?.toUpperCase() || "";
+    let heading = `PHASE ${phase}-Reactive Energy (+)`;
+    return {
+      icon: energy,
+      heading,
+      time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
+      value: `${item?.avg_reactive_energy_positive}KWh`,
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase,
+    };
+  });
+  const reactive_energyNeg = data?.map((item) => {
+    let phase = item?.phase?.toUpperCase() || "";
+    let heading = `PHASE ${phase}-Reactive Energy (-)`;
+    return {
+      icon: energy,
+      heading,
+      time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
+      value: `${item?.avg_reactive_energy_negative}KWh`,
+      // valueColor: "green",
+      headingSize: "19.5px",
+      phase,
+    };
+  });
+  return [
+    ...active_energyPos,
+    ...active_energyNeg,
+    ...reactive_energyPos,
+    ...reactive_energyNeg,
+  ];
 };

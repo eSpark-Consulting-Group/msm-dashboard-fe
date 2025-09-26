@@ -100,8 +100,8 @@ const Devices = () => {
           userName: item?.userName || "-",
           groups: item?.groups_data?.name || "-",
           status: {
-            label: item?.device_status ? "Active" : "Inactive",
-            variant: item?.device_status ? "green" : "red",
+            label: item?.device_data?.device_status ? "Active" : "Inactive",
+            variant: item?.device_data?.device_status ? "green" : "red",
           },
         };
       }) || [];

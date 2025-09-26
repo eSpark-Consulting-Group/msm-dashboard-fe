@@ -1,18 +1,20 @@
+import { lazy } from "react";
+
 // Auth
-import Login from "./auth/login";
+const Login = lazy(() => import("./auth/login"));
 
 // Dashboard
-import Dashboard from "./dashboard/dashboard";
-import Devices from "./dashboard/devices";
-import Reports from "./dashboard/report";
-import Settings from "./dashboard/settings";
-import Support from "./dashboard/support";
-import Users from "./dashboard/users";
-import AddUser from "./dashboard/users/add-user";
-import DashboardHome from "./dashboard/dashboard/home";
-import ChannelInfo from "./dashboard/dashboard/channel-info";
-import MqttProtocol from "./dashboard/mqtt-protocol";
-import UserDetails from "./dashboard/users/user-details";
+const Dashboard = lazy(() => import("./dashboard/dashboard"));
+const Devices = lazy(() => import("./dashboard/devices"));
+const Reports = lazy(() => import("./dashboard/report"));
+const Settings = lazy(() => import("./dashboard/settings"));
+const Support = lazy(() => import("./dashboard/support"));
+const Users = lazy(() => import("./dashboard/users"));
+const AddUser = lazy(() => import("./dashboard/users/add-user"));
+const DashboardHome = lazy(() => import("./dashboard/dashboard/home"));
+const ChannelInfo = lazy(() => import("./dashboard/dashboard/channel-info"));
+const MqttProtocol = lazy(() => import("./dashboard/mqtt-protocol"));
+const UserDetails = lazy(() => import("./dashboard/users/user-details"));
 
 export {
   Login,

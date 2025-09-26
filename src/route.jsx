@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Suspense } from "react";
 import AuthLayout from "./layout/auth-layout";
 import PrivateLayout from "./layout/private-layout";
 import {
@@ -19,7 +20,7 @@ import DashboardInfo from "./pages/dashboard/dashboardInfo";
 
 const Router = () => {
   return (
-    <>
+    <Suspense fallback={<></>}>
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
@@ -45,7 +46,7 @@ const Router = () => {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
+    </Suspense>
   );
 };
 

@@ -18,8 +18,14 @@ import { columns } from "../../../columns/devices";
 import { useSearchParams } from "react-router-dom";
 import { deviceGroupColumns } from "../../../columns/deviceGroupColumns";
 import { EditDeviceModal } from "../../../components";
-import { useDeleteDeviceMutation, useGetAllDevicesQuery } from "../../../services/devices";
-import { useDeleteGroupMutation, useGetAllGroupsQuery } from "../../../services/groups";
+import {
+  useDeleteDeviceMutation,
+  useGetAllDevicesQuery,
+} from "../../../services/devices";
+import {
+  useDeleteGroupMutation,
+  useGetAllGroupsQuery,
+} from "../../../services/groups";
 import { useSelector } from "react-redux";
 
 const Devices = () => {
@@ -61,38 +67,45 @@ const Devices = () => {
     isLoading: deviceLoading,
     isError: isGroupError,
     error: groupError,
-  } = useGetAllDevicesQuery({ page, limit: pageSize, search }, { skip: activeTab !== 0 });
+  } = useGetAllDevicesQuery(
+    { page, limit: pageSize, search },
+    { skip: activeTab !== 0, refetchOnMountOrArgChange: true }
+  );
 
-  const { devices: devicesData } = useSelector(state => state.devices);
+  const { devices: devicesData } = useSelector((state) => state.devices);
 
   const {
     data: groupData,
     isLoading: groupLoading,
     isError,
     error,
-  } = useGetAllGroupsQuery({ page, limit: pageSize, search }, { skip: activeTab !== 1 });
+  } = useGetAllGroupsQuery(
+    { page, limit: pageSize, search },
+    { skip: activeTab !== 1 }
+  );
 
   useEffect(() => {
     if (isError && error) {
       toast.error(error?.data?.message);
-      return
+      return;
     }
-    const deviceData = devicesData?.map(item => {
-      return {
-        ...item,
-        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        deviceId: item?.device_data?.device_uuid || "-",
-        deviceName: item?.name || "-",
-        label: item?.label || "-",
-        userName: item?.userName || "-",
-        groups: item?.groups_data?.name || "-",
-        status: {
-          label: item?.device_data?.mqtt_status ? "Active" : "Inactive",
-          variant: item?.device_data?.mqtt_status ? "green" : "red"
-        }
-      }
-    }) || []
-    setDeviceData(deviceData)
+    const deviceData =
+      devicesData?.map((item) => {
+        return {
+          ...item,
+          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          deviceId: item?.device_data?.device_uuid || "-",
+          deviceName: item?.name || "-",
+          label: item?.label || "-",
+          userName: item?.userName || "-",
+          groups: item?.groups_data?.name || "-",
+          status: {
+            label: item?.device_status ? "Active" : "Inactive",
+            variant: item?.device_status ? "green" : "red",
+          },
+        };
+      }) || [];
+    setDeviceData(deviceData);
     if (activeTab === 0) {
       setData(deviceData);
     }
@@ -101,15 +114,16 @@ const Devices = () => {
   useEffect(() => {
     if (isGroupError && groupError) {
       toast.error(groupError?.data?.message);
-      return
+      return;
     }
-    const deviceGroupData = groupData?.data?.map(item => {
-      return {
-        ...item,
-        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-      }
-    }) || []
-    setDeviceGroupData(deviceGroupData)
+    const deviceGroupData =
+      groupData?.data?.map((item) => {
+        return {
+          ...item,
+          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+        };
+      }) || [];
+    setDeviceGroupData(deviceGroupData);
     if (activeTab === 1) {
       setData(deviceGroupData);
     }
@@ -124,36 +138,37 @@ const Devices = () => {
     setDeviceDelete(item);
   };
 
-  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDeviceMutation();
+  const [deleteDashboard, { isLoading: deleteLoading }] =
+    useDeleteDeviceMutation();
 
   const handleDeleteDevice = (id) => {
-    deleteDashboard(id).then(res => {
+    deleteDashboard(id).then((res) => {
       if (res?.error) {
         toast.error(res?.error?.data?.message || "Failed to delete device");
         return;
       }
       if (res?.data) {
-        toast.success(res?.data?.message || "Device deleted successfully")
+        toast.success(res?.data?.message || "Device deleted successfully");
         setDeviceDelete(false);
       }
-    })
+    });
   };
 
-  const [deleteGroup, { isLoading: deleteGroupLoading }] = useDeleteGroupMutation();
+  const [deleteGroup, { isLoading: deleteGroupLoading }] =
+    useDeleteGroupMutation();
 
   const handleDeleteGroup = (id) => {
-    deleteGroup(id)
-      .then((res) => {
-        if (res?.error) {
-          toast.error(res?.error?.data?.message || "Failed to delete group");
-          return;
-        }
-        if (res?.data) {
-          toast.success(res?.data?.message || "Group deleted successfully");
-          setDeviceDelete(false)
-        }
-      })
-  }
+    deleteGroup(id).then((res) => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to delete group");
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Group deleted successfully");
+        setDeviceDelete(false);
+      }
+    });
+  };
 
   const handleDeleteAction = () => {
     if (activeTab === 0) {
@@ -168,7 +183,7 @@ const Devices = () => {
   };
 
   const handleSubHeaderClick = () => {
-    setOpenAddModal(activeTab)
+    setOpenAddModal(activeTab);
   };
 
   const tabs = [
@@ -241,7 +256,9 @@ const Devices = () => {
         loading={deleteGroupLoading || deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"}`}
+          {`Are you sure you want to delete this ${
+            activeTab === 0 ? "device" : "group"
+          }`}
         </Typography>
       </DeleteModal>
       <DynamicModal
@@ -249,7 +266,7 @@ const Devices = () => {
         handleClose={() => setOpenAddModal(false)}
         // acceptButtonText={"Next"}
         heading={"Add New Device"}
-      // handleAccept={handleAddDeviceAccept}
+        // handleAccept={handleAddDeviceAccept}
       >
         <AddDeviceModal onCancel={() => setOpenAddModal(false)} />
       </DynamicModal>
@@ -258,9 +275,7 @@ const Devices = () => {
         handleClose={() => setOpenAddModal(null)}
         heading={"Add Entity Group"}
       >
-        <AddGroupModal
-          handleCancel={() => setOpenAddModal(null)}
-        />
+        <AddGroupModal handleCancel={() => setOpenAddModal(null)} />
       </DynamicModal>
       <DynamicModal
         open={openEditModal === 1}

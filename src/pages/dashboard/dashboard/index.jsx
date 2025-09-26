@@ -10,7 +10,11 @@ import {
 } from "../../../components";
 import { columns } from "../../../columns/dashboard";
 import { useNavigate } from "react-router-dom";
-import { useDeleteDeviceMutation, useGetAllDevicesQuery } from "../../../services/devices";
+import {
+  useDeleteDeviceMutation,
+  useDeleteUserDeviceMutation,
+  useGetAllDevicesQuery,
+} from "../../../services/devices";
 import { useSelector } from "react-redux";
 
 const Dashboard = () => {
@@ -21,28 +25,56 @@ const Dashboard = () => {
   const [pageSize] = useState(11);
   const [total] = useState(11);
   const [deviceDelete, setDeviceDelete] = useState(false);
+  const token = localStorage.getItem("msm_token");
 
-  const { isLoading, isError, error } = useGetAllDevicesQuery({
-    page,
-    limit: pageSize,
-    search,
-  });
+  const { user } = useSelector((state) => state.auth);
+
+  const { isLoading, isError, error } = useGetAllDevicesQuery(
+    {
+      page,
+      limit: pageSize,
+      search,
+    },
+    { skip: !token, refetchOnMountOrArgChange: true }
+  );
 
   const { devices: dashboardData } = useSelector((state) => state.devices);
 
-  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteDeviceMutation();
+  const [deleteDashboard, { isLoading: deleteLoading }] =
+    useDeleteDeviceMutation();
+
+  const [deleteDashboard2, { isLoading: deleteLoading2 }] =
+    useDeleteUserDeviceMutation();
 
   const handleDeleteDashboard = () => {
-    deleteDashboard(deviceDelete?.device_data?.device_uuid).then(res => {
-      if (res?.error) {
-        toast.error(res?.error?.data?.message || "Failed to delete device");
-        return;
-      }
-      if (res?.data) {
-        toast.success(res?.data?.message || "Device deleted successfully")
-        setDeviceDelete(false);
-      }
-    })
+    if (user?.role?.name === "super_admin") {
+      deleteDashboard2({
+        id: deviceDelete?.device_data?.device_uuid,
+        userId: deviceDelete?.user_id,
+      }).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to delete device");
+          setDeviceDelete(false);
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "Device deleted successfully");
+          setDeviceDelete(false);
+        }
+      });
+    } else {
+      deleteDashboard(deviceDelete?.device_data?.device_uuid).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to delete device");
+          setDeviceDelete(false);
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "Device deleted successfully");
+          setDeviceDelete(false);
+        }
+      });
+    }
   };
 
   useEffect(() => {
@@ -57,6 +89,8 @@ const Dashboard = () => {
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
           deviceId: item?.device_data?.device_uuid || "-",
           group: item?.groups_data?.name || "-",
+          name: item?.name,
+          createdBy: item?.user_id,
         };
       }) || []
     );
@@ -82,9 +116,9 @@ const Dashboard = () => {
       <SubHeader
         heading="Dashboard"
         subHeading="Here’s what’s happening with your device and users"
-      // buttonText="Add New Dashoard"
-      // onClick={() => setOpen(true)}
-      // variant="contained"
+        // buttonText="Add New Dashoard"
+        // onClick={() => setOpen(true)}
+        // variant="contained"
       />
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
         <SearchBar value={search} onChange={(val) => setSearch(val)} />
@@ -114,7 +148,7 @@ const Dashboard = () => {
         heading={"Delete"}
         handleAccept={handleDeleteDashboard}
         handleCancel={() => setDeviceDelete(false)}
-        loading={deleteLoading}
+        loading={deleteLoading || deleteLoading2}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?

@@ -32,45 +32,51 @@ const UserDetails = () => {
     setDeviceDelete(item);
   };
 
-  const [deleteDashboard, { isLoading: deleteLoading }] = useDeleteUserDeviceMutation();
+  const [deleteDashboard, { isLoading: deleteLoading }] =
+    useDeleteUserDeviceMutation();
 
   const handleDeleteDevice = () => {
-    deleteDashboard({ id: deviceDelete?.device_data?.device_uuid, userId: params?.id }).then(res => {
+    deleteDashboard({
+      id: deviceDelete?.device_data?.device_uuid,
+      userId: params?.id,
+    }).then((res) => {
       if (res?.error) {
         toast.error(res?.error?.data?.message || "Failed to delete device");
         return;
       }
       if (res?.data) {
-        toast.success(res?.data?.message || "Device deleted successfully")
+        toast.success(res?.data?.message || "Device deleted successfully");
         setDeviceDelete(false);
       }
-    })
+    });
   };
 
   useEffect(() => {
     if (isError && error) {
       toast.error(error?.data?.message);
+      setData([]);
     }
   }, [isError, error]);
 
   useEffect(() => {
     if (userDetailsData) {
-      const deviceData = userDetailsData?.data?.map(item => {
-        return {
-          ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-          deviceId: item?.device_data?.device_uuid || "-",
-          deviceName: item?.deviceName || "-",
-          label: item?.label || "-",
-          mqtt_username: item?.mqtt_user || "-",
-          groups: item?.groups_data?.name || "-",
-          status: {
-            label: item?.device_data?.mqtt_status ? "Active" : "Inactive",
-            variant: item?.device_data?.mqtt_status ? "green" : "red"
-          }
-        }
-      }) || []
-      setData(deviceData)
+      const deviceData =
+        userDetailsData?.data?.map((item) => {
+          return {
+            ...item,
+            createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+            deviceId: item?.device_data?.device_uuid || "-",
+            deviceName: item?.deviceName || "-",
+            label: item?.label || "-",
+            mqtt_username: item?.mqtt_user || "-",
+            groups: item?.groups_data?.name || "-",
+            status: {
+              label: item?.device_data?.mqtt_status ? "Active" : "Inactive",
+              variant: item?.device_data?.mqtt_status ? "green" : "red",
+            },
+          };
+        }) || [];
+      setData(deviceData);
     }
   }, [userDetailsData]);
 

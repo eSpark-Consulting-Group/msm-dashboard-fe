@@ -62,8 +62,13 @@ export const deviceApi = api.injectEndpoints({
         url: `/devices/user/${id}/${userId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Users"],
-    })
+      invalidatesTags: (result, error, id) => [
+        "Devices",
+        { type: "Devices", id },
+        "Users",
+        { type: "Users" },
+      ],
+    }),
   }),
 });
 

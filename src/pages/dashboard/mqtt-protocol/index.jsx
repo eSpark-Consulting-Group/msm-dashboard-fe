@@ -1,3 +1,4 @@
+import { generateColumns } from "../../../columns/mqtt";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import {
   Button,
@@ -7,10 +8,9 @@ import {
   SubHeader,
 } from "../../../components";
 import { useEffect, useState } from "react";
-import { columns } from "../../../columns/mqtt";
-import { mqttTableData } from "../../../constant";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGetAllProtocolsQuery } from "../../../services/protocol";
+import { useSelector } from "react-redux";
 
 const MqttProtocol = () => {
   const { state } = useLocation();
@@ -19,21 +19,28 @@ const MqttProtocol = () => {
   const [pageSize] = useState(13);
   const [total, setTotal] = useState(null);
   const [data, setData] = useState([]);
+  const [columns, setColumns] = useState([]);
 
-  const {
-    data: protocolData,
-    isLoading: protocolLoading,
-    isError,
-    error,
-  } = useGetAllProtocolsQuery({ device_uuid: id }, { skip: !id });
+  const { user } = useSelector((state) => state.auth);
+
+  console.log(user);
 
   const [activeTab, setActiveTab] = useState(0);
 
   const navigate = useNavigate();
 
-  const handlePageChange = (page) => {
-    setPage(page);
-  };
+  const { data: protocolData, isLoading: protocolLoading } =
+    useGetAllProtocolsQuery({ device_uuid: id }, { skip: !id });
+
+  useEffect(() => {
+    if (protocolData?.data?.length > 0) {
+      const apiData = protocolData.data;
+
+      setTotal(apiData.length);
+      setData(apiData);
+      setColumns(generateColumns(apiData));
+    }
+  }, [protocolData]);
 
   const handleTabChange = (newIndex) => {
     setActiveTab(newIndex);
@@ -42,56 +49,19 @@ const MqttProtocol = () => {
     }
   };
 
-  useEffect(() => {
-    if (protocolData) {
-      setTotal(protocolData?.data?.length);
-      const data = protocolData?.data?.map((item) => ({
-        timestamp: item?.createdAt,
-        date: item?.date,
-        time: item?.time,
-        V_R: item?.V_R,
-        In1_R1: item?.In1_R1,
-        In1_RPF: item?.In1_RPF,
-        V_Y: item?.V_Y,
-        In1_Y1: item?.In1_Y1,
-        In1_YPF: item?.In1_YPF,
-        V_B: item?.V_B,
-        In1_B1: item?.In1_B1,
-        In1_BPF: item?.In1_BPF,
-        P1_R: item?.P1_R,
-        P1_Y: item?.P1_Y,
-        P1_B: item?.P1_B,
-        P1: item?.P1,
-        Q1_R: item?.Q1_R,
-        Q1_Y: item?.Q1_Y,
-        Q1_B: item?.Q1_B,
-        Q1: item?.Q1,
-        S1_R: item?.S1_R,
-        S1_Y: item?.S1_Y,
-        "S1 V_R": item?.["S1 V_R"],
-        S1_B: item?.S1_B,
-        S1: item?.S1,
-      }));
-      setData(data);
-    }
-  }, [protocolData]);
-
   return (
     <>
       <NavigateHeader />
       <DynamicTabs2
         tabs={[
           { id: 1, label: "Dashboard 1", content: <></> },
-          {
-            id: 2,
-            label: "Dashboard 2",
-            content: <></>,
-          },
+          { id: 2, label: "Dashboard 2", content: <></> },
         ]}
         linksTab={true}
-        defaultActive={activeTab}
+        defaultActive={0}
         onTabChange={handleTabChange}
       />
+
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "3px" }}>
         <Typography sx={{ fontSize: "18px", fontWeight: "700" }}>
           MQTTS PROTOCOL
@@ -102,6 +72,7 @@ const MqttProtocol = () => {
           Realtime - last 30 minutes
         </Typography>
       </Box>
+
       {!protocolLoading && protocolData?.data?.length === 0 ? (
         <Typography>No Data Found</Typography>
       ) : (
@@ -122,11 +93,11 @@ const MqttProtocol = () => {
           ) : (
             <DynamicTable
               data={data}
-              columns={columns()}
-              isLoading={false}
+              columns={columns}
+              isLoading={protocolLoading}
               page={page}
               pageSize={pageSize}
-              handlePageChange={handlePageChange}
+              handlePageChange={setPage}
               total={total}
               mqttTable={true}
             />

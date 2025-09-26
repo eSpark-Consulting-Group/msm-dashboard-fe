@@ -34,7 +34,10 @@ const Users = () => {
     isLoading,
     isError,
     error,
-  } = useGetAllUsersQuery({ page: 1, limit: 10, search });
+  } = useGetAllUsersQuery(
+    { page: 1, limit: 10, search },
+    { refetchOnMountOrArgChange: true }
+  );
 
   useEffect(() => {
     if (isError && error) {

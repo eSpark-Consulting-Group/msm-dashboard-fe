@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGetAllProtocolsQuery } from "../../../services/protocol";
 import { useSelector } from "react-redux";
+import MeterReadingConfigPopover from "../../../components/meter-reading-modal";
 
 const MqttProtocol = () => {
   const { state } = useLocation();
@@ -26,6 +27,7 @@ const MqttProtocol = () => {
   console.log(user);
 
   const [activeTab, setActiveTab] = useState(0);
+  const [isOpenRealTimePopup, setIsOpenRealTimePopup] = useState(null);
 
   const navigate = useNavigate();
 
@@ -49,6 +51,8 @@ const MqttProtocol = () => {
     }
   };
 
+  const handleOpen = (e) => setIsOpenRealTimePopup(e.currentTarget);
+
   return (
     <>
       <NavigateHeader />
@@ -67,11 +71,19 @@ const MqttProtocol = () => {
           MQTTS PROTOCOL
         </Typography>
         <Typography
+          onClick={handleOpen}
           sx={{ fontSize: "12.28px", fontWeight: "400", color: "#667085" }}
         >
           Realtime - last 30 minutes
         </Typography>
       </Box>
+
+      <MeterReadingConfigPopover
+        id={id}
+        open={Boolean(isOpenRealTimePopup)}
+        anchorEl={isOpenRealTimePopup}
+        setAnchorEl={setIsOpenRealTimePopup}
+      />
 
       {!protocolLoading && protocolData?.data?.length === 0 ? (
         <Typography>No Data Found</Typography>

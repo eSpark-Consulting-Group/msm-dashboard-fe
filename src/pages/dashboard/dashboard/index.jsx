@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import {
   DeleteModal,
+  DynamicModal,
   DynamicTable,
   SearchBar,
   SubHeader,
@@ -16,6 +17,7 @@ import {
   useGetAllDevicesQuery,
 } from "../../../services/devices";
 import { useSelector } from "react-redux";
+import MeterReadingConfigPopover from "../../../components/meter-reading-modal";
 
 const Dashboard = () => {
   // const [open, setOpen] = useState(false);
@@ -123,6 +125,7 @@ const Dashboard = () => {
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
         <SearchBar value={search} onChange={(val) => setSearch(val)} />
       </Box>
+
       <DynamicTable
         data={data}
         columns={columns()}
@@ -142,6 +145,7 @@ const Dashboard = () => {
         handleCancel={() => setOpen(false)}
         handleAccept={() => console.log("success")}
       /> */}
+
       <DeleteModal
         open={deviceDelete}
         handleClose={() => setDeviceDelete(false)}

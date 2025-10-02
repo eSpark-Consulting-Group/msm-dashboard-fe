@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import Button from "../buttons";
 import { gtIcon } from "../../assets";
+import { useSelector } from "react-redux";
 
 const SubHeader = ({
   heading,
@@ -12,6 +13,7 @@ const SubHeader = ({
   userDetails,
   userName = "User",
 }) => {
+  const { user } = useSelector((state) => state.auth);
   return (
     <Box>
       <Stack
@@ -62,7 +64,7 @@ const SubHeader = ({
             </Typography>
           )}
         </Stack>
-        {buttonText && (
+        {user?.role?.name !== "user" && buttonText && (
           <Button
             sx={{ width: "max-content", minWidth: "160px" }}
             variant={variant}

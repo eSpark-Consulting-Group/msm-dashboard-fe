@@ -17,8 +17,11 @@ import {
   UserDetails,
 } from "./pages";
 import DashboardInfo from "./pages/dashboard/dashboardInfo";
+import { useSelector } from "react-redux";
 
 const Router = () => {
+  const { user } = useSelector((state) => state.auth);
+
   return (
     <Suspense fallback={<></>}>
       <Routes>
@@ -33,14 +36,19 @@ const Router = () => {
           {/* <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/support" element={<Support />} /> */}
-          <Route path="/users" element={<Users />} />
-          <Route path="/users/add" element={<AddUser />} />
+          {user?.role?.name !== "user" && (
+            <>
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/add" element={<AddUser />} />
+              <Route path="/users/:id" element={<UserDetails />} />
+            </>
+          )}
+
           <Route path="/dashboard/:id/home" element={<DashboardHome />} />
           <Route
             path="/dashboard/:id/info/:channelId"
             element={<ChannelInfo />}
           />
-          <Route path="/users/:id" element={<UserDetails />} />
           <Route path="/dashboard/:id" element={<MqttProtocol />} />
         </Route>
 

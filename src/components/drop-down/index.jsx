@@ -52,23 +52,21 @@ const Dropdown = ({
 
   return (
     <>
-      {customLabel && (
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography fontSize="14px" mb={1} sx={{ color: "#454545" }}>
-            {customLabel}
-          </Typography>
-        </Stack>
-      )}
-
       <FormControl sx={{ width: "100%" }} variant="filled" error={error}>
+        {customLabel && (
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography fontSize="14px" mb={1} sx={{ color: "#454545" }}>
+              {customLabel}
+            </Typography>
+          </Stack>
+        )}
+        
         {!noLabel && (
-          <InputLabel id={`${name}-label`}>
-            {placeholder}
-          </InputLabel>
+          <InputLabel id={`${name}-label`}>{placeholder}</InputLabel>
         )}
 
         <Select
@@ -96,7 +94,10 @@ const Dropdown = ({
           }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {
-            if (!selected || (Array.isArray(selected) && selected.length === 0)) {
+            if (
+              !selected ||
+              (Array.isArray(selected) && selected.length === 0)
+            ) {
               return (
                 <span style={{ color: "#aaa", ...renderValueSx }}>
                   {placeholder}
@@ -114,7 +115,9 @@ const Dropdown = ({
                 </span>
               );
             } else {
-              const selectedOption = options.find((opt) => opt.value === selected);
+              const selectedOption = options.find(
+                (opt) => opt.value === selected
+              );
               return (
                 <span style={defaultRenderValueStyle}>
                   {selectedOption ? selectedOption.label : selected}
@@ -127,15 +130,12 @@ const Dropdown = ({
             <em>{placeholder}</em>
           </MenuItem>
 
-          {options?.map(
-            (item, index) => (
-              <MenuItem value={item?.value} key={index}>
-                {multiple && (
-                  <Checkbox checked={value?.includes(item?.value)} />
-                )}
-                <ListItemText primary={item?.label} />
-              </MenuItem>
-            ))}
+          {options?.map((item, index) => (
+            <MenuItem value={item?.value} key={index}>
+              {multiple && <Checkbox checked={value?.includes(item?.value)} />}
+              <ListItemText primary={item?.label} />
+            </MenuItem>
+          ))}
         </Select>
 
         {error && <FormHelperText>{helperText}</FormHelperText>}

@@ -7,7 +7,7 @@ import { useClickOutside } from "../../utils";
 import { useSelector } from "react-redux";
 
 const Sidebar = ({ open, setOpen }) => {
-  const { user } = useSelector(state => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const { pathname: path } = useLocation();
   let pathname = `/${path?.split("/")[1]}`;
   if (pathname[0] === "/") {

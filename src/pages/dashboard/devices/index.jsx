@@ -73,7 +73,7 @@ const Devices = () => {
   );
 
   const { devices: devicesData } = useSelector((state) => state.devices);
-
+  const { user } = useSelector((state) => state.auth);
   const {
     data: groupData,
     isLoading: groupLoading,
@@ -218,7 +218,11 @@ const Devices = () => {
       </Box>
       <DynamicTable
         data={data}
-        columns={activeTab === 0 ? columns() : deviceGroupColumns()}
+        columns={
+          activeTab === 0
+            ? columns(user?.role?.name)
+            : deviceGroupColumns(user?.role?.name)
+        }
         isLoading={deviceLoading || groupLoading}
         handleEdit={handleEdit}
         handleDelete={handleDelete}

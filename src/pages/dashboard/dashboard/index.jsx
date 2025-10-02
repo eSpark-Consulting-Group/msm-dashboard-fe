@@ -128,7 +128,7 @@ const Dashboard = () => {
 
       <DynamicTable
         data={data}
-        columns={columns()}
+        columns={columns(user?.role?.name)}
         hideView
         hideEdit
         handleDelete={handleDelete}

@@ -69,6 +69,12 @@ export const deviceApi = api.injectEndpoints({
         { type: "Users" },
       ],
     }),
+    getUserDevices: builder.query({
+      query: (id) => ({
+        url: `/devices/user_devices/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -80,4 +86,5 @@ export const {
   useDeleteDeviceMutation,
   useDeleteUserDeviceMutation,
   useRebootDeviceMutation,
+  useGetUserDevicesQuery,
 } = deviceApi;

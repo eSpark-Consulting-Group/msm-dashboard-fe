@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { edit, pencilWhite, uploadIcon2, userAvatar } from "../../assets";
@@ -21,6 +21,7 @@ import { profileSchema } from "../../schemas";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useUpdateUserMutation } from "../../services/users";
 import ChangePassword from "../change-password";
+import { handleProfileUpdate } from "../../store/slices/auth";
 
 const sharedInputStyles = {
   "& .MuiOutlinedInput-root": {
@@ -62,6 +63,7 @@ const ProfileModal = ({ handleClose }) => {
   );
 
   const [isEditAble, setIsEditAble] = useState(false);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -97,6 +99,8 @@ const ProfileModal = ({ handleClose }) => {
         }
         if (res?.data) {
           toast.success("Profile updated successfully");
+          // console.log(res?.data);
+          dispatch(handleProfileUpdate(res?.data?.data));
           setIsEditAble(false);
           handleClose();
         }

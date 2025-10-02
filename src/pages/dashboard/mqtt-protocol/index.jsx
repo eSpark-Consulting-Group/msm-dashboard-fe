@@ -185,7 +185,11 @@ const MqttProtocol = () => {
             <DynamicTable
               data={data}
               columns={columns}
-              isLoading={mqttDataHistoryLoading}
+              isLoading={
+                dataState === 0 && data?.length === 0
+                  ? true
+                  : mqttDataHistoryLoading
+              }
               page={page}
               pageSize={pageSize}
               handlePageChange={setPage}

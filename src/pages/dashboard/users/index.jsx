@@ -123,7 +123,12 @@ const Users = () => {
   };
 
   const handleUserClick = (item) => {
-    navigate(`/users/${item?._id}?name=${item?.userName?.name}`);
+    console.log(item);
+    navigate(
+      `/users/${item?._id}?name=${encodeURIComponent(
+        item?.userName?.name
+      )}&role=${encodeURIComponent(item?.role?.name)}`
+    );
   };
 
   // ✅ Sorting logic

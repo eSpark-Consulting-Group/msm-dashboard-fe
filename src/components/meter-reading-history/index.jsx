@@ -79,22 +79,51 @@ const HistoryConfig = ({
         {timeWindowTab === 1 && (
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Stack
+              width={"100%"}
               direction={{ xs: "column", sm: "row" }}
               spacing={2}
               justifyContent="space-between"
             >
-              <DateTimePicker
-                label="From"
-                value={historyConfig.fromDate}
-                onChange={(val) => updateHistoryConfig("fromDate", val)}
-                renderInput={(params) => <TextField {...params} size="small" />}
-              />
-              <DateTimePicker
-                label="To"
-                value={historyConfig.toDate}
-                onChange={(val) => updateHistoryConfig("toDate", val)}
-                renderInput={(params) => <TextField {...params} size="small" />}
-              />
+              <Stack width={{ xs: "100%", sm: "48%" }}>
+                <Typography ml={0.5} mb={0.5}>
+                  From
+                </Typography>
+                <DateTimePicker
+                  value={historyConfig.fromDate}
+                  onChange={(val) => updateHistoryConfig("fromDate", val)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="From"
+                      size="small"
+                      InputLabelProps={{
+                        ...params.InputLabelProps,
+                        shrink: true,
+                      }}
+                    />
+                  )}
+                />
+              </Stack>
+              <Stack width={{ xs: "100%", sm: "48%" }}>
+                <Typography ml={0.5} mb={0.5}>
+                  To
+                </Typography>
+                <DateTimePicker
+                  value={historyConfig.toDate}
+                  onChange={(val) => updateHistoryConfig("toDate", val)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      InputLabelProps={{
+                        ...params.InputLabelProps,
+                        shrink: true,
+                        style: { color: "red" },
+                      }}
+                    />
+                  )}
+                />
+              </Stack>
             </Stack>
           </LocalizationProvider>
         )}

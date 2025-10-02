@@ -7,6 +7,7 @@ import {
   addPowerData,
   handleUnsubscribe,
 } from "./store/slices/telemetry";
+import { addMqttData } from "./store/slices/mqtt";
 
 let socketInstance = null; // 🔑 global singleton socket
 
@@ -25,19 +26,15 @@ export function useSocket() {
         console.log("✅ Connected:", socketRef.current.id);
       });
 
-      // if you want global telemetry
-      // socketRef.current.on("telemetry", (data) => {
-      //   dispatch(addPowerData(data?.data));
-      //   dispatch(addEnergyData(data?.data));
-      // });
+      // 🔹 Listen for mqtt_protocol event from server
+      socketRef.current.on("mqtt_protocol", (obj) => {
+        dispatch(addMqttData(obj?.data));
+        // console.log(obj?.data, "");
+      });
     }
-
-    return () => {
-      // don't disconnect globally unless app fully unmounts
-    };
   }, [dispatch]);
 
-  // ✅ stable subscribe/unsubscribe with useCallback
+  // ✅ subscribe/unsubscribe for telemetry
   const subscribeToTelemetry = useCallback(
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
@@ -49,11 +46,35 @@ export function useSocket() {
     [dispatch]
   );
 
-  const unsubscribeFromTelemetry = useCallback((deviceId, channelId) => {
-    const eventName = `telemetry:${deviceId}:channel:${channelId}`;
-    dispatch(handleUnsubscribe());
-    socketRef.current?.off(eventName);
+  const unsubscribeFromTelemetry = useCallback(
+    (deviceId, channelId) => {
+      const eventName = `telemetry:${deviceId}:channel:${channelId}`;
+      dispatch(handleUnsubscribe());
+      socketRef.current?.off(eventName);
+    },
+    [dispatch]
+  );
+
+  // ✅ emit (send) event to server
+  const emitEvent = useCallback((eventName, payload) => {
+    if (!socketRef.current) return;
+
+    if (socketRef.current.connected) {
+      // already connected → send immediately
+      socketRef.current.emit(eventName, payload);
+      // console.log(`📤 Sent ${eventName}:`, payload);
+    } else {
+      // not connected yet → wait for connection, then send once
+      socketRef.current.once("connect", () => {
+        socketRef.current.emit(eventName, payload);
+        // console.log(`📤 Sent (after connect) ${eventName}:`, payload);
+      });
+    }
   }, []);
 
-  return { subscribeToTelemetry, unsubscribeFromTelemetry };
+  return {
+    subscribeToTelemetry,
+    unsubscribeFromTelemetry,
+    emitEvent, // 🔹 expose sending function
+  };
 }

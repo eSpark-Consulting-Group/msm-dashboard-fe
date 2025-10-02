@@ -2,10 +2,19 @@ import * as React from "react";
 import { Box, Button, Popover, Tabs, Tab, Divider } from "@mui/material";
 import RealtimeConfig from "../meter-reading-realtime";
 import HistoryConfig from "../meter-reading-history";
-import { useLazyGetAllProtocolsQuery } from "../../services/protocol";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-
+import { useSocket } from "../../SocketTest";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addCurrentData,
+  addMqttDataState,
+  addMqttHistoryData,
+  addMqttMessage,
+  addMqttProtocol,
+  handleMqttLoading,
+} from "../../store/slices/mqtt";
+import { useLazyGetAllProtocolsQuery } from "../../services/protocol";
 // ---------- DATA ----------
 export const METER_READING_MODAL_DATA = {
   timezones: [
@@ -164,12 +173,6 @@ export const METER_READING_MODAL_STYLE = {
 };
 
 const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
-  const [activeTab, setActiveTab] = React.useState(0);
-  const [timeWindowTab, setTimeWindowTab] = React.useState(0);
-
-  const [triggerGetProtocols, { isLoading, isFetching }] =
-    useLazyGetAllProtocolsQuery();
-
   function getCurrentTimezoneOffset() {
     const offsetMinutes = new Date().getTimezoneOffset();
     const sign = offsetMinutes > 0 ? "-" : "+";
@@ -180,6 +183,14 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
     const minutes = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
     return `UTC${sign}${hours}:${minutes}`;
   }
+
+  const { limit, currentData } = useSelector((state) => state?.mqtt);
+  const dispatch = useDispatch();
+
+  const [triggerGetProtocols, { isLoading, isFetching }] =
+    useLazyGetAllProtocolsQuery();
+
+  const [timeWindowTab, setTimeWindowTab] = React.useState(0);
   const [realtimeConfig, setRealtimeConfig] = React.useState({
     interval: 5,
     limit: 5,
@@ -194,7 +205,11 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
     limit: 5,
   });
 
-  const handleTabChange = (_, newValue) => setActiveTab(newValue);
+  const { emitEvent } = useSocket();
+
+  const handleTabChange = (_, newValue) => {
+    dispatch(addCurrentData(newValue));
+  };
   const handleTabChangeOfTimeWindow = (_, newValue) =>
     setTimeWindowTab(newValue);
 
@@ -213,19 +228,29 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       fromDate: new Date(),
       toDate: new Date(),
     });
-    setActiveTab(0);
     setTimeWindowTab(0);
     setAnchorEl(null);
   };
 
   const handleUpdate = async () => {
-    if (activeTab === 1) {
+    if (currentData === 1) {
       let payload = {
         device_uuid: id,
         limit: historyConfig.limit || 10,
         timezone: historyConfig.timezone,
       };
-
+      dispatch(addMqttDataState(currentData));
+      dispatch(
+        addMqttMessage(
+          `History - ${
+            timeWindowTab === 0
+              ? `last ${historyConfig.range_value} ${historyConfig.range_unit}`
+              : `range ${dayjs(historyConfig.fromDate).format(
+                  "DD-MM-YYYY HH:mm"
+                )} - ${dayjs(historyConfig.toDate).format("DD-MM-YYYY HH:mm")}`
+          }`
+        )
+      );
       if (timeWindowTab === 0) {
         payload = {
           ...payload,
@@ -244,18 +269,54 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
 
       try {
         const res = await triggerGetProtocols(payload).unwrap();
-        toast.success("Protocols fetched successfully!");
-        console.log("API Response:", res);
+        toast.success("History configuration updated");
+        dispatch(addMqttHistoryData(res.protocolsByRank));
+
         handleClose();
       } catch (err) {
         toast.error(err?.data?.message || "Failed to fetch protocols");
         console.error("API Error:", err);
       }
     } else {
-      toast.info("Realtime config updated");
+      emitEvent("mqtt_protocol", {
+        thing_name: id,
+        interval_time: realtimeConfig?.interval * 1000,
+        data_range: realtimeConfig?.limit,
+      });
+      dispatch(addMqttProtocol(realtimeConfig?.limit));
+      dispatch(addMqttDataState(currentData));
+      dispatch(
+        addMqttMessage(
+          `Realtime - ${
+            realtimeConfig?.interval < 60
+              ? `${realtimeConfig?.interval} sec`
+              : `${Math.floor(realtimeConfig?.interval / 60)} min ${
+                  realtimeConfig?.interval % 60
+                    ? (realtimeConfig?.interval % 60) + " sec"
+                    : ""
+                }`
+          }`
+        )
+      );
+      toast.success("Realtime configuration updated");
       handleClose();
     }
   };
+
+  React.useEffect(() => {
+    setRealtimeConfig((prev) => ({
+      ...prev,
+      limit,
+    }));
+  }, [limit]);
+
+  React.useEffect(() => {
+    if (isLoading || isFetching) {
+      dispatch(handleMqttLoading(true));
+    } else {
+      dispatch(handleMqttLoading(false));
+    }
+  }, [isLoading, isFetching]);
 
   return (
     <Popover
@@ -266,6 +327,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       transformOrigin={{ vertical: "top", horizontal: "left" }}
       PaperProps={{
         sx: {
+          mt: 0.5,
           width: { xs: "95vw", sm: 480 },
           borderRadius: 2,
           boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
@@ -275,7 +337,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       {/* Tabs Header */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", p: 1.5 }}>
         <Tabs
-          value={activeTab}
+          value={currentData}
           onChange={handleTabChange}
           TabIndicatorProps={{ style: { display: "none" } }}
           sx={METER_READING_MODAL_STYLE.tabsContainer}
@@ -287,13 +349,13 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
 
       {/* Content */}
       <Box sx={{ p: 2, minHeight: 200 }}>
-        {activeTab === 0 && (
+        {currentData === 0 && (
           <RealtimeConfig
             realtimeConfig={realtimeConfig}
             updateRealtimeConfig={updateRealtimeConfig}
           />
         )}
-        {activeTab === 1 && (
+        {currentData === 1 && (
           <HistoryConfig
             historyConfig={historyConfig}
             updateHistoryConfig={updateHistoryConfig}

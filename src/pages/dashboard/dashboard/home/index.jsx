@@ -12,6 +12,7 @@ import { NavigateHeader, Channels, DynamicTabs2 } from "../../../../components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGetTelemetryByDeviceQuery } from "../../../../services/telemetry";
+import MeterReadingConfigPopover from "../../../../components/meter-reading-modal";
 
 const DashboardHome = () => {
   const { id } = useParams();
@@ -97,9 +98,11 @@ const DashboardHome = () => {
       {telemetryLoading ? (
         <LinearProgress />
       ) : telemetryData?.data?.length === 0 ? (
-        <Typography sx={{ fontSize: "25.19px", fontWeight: "700" }}>
-          No Channels Found
-        </Typography>
+        <>
+          <Typography sx={{ fontSize: "25.19px", fontWeight: "700" }}>
+            No Channels Found
+          </Typography>
+        </>
       ) : (
         <>
           {/* Info Button */}

@@ -183,7 +183,7 @@ const DynamicTable = ({
         <Typography
           fontSize={20}
           fontWeight={900}
-          mt="100px"
+          mt={mqttTable ? 0 : "100px"}
           textAlign="center"
         >
           No Data Found

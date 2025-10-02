@@ -29,8 +29,11 @@ export const generalScehma = Yup.object({
 
 export const passwordScehma = Yup.object({
   password: Yup.string()
-    .min(5, "Password must be at least 5 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(12, "Password must be at least 12 characters long.")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .matches(/[0-9]/, "Password must contain at least one number."),
   conPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Please confirm your password"),
@@ -43,12 +46,16 @@ export const profileSchema = Yup.object({
     .required("Date of Birth is required")
     .max(new Date(), "DOB cannot be in the future"),
   companyName: Yup.string().required("Company name is required"),
-  companyMail: Yup.string().matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    "Invalid email address"
-  ).required("Company mail is required"),
+  companyMail: Yup.string()
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Invalid email address"
+    )
+    .required("Company mail is required"),
   phone: Yup.string()
-    .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
+    .required("Phone number is required")
+    .max(15, "Phone number must be less than 15 digits")
+    .min(10, "Phone number must be greater than 10 digits"),
 });
 
 export const userSchema = Yup.object().shape({
@@ -64,25 +71,25 @@ export const userSchema = Yup.object().shape({
       "Invalid email address"
     )
     .required("Email is required"),
-  password: Yup.string()
-    .required("Password is required")
-    .min(12, "Password must be at least 12 characters long.")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .matches(/[0-9]/, "Password must contain at least one number."),
+  // password: Yup.string()
+  //   .required("Password is required")
+  //   .min(12, "Password must be at least 12 characters long.")
+  //   .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+  //   .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+  //   .matches(/[0-9]/, "Password must contain at least one number."),
   phoneNumber: Yup.string()
-    .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
+    .required("Phone number is required")
+    .max(15, "Phone number must be less than 15 digits")
+    .min(10, "Phone number must be greater than 10 digits"),
   description: Yup.string()
     .nullable()
     .max(255, "Description cannot exceed 255 characters"),
-  method: Yup.string()
-    .required("Method is required"),
-  owners: Yup.string()
-    .required("Owners field is required"),
-  customerName: Yup.string()
-    .required("Customer name is required"),
-  role: Yup.string()
-    .required("Role is required"),
+  // method: Yup.string()
+  //   .required("Method is required"),
+  // owners: Yup.string()
+  //   .required("Owners field is required"),
+  customerName: Yup.string().required("Customer name is required"),
+  role: Yup.string().required("Role is required"),
 });
 
 export const editUserSchema = Yup.object().shape({
@@ -90,9 +97,10 @@ export const editUserSchema = Yup.object().shape({
     .required("User name is required")
     .min(2, "Name must be at least 2 characters"),
   phone_number: Yup.string()
-    .required("Phone number is required").max(15, "Phone number must be less than 15 digits").min(10, "Phone number must be greater than 10 digits"),
-  customer_name: Yup.string()
-    .required("Customer name is required"),
+    .required("Phone number is required")
+    .max(15, "Phone number must be less than 15 digits")
+    .min(10, "Phone number must be greater than 10 digits"),
+  customer_name: Yup.string().required("Customer name is required"),
 });
 
 export const deviceSchema = Yup.object().shape({
@@ -100,8 +108,7 @@ export const deviceSchema = Yup.object().shape({
     .required("Name is required")
     .min(2, "Name must be at least 2 characters"),
 
-  device_uuid: Yup.string()
-    .required("Device Id is required"),
+  device_uuid: Yup.string().required("Device Id is required"),
 
   // label: Yup.string()
   //   .required("Label is required"),
@@ -115,8 +122,7 @@ export const deviceSchema = Yup.object().shape({
   // owners: Yup.string()
   //   .required("Owner is required"),
 
-  groups: Yup.string()
-    .required("Please select a group"),
+  groups: Yup.string().required("Please select a group"),
 
   // accessToken: Yup.string()
   //   .required("Access token is required"),
@@ -133,9 +139,32 @@ export const deviceSchema = Yup.object().shape({
   // userName: Yup.string()
   //   .required("MQTTS Username is required"),
 
-  password: Yup.string()
-    .required("MQTTS Password is required"),
+  password: Yup.string().required("MQTTS Password is required"),
 });
 
+export const verifyEmailSchema = Yup.object({
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Invalid email address"
+    )
+    .required("Email is required"),
+});
 
-
+export const passwordScehma2 = Yup.object({
+  oldPassword: Yup.string()
+    .required("Password is required")
+    .min(12, "Password must be at least 12 characters long.")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .matches(/[0-9]/, "Password must contain at least one number."),
+  newPassword: Yup.string()
+    .required("Password is required")
+    .min(12, "Password must be at least 12 characters long.")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+    .matches(/[0-9]/, "Password must contain at least one number."),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
+    .required("Please confirm your password"),
+});

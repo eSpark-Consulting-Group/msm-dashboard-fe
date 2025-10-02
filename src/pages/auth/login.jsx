@@ -2,6 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import LoginForm from "../../components/form/loginForm";
 import RightPanel from "../../components/form/rightPanel";
 import Logo from "../../components/logo";
+import { mainLogo } from "../../assets";
 
 const Login = () => {
   return (
@@ -28,12 +29,32 @@ const Login = () => {
               flexWrap: "wrap",
             }}
           >
-            <Logo bigLogo />
+            <img src={mainLogo} alt="Logo" style={{ width: "353px" }} />
           </Box>
+          <Typography
+            sx={{
+              color: "#0C89E2",
+              fontSize: "60px",
+              fontWeight: "900",
+              textAlign: "center",
+            }}
+          >
+            EIN
+            <Typography
+              component={"span"}
+              sx={{
+                color: "#5AB4F4",
+                fontSize: "40px",
+                fontWeight: "900",
+                ml: "10px",
+              }}
+            >
+              CLOUD
+            </Typography>
+          </Typography>
 
           <Typography
             variant="h5"
-            mt={2}
             fontWeight={900}
             sx={{
               fontSize: { xs: "28px", sm: "40px" },

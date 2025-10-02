@@ -49,6 +49,7 @@ import pen from "./icons/pen.svg";
 
 import avatar from "./images/avatar.png";
 import loginFrame from "./images/login_image.png";
+import mainLogo from "./images/main_logo.png";
 
 export {
   dashboardIcon,
@@ -101,4 +102,5 @@ export {
   uploadIcon2,
   gtIcon,
   pen,
+  mainLogo,
 };

@@ -2,6 +2,8 @@ import { lazy } from "react";
 
 // Auth
 const Login = lazy(() => import("./auth/login"));
+const VerifyEmail = lazy(() => import("./auth/verify-email"));
+const ResetPassword = lazy(() => import("./auth/reset-password"));
 
 // Dashboard
 const Dashboard = lazy(() => import("./dashboard/dashboard"));
@@ -29,4 +31,6 @@ export {
   ChannelInfo,
   MqttProtocol,
   UserDetails,
+  VerifyEmail,
+  ResetPassword,
 };

@@ -13,7 +13,7 @@ const fields = [
   { name: "name", label: "User name", placeholder: "Enter User Name" },
   { name: "label", label: "Label", placeholder: "Label" },
   { name: "email", label: "Email", placeholder: "Enter Email" },
-  { name: "password", label: "Password", placeholder: "Enter Password" },
+  // { name: "password", label: "Password", placeholder: "Enter Password" },
   {
     name: "phoneNumber",
     label: "Phone Number",
@@ -24,8 +24,8 @@ const fields = [
     label: "Description",
     placeholder: "Enter Description",
   },
-  { name: "method", label: "Method", placeholder: "Enter Method" },
-  { name: "owners", label: "Owner", placeholder: "Enter Owner Name" },
+  // { name: "method", label: "Method", placeholder: "Enter Method" },
+  // { name: "owners", label: "Owner", placeholder: "Enter Owner Name" },
   {
     name: "customerName",
     label: "Customer Name",
@@ -54,9 +54,9 @@ const AddUserModal = ({ onCancel }) => {
 
   useEffect(() => {
     if (rolesError) {
-      toast.error(rolesError?.data?.message || "Failed to fetch roles")
+      toast.error(rolesError?.data?.message || "Failed to fetch roles");
     }
-  }, [rolesError])
+  }, [rolesError]);
 
   const [createUser, { isLoading }] = useCreateUserMutation();
 
@@ -65,11 +65,11 @@ const AddUserModal = ({ onCancel }) => {
       name: "",
       label: "",
       email: "",
-      password: "",
+      // password: "",
       phoneNumber: "",
       description: "",
-      method: "",
-      owners: "",
+      // method: "",
+      // owners: "",
       customerName: "",
       role: "",
     },
@@ -86,20 +86,19 @@ const AddUserModal = ({ onCancel }) => {
         owner: values?.owners,
         customer_name: values?.customerName,
         role_id: values?.role,
-        status: "active"
-      }
-      createUser(bodyToSend)
-        .then((res) => {
-          if (res?.error) {
-            toast.error(res?.error?.data?.message || "Failed to create user");
-            return;
-          }
-          if (res?.data) {
-            toast.success(res?.data?.message || "User created successfully");
-            onCancel()
-          }
-        })
-    }
+        status: "active",
+      };
+      createUser(bodyToSend).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to create user");
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "User created successfully");
+          onCancel();
+        }
+      });
+    },
   });
 
   const renderInput = ({ name, label, placeholder, type }) => (
@@ -119,7 +118,11 @@ const AddUserModal = ({ onCancel }) => {
   );
 
   if (rolesLoading) {
-    return <Stack justifyContent="center" alignItems="center" ><CircularProgress /></Stack>
+    return (
+      <Stack justifyContent="center" alignItems="center">
+        <CircularProgress />
+      </Stack>
+    );
   }
 
   return (

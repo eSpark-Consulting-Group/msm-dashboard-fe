@@ -15,6 +15,15 @@ const slice = createSlice({
       localStorage.removeItem("msm_token");
       localStorage.removeItem("user");
     },
+    handleChangePassword: (state) => {
+      if (state.user) {
+        state.user.isPasswordChanged = true;
+      }
+
+      const user = JSON.parse(localStorage.getItem("user")) || {};
+      user.isPasswordChanged = true;
+      localStorage.setItem("user", JSON.stringify(user));
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -45,6 +54,6 @@ const slice = createSlice({
   },
 });
 
-export const { logout } = slice.actions;
+export const { logout, handleChangePassword } = slice.actions;
 
 export default slice.reducer;

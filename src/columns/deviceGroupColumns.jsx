@@ -1,6 +1,6 @@
 export const deviceGroupColumns = () => {
   return [
-    { name: "Created Time", key: "createdAt" },
+    { name: "Created Time", key: "createdAt", sortable: true },
     { name: "Name", key: "name" },
     { name: "Description", key: "description" },
     { name: "Actions", key: "action" },

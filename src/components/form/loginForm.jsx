@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Box,
   Button,
   Checkbox,
   FormControlLabel,
+  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { loginSchema } from "../../schemas";
@@ -94,6 +95,12 @@ const LoginForm = () => {
           helperText={formik.touched.password && formik.errors.password}
         />
       </Box>
+
+      <Link to={"/verify-email"} style={{ textDecoration: "none" }}>
+        <Typography sx={{ my: "10px", cursor: "pointer" }}>
+          Forget Password?
+        </Typography>
+      </Link>
 
       <FormControlLabel
         control={

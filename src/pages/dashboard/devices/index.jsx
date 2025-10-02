@@ -45,6 +45,10 @@ const Devices = () => {
   const [openEditModal, setOpenEditModal] = useState(null);
   const [importDeviceModal, setImportDeviceModal] = useState(false);
 
+  // Sorting state
+  const [sortKey, setSortKey] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
+
   useEffect(() => {
     if (tab) {
       setActiveTab(Number(tab));
@@ -61,6 +65,8 @@ const Devices = () => {
     }
     setPage(1);
     setSearch("");
+    setSortKey(null);
+    setSortOrder(null);
   }, [activeTab]);
 
   const {
@@ -195,6 +201,31 @@ const Devices = () => {
     setImportDeviceModal(true);
   };
 
+  // Sorting function
+  const handleSortChange = (key, order) => {
+    setSortKey(key);
+    setSortOrder(order);
+  };
+
+  const getSortedData = () => {
+    if (!sortKey || !sortOrder) return data;
+
+    return [...data].sort((a, b) => {
+      let aVal = a[sortKey];
+      let bVal = b[sortKey];
+
+      // Special handling for status (Active/Inactive)
+      if (sortKey === "status") {
+        aVal = aVal?.label || "";
+        bVal = bVal?.label || "";
+      }
+
+      if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  };
+
   return (
     <>
       <SubHeader
@@ -217,7 +248,7 @@ const Devices = () => {
         </Box>
       </Box>
       <DynamicTable
-        data={data}
+        data={getSortedData()}
         columns={activeTab === 0 ? columns() : deviceGroupColumns()}
         isLoading={deviceLoading || groupLoading}
         handleEdit={handleEdit}
@@ -227,6 +258,9 @@ const Devices = () => {
         handlePageChange={handlePageChange}
         total={total}
         hideView={true}
+        sortKey={sortKey}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
       />
       <DynamicModal
         open={openEditModal === 0}
@@ -264,9 +298,7 @@ const Devices = () => {
       <DynamicModal
         open={openAddModal === 0}
         handleClose={() => setOpenAddModal(false)}
-        // acceptButtonText={"Next"}
         heading={"Add New Device"}
-        // handleAccept={handleAddDeviceAccept}
       >
         <AddDeviceModal onCancel={() => setOpenAddModal(false)} />
       </DynamicModal>

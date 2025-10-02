@@ -17,25 +17,24 @@ const EditUserModal = ({ user, handleCancel }) => {
       email: user?.email || "",
       phone_number: user?.phone_number,
       customer_name: user?.customer_name,
-      status: user?.status?.label === "Active" ? "active" : "inactive" || "inactive",
+      status:
+        user?.status?.label === "Active" ? "active" : "inactive" || "inactive",
     },
     enableReinitialize: true,
     validationSchema: editUserSchema,
     onSubmit: (values) => {
-      editUser({ id: user?._id, formData: values })
-        .then((res) => {
-          if (res?.error) {
-            toast.error(res?.error?.data?.message || "Failed to update user");
-            return;
-          }
-          if (res?.data) {
-            toast.success(res?.data?.message || "User updated successfully");
-            handleCancel();
-          }
-        })
+      editUser({ id: user?._id, formData: values }).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to update user");
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "User updated successfully");
+          handleCancel();
+        }
+      });
     },
   });
-
 
   return (
     <Box
@@ -78,7 +77,9 @@ const EditUserModal = ({ user, handleCancel }) => {
         value={formik.values.phone_number}
         onInputChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
+        error={
+          formik.touched.phone_number && Boolean(formik.errors.phone_number)
+        }
         helperText={formik.touched.phone_number && formik.errors.phone_number}
       />
 
@@ -90,7 +91,9 @@ const EditUserModal = ({ user, handleCancel }) => {
         value={formik.values.customer_name}
         onInputChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        error={formik.touched.customer_name && Boolean(formik.errors.customer_name)}
+        error={
+          formik.touched.customer_name && Boolean(formik.errors.customer_name)
+        }
         helperText={formik.touched.customer_name && formik.errors.customer_name}
       />
 
@@ -118,6 +121,7 @@ const EditUserModal = ({ user, handleCancel }) => {
               formik.values.status === "active" ? "#EFEFEF" : "#FDE8E8",
             border: "1.38px solid #DBD6D6",
             borderRadius: "6.92px",
+            pt: "0px",
           }}
         />
       </Box>
@@ -136,7 +140,13 @@ const EditUserModal = ({ user, handleCancel }) => {
           </Button>
         </Box>
         <Box sx={{ width: "203.70px", height: "50px" }}>
-          <Button disabled={isLoading} loading={isLoading} variant="contained" disableRipple type="submit">
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            variant="contained"
+            disableRipple
+            type="submit"
+          >
             Save
           </Button>
         </Box>

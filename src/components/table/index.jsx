@@ -13,6 +13,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { copyToClipboard, getValue } from "../../utils";
 import { view, edit, trash, copy } from "../../assets";
 
@@ -32,16 +33,23 @@ const DynamicTable = ({
   total,
   onRowClick,
   mqttTable,
+  sortKey,
+  sortOrder,
+  onSortChange,
 }) => {
-  const extendedColumns = columns?.map((column) => {
-    return { ...column, key: column.key.split(".") };
-  });
+  // keep key as string for sorting, arrows
+  // add keyPath for nested object access
+  const extendedColumns = columns?.map((column) => ({
+    ...column,
+    keyPath: column.key.split("."),
+  }));
+
   const generateCell = (column, item) => {
     const cell = column.component
       ? column.component(item)
-      : getValue(item, column.key);
+      : getValue(item, column.keyPath);
 
-    if (column.key[0] === "action") {
+    if (column.key === "action") {
       return (
         <Stack
           direction="row"
@@ -132,6 +140,40 @@ const DynamicTable = ({
       );
     }
 
+    if (column.chipArray && Array.isArray(cell)) {
+      const maxVisible = 3; // show 3 chips max
+      const visibleChips = cell.slice(0, maxVisible);
+      const hiddenCount = cell.length - maxVisible;
+
+      return (
+        <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1}>
+          {visibleChips.map((val, idx) => (
+            <Chip
+              key={idx}
+              label={val}
+              sx={{
+                backgroundColor: "#e0e0e0",
+                color: "#333",
+                fontSize: "12px",
+                height: "24px",
+              }}
+            />
+          ))}
+          {hiddenCount > 0 && (
+            <Chip
+              label={`+${hiddenCount} more`}
+              sx={{
+                backgroundColor: "#ccc",
+                color: "#333",
+                fontSize: "12px",
+                height: "24px",
+              }}
+            />
+          )}
+        </Stack>
+      );
+    }
+
     return cell;
   };
 
@@ -165,13 +207,38 @@ const DynamicTable = ({
             >
               <TableRow>
                 {extendedColumns?.map((column, index) => (
-                  <TableCell key={`${index}`}>
+                  <TableCell
+                    key={`${index}`}
+                    onClick={() => {
+                      if (column.sortable && onSortChange) {
+                        if (sortKey !== column.key) {
+                          // clicked a NEW column → start with ascending
+                          onSortChange(column.key, "asc");
+                        } else {
+                          // clicked SAME column → toggle asc ↔ desc only
+                          const newOrder = sortOrder === "asc" ? "desc" : "asc";
+                          onSortChange(column.key, newOrder);
+                        }
+                      }
+                    }}
+                    sx={{
+                      cursor: column.sortable ? "pointer" : "default",
+                      userSelect: "none",
+                    }}
+                  >
                     <Stack
-                      direction={"row"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={0.5}
                     >
-                      <Stack direction="row">{column.name}</Stack>
+                      {column.name}
+                      {sortKey === column.key && sortOrder === "asc" && (
+                        <ArrowUpward sx={{ fontSize: 16 }} />
+                      )}
+                      {sortKey === column.key && sortOrder === "desc" && (
+                        <ArrowDownward sx={{ fontSize: 16 }} />
+                      )}
                     </Stack>
                   </TableCell>
                 ))}
@@ -182,7 +249,7 @@ const DynamicTable = ({
                 sx={{
                   ...(mqttTable && {
                     "& .MuiTableRow-root": {
-                      backgroundColor: "#F7F9FB", // or alternate row background logic
+                      backgroundColor: "#F7F9FB",
                     },
                     "& .MuiTableCell-root": {
                       padding: "20px 8px",
@@ -200,7 +267,7 @@ const DynamicTable = ({
                           pl: "0px",
                           cursor: onRowClick ? "pointer" : "auto",
                         }}
-                        key={column.key.join(".")}
+                        key={column.key}
                         onClick={onRowClick ? () => onRowClick(item) : () => {}}
                       >
                         {generateCell(column, item)}

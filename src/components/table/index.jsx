@@ -147,28 +147,34 @@ const DynamicTable = ({
 
       return (
         <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1}>
-          {visibleChips.map((val, idx) => (
-            <Chip
-              key={idx}
-              label={val}
-              sx={{
-                backgroundColor: "#e0e0e0",
-                color: "#333",
-                fontSize: "12px",
-                height: "24px",
-              }}
-            />
-          ))}
-          {hiddenCount > 0 && (
-            <Chip
-              label={`+${hiddenCount} more`}
-              sx={{
-                backgroundColor: "#ccc",
-                color: "#333",
-                fontSize: "12px",
-                height: "24px",
-              }}
-            />
+          {visibleChips?.length === 0 ? (
+            <Typography>-</Typography>
+          ) : (
+            <>
+              {visibleChips.map((val, idx) => (
+                <Chip
+                  key={idx}
+                  label={val}
+                  sx={{
+                    backgroundColor: "#e0e0e0",
+                    color: "#333",
+                    fontSize: "12px",
+                    height: "24px",
+                  }}
+                />
+              ))}
+              {hiddenCount > 0 && (
+                <Chip
+                  label={`+${hiddenCount} more`}
+                  sx={{
+                    backgroundColor: "#ccc",
+                    color: "#333",
+                    fontSize: "12px",
+                    height: "24px",
+                  }}
+                />
+              )}
+            </>
           )}
         </Stack>
       );

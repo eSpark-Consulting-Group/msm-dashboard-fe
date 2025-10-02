@@ -6,11 +6,11 @@ export const columns = () => {
     { name: "Email", key: "email" },
     { name: "No of Devices", key: "total_devices_count", sortable: true },
     { name: "Status", key: "status", chip: true, sortable: true },
-    { name: "Actions", key: "action" },
     {
       name: "Groups",
       key: "tags",
       chipArray: true,
     },
+    { name: "Actions", key: "action" },
   ];
 };

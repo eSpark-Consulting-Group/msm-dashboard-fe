@@ -50,6 +50,7 @@ const Users = () => {
     }
     setData(
       userData?.data?.map((item) => {
+        const groups = item?.groupsData?.map((group) => group?.name);
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
@@ -73,23 +74,7 @@ const Users = () => {
               : "red",
           },
           deviceId: "-",
-          tags: [
-            "IoT",
-            "Smart",
-            "Energy",
-            "IoT",
-            "Smart",
-            "Energy",
-            "IoT",
-            "Smart",
-            "Energy",
-            "IoT",
-            "Smart",
-            "Energy",
-            "IoT",
-            "Smart",
-            "Energy",
-          ],
+          tags: groups,
         };
       }) || []
     );

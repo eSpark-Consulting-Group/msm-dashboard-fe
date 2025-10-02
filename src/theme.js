@@ -291,7 +291,7 @@ export const theme = createTheme({
         root: {
           backgroundColor: "#EFEFEF",
           borderRadius: "6.92px",
-          height: "55px",
+          minHeight: "55px",
           color: "#000",
           border: "1.28px solid #DBD6D6",
           fontSize: "16px",

@@ -39,7 +39,7 @@ const Users = () => {
     isError,
     error,
   } = useGetAllUsersQuery(
-    { page: 1, limit: 10, search },
+    { page: 1, limit: 20, search },
     { refetchOnMountOrArgChange: true }
   );
 

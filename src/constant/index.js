@@ -19,6 +19,11 @@ export const sidebarTabs = (role) => {
           title: "Dashboard",
           link: "/",
         },
+        {
+          icon: devicesIcon,
+          title: "Devices",
+          link: "/devices",
+        },
       ]
     : [
         {
@@ -899,5 +904,3 @@ export const userDetails = [
     },
   },
 ];
-
-

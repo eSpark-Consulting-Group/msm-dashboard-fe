@@ -31,7 +31,7 @@ const Login = () => {
           >
             <img src={mainLogo} alt="Logo" style={{ width: "353px" }} />
           </Box>
-          <Typography
+          {/* <Typography
             sx={{
               color: "#0C89E2",
               fontSize: "60px",
@@ -51,7 +51,8 @@ const Login = () => {
             >
               CLOUD
             </Typography>
-          </Typography>
+          </Typography> */}
+          <Logo bigLogo={true} />
 
           <Typography
             variant="h5"

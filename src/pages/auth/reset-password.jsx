@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { mainLogo } from "../../assets";
-import { Button, OutlinedInput } from "../../components";
+import { Button, Logo, OutlinedInput } from "../../components";
 import { useFormik } from "formik";
 import RightPanel from "../../components/form/rightPanel";
 import { passwordScehma } from "../../schemas";
@@ -69,7 +69,7 @@ const ResetPassword = () => {
             <img src={mainLogo} alt="Logo" style={{ width: "353px" }} />
           </Box>
 
-          <Typography
+          {/* <Typography
             sx={{
               color: "#0C89E2",
               fontSize: "60px",
@@ -90,7 +90,8 @@ const ResetPassword = () => {
             >
               CLOUD
             </Typography>
-          </Typography>
+          </Typography> */}
+          <Logo bigLogo={true} />
 
           <Typography
             variant="h5"

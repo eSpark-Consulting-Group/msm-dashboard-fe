@@ -7,6 +7,7 @@ const Logo = ({ bigLogo }) => {
       justifyContent="center"
       alignItems="flex-end"
       gap="4px"
+      my={bigLogo ? 3 : 0}
     >
       <Typography
         lineHeight={bigLogo ? "50px" : "22px"}

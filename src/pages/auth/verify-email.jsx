@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { mainLogo } from "../../assets";
 import RightPanel from "../../components/form/rightPanel";
-import { Button, OutlinedInput } from "../../components";
+import { Button, Logo, OutlinedInput } from "../../components";
 import { useFormik } from "formik";
 import { verifyEmailSchema } from "../../schemas";
 import { useNavigate } from "react-router-dom";
@@ -64,7 +64,7 @@ const VerifyEmail = () => {
             <img src={mainLogo} alt="Logo" style={{ width: "353px" }} />
           </Box>
 
-          <Typography
+          {/* <Typography
             sx={{
               color: "#0C89E2",
               fontSize: "60px",
@@ -84,7 +84,8 @@ const VerifyEmail = () => {
             >
               CLOUD
             </Typography>
-          </Typography>
+          </Typography> */}
+          <Logo bigLogo={true} />
           {isVerified ? (
             <Typography sx={{ textAlign: "center" }}>
               Password reset link has been sent to your email. You can close

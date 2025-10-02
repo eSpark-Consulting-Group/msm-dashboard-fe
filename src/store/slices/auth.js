@@ -15,6 +15,20 @@ const slice = createSlice({
       localStorage.removeItem("msm_token");
       localStorage.removeItem("user");
     },
+    handleChangePassword: (state) => {
+      if (state.user) {
+        state.user.isPasswordChanged = true;
+      }
+
+      const user = JSON.parse(localStorage.getItem("user")) || {};
+      user.isPasswordChanged = true;
+      localStorage.setItem("user", JSON.stringify(user));
+    },
+    handleProfileUpdate: (state, action) => {
+      // console.log(action?.payload);
+      state.user = action?.payload;
+      localStorage.setItem("user", JSON.stringify(action?.payload));
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -26,14 +40,14 @@ const slice = createSlice({
         localStorage.setItem("user", JSON.stringify(data?.user));
       }
     );
-    builder.addMatcher(
-      userApi.endpoints.updateUser.matchFulfilled,
-      (state, { payload }) => {
-        const { data } = payload;
-        state.user = data;
-        localStorage.setItem("user", JSON.stringify(data));
-      }
-    );
+    // builder.addMatcher(
+    //   userApi.endpoints.updateUser.matchFulfilled,
+    //   (state, { payload }) => {
+    //     const { data } = payload;
+    //     state.user = data;
+    //     localStorage.setItem("user", JSON.stringify(data));
+    //   }
+    // );
     builder.addMatcher(
       authApi.endpoints.getUserInfo.matchFulfilled,
       (state, { payload }) => {
@@ -45,6 +59,7 @@ const slice = createSlice({
   },
 });
 
-export const { logout } = slice.actions;
+export const { logout, handleChangePassword, handleProfileUpdate } =
+  slice.actions;
 
 export default slice.reducer;

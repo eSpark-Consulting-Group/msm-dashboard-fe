@@ -29,6 +29,10 @@ const Users = () => {
   const [editUserValues, setEditUserValues] = useState();
   const [selectedUserToDelete, setSelectedUserToDelete] = useState(null);
 
+  // Sorting state
+  const [sortKey, setSortKey] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
+
   const {
     data: userData,
     isLoading,
@@ -46,6 +50,7 @@ const Users = () => {
     }
     setData(
       userData?.data?.map((item) => {
+        const groups = item?.groupsData?.map((group) => group?.name);
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
@@ -57,10 +62,19 @@ const Users = () => {
             name: item?.name,
           },
           status: {
-            label: item?.status === "active" ? "Active" : "Inactive",
-            variant: item?.status === "active" ? "green" : "red",
+            label: !item?.isPasswordChanged
+              ? "Pending"
+              : item?.status === "active"
+              ? "Active"
+              : "Inactive",
+            variant: !item?.isPasswordChanged
+              ? "simple2"
+              : item?.status === "active"
+              ? "green"
+              : "red",
           },
           deviceId: "-",
+          tags: groups,
         };
       }) || []
     );
@@ -95,7 +109,42 @@ const Users = () => {
 
   const handleUserClick = (item) => {
     console.log(item);
-    navigate(`/users/${item?._id}?name=${item?.userName?.name}`);
+    navigate(
+      `/users/${item?._id}?name=${encodeURIComponent(
+        item?.userName?.name
+      )}&role=${encodeURIComponent(item?.role?.name)}`
+    );
+  };
+
+  // ✅ Sorting logic
+  const handleSortChange = (key, order) => {
+    setSortKey(key);
+    setSortOrder(order);
+  };
+
+  const getSortedData = () => {
+    if (!sortKey || !sortOrder) return data;
+
+    return [...data].sort((a, b) => {
+      let aVal = a[sortKey];
+      let bVal = b[sortKey];
+
+      // Special case: status is an object
+      if (sortKey === "status") {
+        aVal = aVal?.label || "";
+        bVal = bVal?.label || "";
+      }
+
+      // Special case: number of devices (ensure numeric)
+      if (sortKey === "total_devices_count") {
+        aVal = Number(aVal) || 0;
+        bVal = Number(bVal) || 0;
+      }
+
+      if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
   };
 
   return (
@@ -113,7 +162,7 @@ const Users = () => {
         </Box>
         <DynamicTable
           isLoading={isLoading}
-          data={data}
+          data={getSortedData()}
           columns={columns()}
           page={page}
           pageSize={pageSize}
@@ -123,6 +172,9 @@ const Users = () => {
           handlePageChange={handlePageChange}
           hideView={true}
           onRowClick={handleUserClick}
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
         />
       </Box>
       <DynamicModal

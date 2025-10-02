@@ -260,6 +260,17 @@ export const theme = createTheme({
             fontWeight: 400,
           },
         },
+        {
+          props: { variant: "simple2" },
+          style: {
+            backgroundColor: "#e0e0e0",
+            color: "#333",
+            width: "100px",
+            height: "30px",
+            fontSize: "16px",
+            fontWeight: 400,
+          },
+        },
       ],
     },
     MuiLinearProgress: {

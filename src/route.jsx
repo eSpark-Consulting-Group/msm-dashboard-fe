@@ -15,6 +15,8 @@ import {
   ChannelInfo,
   MqttProtocol,
   UserDetails,
+  VerifyEmail,
+  ResetPassword,
 } from "./pages";
 import DashboardInfo from "./pages/dashboard/dashboardInfo";
 import { useSelector } from "react-redux";
@@ -27,6 +29,8 @@ const Router = () => {
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/reset-password/:id" element={<ResetPassword />} />
         </Route>
 
         <Route element={<PrivateLayout />}>

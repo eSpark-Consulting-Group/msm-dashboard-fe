@@ -29,6 +29,9 @@ const Dashboard = () => {
   const [deviceDelete, setDeviceDelete] = useState(false);
   const token = localStorage.getItem("msm_token");
 
+  const [sortKey, setSortKey] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
+
   const { user } = useSelector((state) => state.auth);
 
   const { isLoading, isError, error } = useGetAllDevicesQuery(
@@ -36,6 +39,8 @@ const Dashboard = () => {
       page,
       limit: pageSize,
       search,
+      sortKey,
+      sortOrder,
     },
     { skip: !token, refetchOnMountOrArgChange: true }
   );
@@ -84,19 +89,47 @@ const Dashboard = () => {
       toast.error(error?.data?.message);
       return;
     }
-    setData(
-      dashboardData?.map((item) => {
-        return {
-          ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-          deviceId: item?.device_data?.device_uuid || "-",
-          group: item?.groups_data?.name || "-",
-          name: item?.name,
-          createdBy: item?.user_id,
-        };
-      }) || []
-    );
-  }, [isError, error, dashboardData]);
+
+    let mappedData =
+      dashboardData?.map((item) => ({
+        ...item,
+        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+        deviceId: item?.device_data?.device_uuid || "-",
+        group: item?.groups_data?.name || "-",
+        name: item?.name,
+        createdBy: item?.user_id,
+        status: {
+          label: item?.device_data?.device_status ? "Active" : "Inactive",
+          variant: item?.device_data?.device_status ? "green" : "red",
+        },
+      })) || [];
+
+    // ✅ apply client-side sorting
+    if (sortKey && sortOrder) {
+      mappedData = mappedData.sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
+
+        if (sortKey === "status") {
+          return sortOrder === "asc"
+            ? aVal.label.localeCompare(bVal.label)
+            : bVal.label.localeCompare(aVal.label);
+        }
+
+        if (sortKey === "createdAt") {
+          return sortOrder === "asc"
+            ? new Date(aVal) - new Date(bVal)
+            : new Date(bVal) - new Date(aVal);
+        }
+
+        return sortOrder === "asc"
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+    }
+
+    setData(mappedData);
+  }, [isError, error, dashboardData, sortKey, sortOrder]);
 
   const navigate = useNavigate();
 
@@ -137,8 +170,15 @@ const Dashboard = () => {
         pageSize={pageSize}
         handlePageChange={handlePageChange}
         total={total}
-        onRowClick={(item) => handleRowClick(item)}
+        onRowClick={handleRowClick}
+        sortKey={sortKey}
+        sortOrder={sortOrder}
+        onSortChange={(key, order) => {
+          setSortKey(key);
+          setSortOrder(order);
+        }}
       />
+
       {/* <AddDashboardModal
         open={open}
         handleClose={() => setOpen(false)}

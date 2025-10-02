@@ -7,6 +7,7 @@ const Logo = ({ bigLogo }) => {
       justifyContent="center"
       alignItems="flex-end"
       gap="4px"
+      my={bigLogo ? 3 : 0}
     >
       <Typography
         lineHeight={bigLogo ? "50px" : "22px"}
@@ -19,7 +20,7 @@ const Logo = ({ bigLogo }) => {
           display: "inline-block",
         }}
       >
-        MSM
+        EIN
       </Typography>
       <Typography
         lineHeight={bigLogo ? "40px" : "17px"}
@@ -27,7 +28,7 @@ const Logo = ({ bigLogo }) => {
         fontWeight={900}
         color="secondary.light"
       >
-        Application
+        CLOUD
       </Typography>
     </Stack>
   );

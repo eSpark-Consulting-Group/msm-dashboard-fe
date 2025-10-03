@@ -57,11 +57,11 @@ const VerifyEmail = () => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: { xs: "center", sm: "flex-start" },
+              justifyContent: "center",
               flexWrap: "wrap",
             }}
           >
-            <img src={mainLogo} alt="Logo" style={{ width: "353px" }} />
+            <img src={mainLogo} alt="Logo" style={{ width: "120px" }} />
           </Box>
 
           {/* <Typography

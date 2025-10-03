@@ -1,11 +1,11 @@
 import { generateColumns } from "../../../columns/mqtt";
-import { Box, LinearProgress, Stack, Typography } from "@mui/material";
+import { Box, LinearProgress, Typography } from "@mui/material";
 import {
   DynamicTable,
   DynamicTabs2,
   NavigateHeader,
 } from "../../../components";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGetAllProtocolsQuery } from "../../../services/protocol";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,7 +55,7 @@ const MqttProtocol = () => {
   // }, [protocolData]);
 
   useEffect(() => {
-    if (!id) return; // ✅ guard against missing id
+    if (!id) return;
 
     emitEvent("mqtt_protocol", {
       thing_name: id,

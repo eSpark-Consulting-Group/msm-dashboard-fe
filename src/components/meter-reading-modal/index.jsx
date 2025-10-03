@@ -270,12 +270,17 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       try {
         const res = await triggerGetProtocols(payload).unwrap();
         toast.success("History configuration updated");
-        const transformed = res.protocolsByRank.map((item) => ({
-          timestamp: item.timestamp,
-          ip_address: item.ip_address,
-          ofp_uid: item.ofp_uid,
-          ...item.data,
-        }));
+        const transformed = res.protocolsByRank.map((item) => {
+          const dateObj = new Date(item.timestamp);
+
+          return {
+            timestamp: item.timestamp,
+            date: dateObj.toISOString().split("T")[0],
+            time: dateObj.toISOString().split("T")[1].replace("Z", ""),
+            device_ID: item.ofp_uid,
+            ...item.data,
+          };
+        });
         dispatch(addMqttHistoryData(transformed));
 
         handleClose();

@@ -30,8 +30,12 @@ export function useSocket() {
       socketRef.current.on("mqtt_protocol", (obj) => {
         const transformed = {
           timestamp: obj.timestamp,
-          ip_address: obj.ip_address,
-          ofp_uid: obj.ofp_uid,
+          date: new Date(obj.timestamp).toISOString().split("T")[0],
+          time: new Date(obj.timestamp)
+            .toISOString()
+            .split("T")[1]
+            .replace("Z", ""),
+          device_ID: obj.ofp_uid,
           ...obj.data,
         };
         dispatch(addMqttData(transformed));

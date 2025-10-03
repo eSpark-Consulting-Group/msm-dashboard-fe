@@ -698,7 +698,7 @@ const AddUserModal = ({ onCancel }) => {
               }
               getOptionLabel={(option) => option.label}
               renderOption={(props, option, { selected }) => (
-                <li {...props}>
+                <li {...props} key={option.value}>
                   <Checkbox
                     icon={icon}
                     checkedIcon={checkedIcon}

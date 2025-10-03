@@ -12,7 +12,7 @@ export default function SearchBar({
 
   useEffect(() => {
     setSearch(value);
-  }, [value])
+  }, [value]);
 
   const handleChange = (e) => {
     const val = e.target.value;
@@ -50,7 +50,7 @@ export default function SearchBar({
       }}
       variant="outlined"
       placeholder={placeholder}
-      value={search}
+      value={search || ""}
       onChange={handleChange}
       InputProps={{
         startAdornment: (

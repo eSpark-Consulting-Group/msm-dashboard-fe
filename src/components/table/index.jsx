@@ -239,6 +239,9 @@ const DynamicTable = ({
                       gap={0.5}
                     >
                       {column.name}
+                      {column.name === "Timestamp" && (
+                        <ArrowDownward sx={{ fontSize: 16 }} />
+                      )}
                       {sortKey === column.key && sortOrder === "asc" && (
                         <ArrowUpward sx={{ fontSize: 16 }} />
                       )}

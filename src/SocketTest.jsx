@@ -28,8 +28,17 @@ export function useSocket() {
 
       // 🔹 Listen for mqtt_protocol event from server
       socketRef.current.on("mqtt_protocol", (obj) => {
-        dispatch(addMqttData(obj?.data));
-        // console.log(obj?.data, "");
+        const transformed = {
+          timestamp: obj.timestamp,
+          date: new Date(obj.timestamp).toISOString().split("T")[0],
+          time: new Date(obj.timestamp)
+            .toISOString()
+            .split("T")[1]
+            .replace("Z", ""),
+          device_ID: obj.ofp_uid,
+          ...obj.data,
+        };
+        dispatch(addMqttData(transformed));
       });
     }
   }, [dispatch]);

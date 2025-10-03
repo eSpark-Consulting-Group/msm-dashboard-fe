@@ -49,7 +49,7 @@ const RealtimeConfig = ({ realtimeConfig, updateRealtimeConfig }) => {
           width={"100%"}
           direction={{ xs: "column", sm: "row" }}
           alignItems={{ xs: "center", sm: "center" }}
-          spacing={{ xs: 0.2, sm: 2 }}
+          spacing={{ xs: 0.2, sm: 1.5 }}
           justifyContent="space-between"
         >
           <Typography variant="body1">Max Values</Typography>

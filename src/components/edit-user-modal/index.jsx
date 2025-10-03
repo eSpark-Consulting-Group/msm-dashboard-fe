@@ -152,6 +152,8 @@ const EditUserModal = ({ user, handleCancel }) => {
         renderValueSx={{
           color: formik.values.status === "active" ? "#35B21C" : "#EB1B1B",
           fontWeight: 600,
+          position: "relative",
+          bottom: "8px",
         }}
         selectSx={{
           backgroundColor:

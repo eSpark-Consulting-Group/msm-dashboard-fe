@@ -64,7 +64,7 @@ const MqttProtocol = () => {
     });
 
     dispatch(addMqttProtocol(5));
-    dispatch(addMqttMessage("Realtime 5 seconds"));
+    dispatch(addMqttMessage("Realtime - 5 seconds"));
   }, [id, emitEvent, dispatch]);
 
   useEffect(() => {
@@ -116,6 +116,9 @@ const MqttProtocol = () => {
               flexDirection={"row"}
               alignItems={"center"}
               gap={0.5}
+              border={"1px solid grey"}
+              p={0.5}
+              borderRadius={2}
             >
               <AccessTimeIcon fontSize="small" />
               <Typography
@@ -125,6 +128,7 @@ const MqttProtocol = () => {
                   fontWeight: "400",
                   color: "#667085",
                   height: "17px",
+                  cursor: "pointer",
                 }}
               >
                 {mqttMessage}
@@ -136,6 +140,9 @@ const MqttProtocol = () => {
               direction={"row"}
               alignItems={"center"}
               gap={0.5}
+              p={0.5}
+              borderRadius={2}
+              border={"1px solid grey"}
             >
               <HistoryIcon fontSize="small" />
               <Typography
@@ -145,6 +152,7 @@ const MqttProtocol = () => {
                   fontWeight: "400",
                   color: "#667085",
                   height: "17px",
+                  cursor: "pointer",
                 }}
               >
                 {mqttMessage}

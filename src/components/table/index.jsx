@@ -239,14 +239,21 @@ const DynamicTable = ({
                       gap={0.5}
                     >
                       {column.name}
-                      {column.name === "Timestamp" && (
-                        <ArrowDownward sx={{ fontSize: 16 }} />
-                      )}
-                      {sortKey === column.key && sortOrder === "asc" && (
-                        <ArrowUpward sx={{ fontSize: 16 }} />
-                      )}
-                      {sortKey === column.key && sortOrder === "desc" && (
-                        <ArrowDownward sx={{ fontSize: 16 }} />
+                      {column.sortable && (
+                        <>
+                          {/* Neutral indicator before any sorting */}
+                          {sortKey !== column.key && (
+                            <ArrowUpward sx={{ fontSize: 14, opacity: 0.3 }} />
+                          )}
+
+                          {/* Active sorting indicators */}
+                          {sortKey === column.key && sortOrder === "asc" && (
+                            <ArrowUpward sx={{ fontSize: 16 }} />
+                          )}
+                          {sortKey === column.key && sortOrder === "desc" && (
+                            <ArrowDownward sx={{ fontSize: 16 }} />
+                          )}
+                        </>
                       )}
                     </Stack>
                   </TableCell>

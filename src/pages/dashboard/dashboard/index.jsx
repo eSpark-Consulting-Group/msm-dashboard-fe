@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useDeleteDeviceMutation,
   useDeleteUserDeviceMutation,
+  useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
 } from "../../../services/devices";
 import { useSelector } from "react-redux";
@@ -42,10 +43,33 @@ const Dashboard = () => {
       sortKey,
       sortOrder,
     },
-    { skip: !token, refetchOnMountOrArgChange: true }
+    {
+      skip: !token || user?.role?.name === "user",
+      refetchOnMountOrArgChange: true,
+    }
   );
 
-  const { devices: dashboardData } = useSelector((state) => state.devices);
+  const {
+    isLoading: isLoading2,
+    isError: isError2,
+    error: error2,
+  } = useGetAllAssignDevicesQuery(
+    {
+      page,
+      limit: pageSize,
+      search,
+      sortKey,
+      sortOrder,
+    },
+    {
+      skip: !token || user?.role?.name !== "user",
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const { devices: dashboardData, assignDevices: dashboardData2 } = useSelector(
+    (state) => state.devices
+  );
 
   const [deleteDashboard, { isLoading: deleteLoading }] =
     useDeleteDeviceMutation();
@@ -90,19 +114,44 @@ const Dashboard = () => {
       return;
     }
 
+    if (isError2 && error2) {
+      toast.error(error2?.data?.message);
+      return;
+    }
+
+    const sourceData =
+      user?.role?.name === "user" ? dashboardData2 : dashboardData;
+
     let mappedData =
-      dashboardData?.map((item) => ({
-        ...item,
-        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-        deviceId: item?.device_data?.device_uuid || "-",
-        group: item?.groups_data?.name || "-",
-        name: item?.name,
-        createdBy: item?.user_id,
-        status: {
-          label: item?.device_data?.device_status ? "Active" : "Inactive",
-          variant: item?.device_data?.device_status ? "green" : "red",
-        },
-      })) || [];
+      sourceData?.map((item) => {
+        const status =
+          user?.role?.name === "user"
+            ? item?.device_data?.device_data?.device_status
+            : item?.device_data?.device_status;
+
+        return {
+          ...item,
+          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          deviceId:
+            user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_uuid
+              : item?.device_data?.device_uuid || "-",
+          group:
+            user?.role?.name === "user"
+              ? item?.device_data?.groups_data?.name
+              : item?.groups_data?.name || "-",
+          name:
+            user?.role?.name === "user" ? item?.device_data?.name : item?.name,
+          createdBy:
+            user?.role?.name === "user"
+              ? item?.device_data?.user_id
+              : item?.user_id,
+          status: {
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
+          },
+        };
+      }) || [];
 
     // ✅ apply client-side sorting
     if (sortKey && sortOrder) {
@@ -129,7 +178,17 @@ const Dashboard = () => {
     }
 
     setData(mappedData);
-  }, [isError, error, dashboardData, sortKey, sortOrder]);
+  }, [
+    isError,
+    error,
+    dashboardData,
+    sortKey,
+    sortOrder,
+    dashboardData2,
+    user,
+    isError2,
+    error2,
+  ]);
 
   const navigate = useNavigate();
 
@@ -142,8 +201,15 @@ const Dashboard = () => {
   };
 
   const handleRowClick = (item) => {
-    item?.device_data?.device_uuid &&
-      navigate(`/dashboard/${item?.device_data?.device_uuid}/info`);
+    if (user?.role?.name === "user") {
+      item?.device_data?.device_data?.device_uuid &&
+        navigate(
+          `/dashboard/${item?.device_data?.device_data?.device_uuid}/info`
+        );
+    } else {
+      item?.device_data?.device_uuid &&
+        navigate(`/dashboard/${item?.device_data?.device_uuid}/info`);
+    }
   };
 
   return (
@@ -165,7 +231,7 @@ const Dashboard = () => {
         hideView
         hideEdit
         handleDelete={handleDelete}
-        isLoading={isLoading}
+        isLoading={isLoading || isLoading2}
         page={page}
         pageSize={pageSize}
         handlePageChange={handlePageChange}

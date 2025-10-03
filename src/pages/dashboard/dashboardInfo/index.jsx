@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
@@ -13,6 +13,7 @@ import {
   sftp,
 } from "../../../constant";
 import {
+  useGetAssignDeviceByIdQuery,
   useGetDeviceByIdQuery,
   useRebootDeviceMutation,
 } from "../../../services/devices";
@@ -22,6 +23,7 @@ import { useGetMqttByDeviceIdQuery } from "../../../services/mqtt";
 
 const DashboardInfo = () => {
   const { id } = useParams();
+  const [assignDeviceData, setAssignDeviceData] = useState({});
 
   const { user } = useSelector((state) => state.auth);
   const {
@@ -29,7 +31,17 @@ const DashboardInfo = () => {
     isLoading: deviceLoading,
     isError: isDeviceError,
     error: deviceError,
-  } = useGetDeviceByIdQuery(id, { skip: !id });
+  } = useGetDeviceByIdQuery(id, { skip: !id || user?.role?.name === "user" });
+
+  const {
+    data: deviceData2,
+    isLoading: deviceLoading2,
+    isError: isDeviceError2,
+    error: deviceError2,
+  } = useGetAssignDeviceByIdQuery(id, {
+    skip: !id || user?.role?.name !== "user",
+  });
+
   const {
     data: ntpData,
     isLoading: ntpLoading,
@@ -76,6 +88,9 @@ const DashboardInfo = () => {
     if (isDeviceError) {
       toast.error(deviceError?.data?.message);
     }
+    if (isDeviceError2) {
+      toast.error(deviceError2?.data?.message);
+    }
     if (isNtpError) {
       toast.error(ntpError?.data?.message);
     }
@@ -94,14 +109,32 @@ const DashboardInfo = () => {
     mqttError,
     isSftpError,
     sftpError,
+    isDeviceError2,
+    deviceError2,
   ]);
+
+  useEffect(() => {
+    const data = deviceData2?.data;
+    const myData = {
+      device_uuid: data?.device_data?.device_data?.device_uuid,
+      device_imei: data?.device_data?.device_data?.device_imei,
+      device_ip: data?.device_data?.device_data?.device_ip,
+      mqtt_status: data?.device_data?.device_data?.mqtt_status,
+      sftp_status: data?.device_data?.device_data?.sftp_status,
+    };
+    setAssignDeviceData(myData);
+  }, [deviceData2]);
 
   const tabs = [
     {
       label: "INFO",
       component: (
         <InfoCard
-          info={infoData(deviceData?.data?.device_data)}
+          info={infoData(
+            user?.role?.name === "user"
+              ? assignDeviceData
+              : deviceData?.data?.device_data
+          )}
           title="Device Info"
           buttonLabel="Reboot"
           onButtonClick={handleReboot}
@@ -161,7 +194,13 @@ const DashboardInfo = () => {
 
   return (
     <DashboardWrapper
-      loading={deviceLoading || ntpLoading || mqttLoading || sftpLoading}
+      loading={
+        deviceLoading ||
+        ntpLoading ||
+        mqttLoading ||
+        sftpLoading ||
+        deviceLoading2
+      }
     >
       <DynamicTabs tabs={tabs} />
     </DashboardWrapper>

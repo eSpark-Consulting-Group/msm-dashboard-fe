@@ -50,7 +50,16 @@ const Users = () => {
     }
     setData(
       userData?.data?.map((item) => {
-        const groups = item?.groupsData?.map((group) => group?.name);
+        // const groups = item?.groupsData?.map((group) => group?.name);
+        const role = item?.role?.name;
+        let groups = [];
+        if (role === "user") {
+          groups = item?.userDevicesData?.map(
+            (group) => group?.device_data?.groups_data?.name
+          );
+        } else if (role !== "user") {
+          groups = item?.groupsData?.map((group) => group?.name);
+        }
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),

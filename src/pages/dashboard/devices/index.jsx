@@ -20,6 +20,7 @@ import { deviceGroupColumns } from "../../../columns/deviceGroupColumns";
 import { EditDeviceModal } from "../../../components";
 import {
   useDeleteDeviceMutation,
+  useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
 } from "../../../services/devices";
 import {
@@ -44,6 +45,7 @@ const Devices = () => {
   const [openAddModal, setOpenAddModal] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(null);
   const [importDeviceModal, setImportDeviceModal] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
   // Sorting state
   const [sortKey, setSortKey] = useState(null);
@@ -75,11 +77,27 @@ const Devices = () => {
     error: groupError,
   } = useGetAllDevicesQuery(
     { page, limit: pageSize, search },
-    { skip: activeTab !== 0, refetchOnMountOrArgChange: true }
+    {
+      skip: activeTab !== 0 || user?.role?.name === "user",
+      refetchOnMountOrArgChange: true,
+    }
   );
 
-  const { devices: devicesData } = useSelector((state) => state.devices);
-  const { user } = useSelector((state) => state.auth);
+  const {
+    isLoading: deviceLoading2,
+    isError: isGroupError2,
+    error: groupError2,
+  } = useGetAllAssignDevicesQuery(
+    { page, limit: pageSize, search },
+    {
+      skip: user?.role?.name !== "user",
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const { devices: devicesData, assignDevices: devicesData2 } = useSelector(
+    (state) => state.devices
+  );
   const {
     data: groupData,
     isLoading: groupLoading,
@@ -87,7 +105,7 @@ const Devices = () => {
     error,
   } = useGetAllGroupsQuery(
     { page, limit: pageSize, search },
-    { skip: activeTab !== 1 }
+    { skip: activeTab !== 1 || user?.role?.name === "user" }
   );
 
   useEffect(() => {
@@ -95,19 +113,31 @@ const Devices = () => {
       toast.error(error?.data?.message);
       return;
     }
+    const sourceData = user?.role?.name === "user" ? devicesData2 : devicesData;
     const deviceData =
-      devicesData?.map((item) => {
+      sourceData?.map((item) => {
+        const status =
+          user?.role?.name === "user"
+            ? item?.device_data?.device_data?.device_status
+            : item?.device_data?.device_status;
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-          deviceId: item?.device_data?.device_uuid || "-",
-          deviceName: item?.name || "-",
+          deviceId:
+            user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_uuid
+              : item?.device_data?.device_uuid || "-",
+          name:
+            user?.role?.name === "user" ? item?.device_data?.name : item?.name,
           label: item?.label || "-",
           userName: item?.userName || "-",
-          groups: item?.groups_data?.name || "-",
+          groups:
+            user?.role?.name === "user"
+              ? item?.device_data?.groups_data?.name
+              : item?.groups_data?.name || "-",
           status: {
-            label: item?.device_data?.device_status ? "Active" : "Inactive",
-            variant: item?.device_data?.device_status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
         };
       }) || [];
@@ -115,7 +145,7 @@ const Devices = () => {
     if (activeTab === 0) {
       setData(deviceData);
     }
-  }, [isError, error, devicesData]);
+  }, [isError, error, devicesData, devicesData2]);
 
   useEffect(() => {
     if (isGroupError && groupError) {
@@ -123,6 +153,7 @@ const Devices = () => {
       setData([]);
       return;
     }
+
     const deviceGroupData =
       groupData?.data?.map((item) => {
         return {
@@ -131,10 +162,26 @@ const Devices = () => {
         };
       }) || [];
     setDeviceGroupData(deviceGroupData);
-    if (activeTab === 1) {
+    if (activeTab === 1 && user?.role?.name !== "user") {
       setData(deviceGroupData);
+    } else if (activeTab === 1 && user?.role?.name === "user") {
+      const data = devicesData2?.map((item) => ({
+        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+        name: item?.device_data?.groups_data?.name,
+        description: item?.device_data?.groups_data?.description,
+      }));
+      setData(data);
     }
-  }, [isGroupError, groupError, groupData]);
+  }, [
+    isGroupError,
+    groupError,
+    groupData,
+    isGroupError2,
+    groupError2,
+    user,
+    devicesData2,
+    activeTab,
+  ]);
 
   const handleEdit = (item) => {
     setEditDeviceValues(item);
@@ -255,7 +302,7 @@ const Devices = () => {
             ? columns(user?.role?.name)
             : deviceGroupColumns(user?.role?.name)
         }
-        isLoading={deviceLoading || groupLoading}
+        isLoading={deviceLoading || groupLoading || deviceLoading2}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
         page={page}

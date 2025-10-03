@@ -7,6 +7,7 @@ export const deviceApi = api.injectEndpoints({
         url: `/devices/user?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
+      credentials: "include",
       providesTags: ["Devices"],
     }),
 
@@ -75,6 +76,20 @@ export const deviceApi = api.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAllAssignDevices: builder.query({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/devices/assign_devices?page=${page}&limit=${limit}&search=${search}`,
+        method: "GET",
+      }),
+      providesTags: ["Devices"],
+    }),
+    getAssignDeviceById: builder.query({
+      query: (id) => ({
+        url: `/devices/assign_devices/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Devices", id }],
+    }),
   }),
 });
 
@@ -87,4 +102,6 @@ export const {
   useDeleteUserDeviceMutation,
   useRebootDeviceMutation,
   useGetUserDevicesQuery,
+  useGetAllAssignDevicesQuery,
+  useGetAssignDeviceByIdQuery,
 } = deviceApi;

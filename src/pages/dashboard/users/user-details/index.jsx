@@ -85,7 +85,7 @@ const UserDetails = () => {
           ...item,
           createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
           deviceId: item?.device_data?.device_uuid || "-",
-          name: item?.deviceName || "-",
+          name: item?.name || "-",
           label: item?.label || "-",
           mqtt_username: item?.mqtt_user || "-",
           groups: item?.groups_data?.name || "-",

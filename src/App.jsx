@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      if (!user?.isPasswordChanged) {
+      if (user?.isPasswordChanged === false) {
         setOpen(true);
       } else {
         setOpen(false);

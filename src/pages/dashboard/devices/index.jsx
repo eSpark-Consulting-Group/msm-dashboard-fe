@@ -120,6 +120,7 @@ const Devices = () => {
   useEffect(() => {
     if (isGroupError && groupError) {
       toast.error(groupError?.data?.message);
+      setData([]);
       return;
     }
     const deviceGroupData =

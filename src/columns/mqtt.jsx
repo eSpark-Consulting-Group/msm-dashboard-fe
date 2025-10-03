@@ -15,8 +15,6 @@ export const generateColumns = (data) => {
       })
       .join("_");
 
-      console.log(formatted, 'formatted')
-
     return {
       name: formatted,
       key: key,

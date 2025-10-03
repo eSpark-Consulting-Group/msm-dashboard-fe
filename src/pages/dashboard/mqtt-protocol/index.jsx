@@ -69,9 +69,8 @@ const MqttProtocol = () => {
 
   useEffect(() => {
     if (dataState === 1) {
-      const rows = mqttDataHistory.map((item) => item.data);
-      setData(rows);
-      setColumns(generateColumns(rows));
+      setData(mqttDataHistory);
+      setColumns(generateColumns(mqttDataHistory));
     } else if (dataState === 0) {
       setData(mqttData);
       setColumns(generateColumns(mqttData));

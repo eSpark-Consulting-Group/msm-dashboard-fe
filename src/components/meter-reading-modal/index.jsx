@@ -132,7 +132,7 @@ export const METER_READING_MODAL_STYLE = {
     borderColor: "divider",
     borderRadius: 1,
   },
-  slider: { width: { xs: "80%", sm: 200 }, color: "#0C89E2" },
+  slider: { width: { xs: "80%", sm: 180 }, color: "#0C89E2" },
   numberInput: {
     width: { xs: "100%", sm: 80 },
     height: 45,
@@ -270,7 +270,13 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       try {
         const res = await triggerGetProtocols(payload).unwrap();
         toast.success("History configuration updated");
-        dispatch(addMqttHistoryData(res.protocolsByRank));
+        const transformed = res.protocolsByRank.map((item) => ({
+          timestamp: item.timestamp,
+          ip_address: item.ip_address,
+          ofp_uid: item.ofp_uid,
+          ...item.data,
+        }));
+        dispatch(addMqttHistoryData(transformed));
 
         handleClose();
       } catch (err) {

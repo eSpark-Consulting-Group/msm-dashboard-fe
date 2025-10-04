@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -15,37 +15,25 @@ import { useLoginMutation } from "../../services/auth";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, error }] = useLoginMutation();
+  const toastShownRef = useRef(false);
 
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-      remember: false,
-    },
-    validationSchema: loginSchema,
-    onSubmit: (values) => {
-      login({ email: values.email, password: values.password }).then((res) => {
-        if (res?.error) {
-          toast.error(res?.error?.data?.message || "Login failed");
-          return;
-        }
-        if (res?.data) {
-          if (values.remember) {
-            const encoded = btoa(
-              JSON.stringify({ email: values.email, password: values.password })
-            );
-            localStorage.setItem("rememberCreds", encoded);
-          } else {
-            localStorage.removeItem("rememberCreds");
-          }
-
-          navigate("/");
-        }
+  // Handle errors via useEffect instead of try-catch
+  useEffect(() => {
+    if (error && !toastShownRef.current) {
+      toastShownRef.current = true;
+      toast.error(error?.data?.message || "Login failed", {
+        toastId: "login-error",
       });
-    },
-  });
 
+      // Reset after delay
+      setTimeout(() => {
+        toastShownRef.current = false;
+      }, 1500);
+    }
+  }, [error]);
+
+  // Load remembered credentials on mount
   useEffect(() => {
     const savedCreds = localStorage.getItem("rememberCreds");
     if (savedCreds) {
@@ -57,10 +45,54 @@ const LoginForm = () => {
           remember: true,
         });
       } catch (err) {
-        console.error("Failed to decode saved creds", err);
+        console.error("Failed to decode saved creds:", err);
       }
     }
   }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      remember: false,
+    },
+    validationSchema: loginSchema,
+    onSubmit: async (values) => {
+      if (toastShownRef.current) return;
+      toastShownRef.current = true;
+
+      try {
+        const res = await login({
+          email: values.email,
+          password: values.password,
+        }).unwrap();
+
+        toast.success("Login successful", { toastId: "LoginSuccess" });
+
+        // Handle "Remember me"
+        if (values.remember) {
+          const encoded = btoa(
+            JSON.stringify({
+              email: values.email,
+              password: values.password,
+            })
+          );
+          localStorage.setItem("rememberCreds", encoded);
+        } else {
+          localStorage.removeItem("rememberCreds");
+        }
+
+        navigate("/");
+      } catch (err) {
+        // Error is now handled by useEffect above
+        console.error("Login error:", err);
+      } finally {
+        setTimeout(() => {
+          toastShownRef.current = false;
+        }, 1500);
+      }
+    },
+  });
 
   return (
     <Box
@@ -96,9 +128,9 @@ const LoginForm = () => {
         />
       </Box>
 
-      <Link to={"/verify-email"} style={{ textDecoration: "none" }}>
+      <Link to="/verify-email" style={{ textDecoration: "none" }}>
         <Typography sx={{ my: "10px", cursor: "pointer" }}>
-          Forget Password?
+          Forgot Password?
         </Typography>
       </Link>
 
@@ -111,12 +143,8 @@ const LoginForm = () => {
             onChange={formik.handleChange}
             sx={{
               color: "#A1A1AA",
-              "&.Mui-checked": {
-                color: "#147FCC",
-              },
-              "&:hover": {
-                backgroundColor: "transparent",
-              },
+              "&.Mui-checked": { color: "#147FCC" },
+              "&:hover": { backgroundColor: "transparent" },
             }}
           />
         }
@@ -136,6 +164,13 @@ const LoginForm = () => {
             height: "60px",
             borderRadius: "16px",
             backgroundColor: "#5AB4F4",
+            "&:hover": {
+              backgroundColor: "#147FCC",
+            },
+            "&:disabled": {
+              backgroundColor: "#A1A1AA",
+              cursor: "not-allowed",
+            },
           }}
         >
           {isLoading ? "Logging in..." : "Login"}

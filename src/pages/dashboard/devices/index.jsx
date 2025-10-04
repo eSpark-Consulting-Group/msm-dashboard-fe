@@ -110,7 +110,7 @@ const Devices = () => {
 
   useEffect(() => {
     if (isError && error) {
-      toast.error(error?.data?.message);
+      toast.error(error?.data?.message, { toastId: "DEVICEERROR" });
       return;
     }
     const sourceData = user?.role?.name === "user" ? devicesData2 : devicesData;
@@ -149,7 +149,7 @@ const Devices = () => {
 
   useEffect(() => {
     if (isGroupError && groupError) {
-      toast.error(groupError?.data?.message);
+      toast.error(groupError?.data?.message, { toastId: "GROUPERROR" });
       setData([]);
       return;
     }

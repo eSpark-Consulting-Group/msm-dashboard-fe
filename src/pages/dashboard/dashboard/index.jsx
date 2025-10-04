@@ -110,12 +110,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isError && error) {
-      toast.error(error?.data?.message);
+      toast.error(error?.data?.message, { toastId: "Device" });
       return;
     }
 
     if (isError2 && error2) {
-      toast.error(error2?.data?.message);
+      toast.error(error2?.data?.message, { toastId: "assign" });
       return;
     }
 

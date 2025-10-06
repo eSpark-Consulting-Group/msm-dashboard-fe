@@ -278,7 +278,8 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
           .map((item) => {
             const dateObj = new Date(item.timestamp);
             return {
-              timestamp: item.timestamp,
+              // timestamp: item.timestamp,
+              timestamp: dayjs(item.timestamp).format("DD-MM-YYYY HH:mm"),
               date: dateObj.toISOString().split("T")[0],
               time: dateObj.toISOString().split("T")[1].replace("Z", ""),
               device_ID: item.ofp_uid,
@@ -368,7 +369,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
             .map((item) => {
               const dateObj = new Date(item.timestamp);
               return {
-                timestamp: item.timestamp,
+                timestamp: dayjs(item.timestamp).format("DD-MM-YYYY HH:mm"),
                 date: dateObj.toISOString().split("T")[0],
                 time: dateObj.toISOString().split("T")[1].replace("Z", ""),
                 device_ID: item.ofp_uid,

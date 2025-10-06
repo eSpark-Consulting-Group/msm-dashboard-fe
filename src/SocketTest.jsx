@@ -8,6 +8,7 @@ import {
   handleUnsubscribe,
 } from "./store/slices/telemetry";
 import { addMqttData } from "./store/slices/mqtt";
+import dayjs from "dayjs";
 
 let socketInstance = null; // 🔑 global singleton socket
 
@@ -29,12 +30,9 @@ export function useSocket() {
       // 🔹 Listen for mqtt_protocol event from server
       socketRef.current.on("mqtt_protocol", (obj) => {
         const transformed = {
-          timestamp: obj.timestamp,
-          date: new Date(obj.timestamp).toISOString().split("T")[0],
-          time: new Date(obj.timestamp)
-            .toISOString()
-            .split("T")[1]
-            .replace("Z", ""),
+          timestamp: dayjs(obj.timestamp).format("DD-MM-YYYYTHH:mm"),
+          date: dayjs(obj.timestamp).format("DD-MM-YYYY"),
+          time: dayjs(obj.timestamp).format("HH:mm"),
           device_ID: obj.ofp_uid,
           ...obj.data,
         };

@@ -83,7 +83,7 @@ const UserDetails = () => {
       const deviceData =
         userDetailsData?.data?.map((item) => ({
           ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           deviceId: item?.device_data?.device_uuid || "-",
           name: item?.name || "-",
           label: item?.label || "-",
@@ -103,7 +103,7 @@ const UserDetails = () => {
       const deviceData =
         userDetailsData2?.data?.map((item) => ({
           ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           deviceId: item?.device_data?.device_data?.device_uuid || "-",
           name: item?.device_data?.name || "-",
           label: item?.label || "-",

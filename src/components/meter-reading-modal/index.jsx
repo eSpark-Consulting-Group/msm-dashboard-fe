@@ -261,9 +261,9 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
         payload = {
           ...payload,
           startTime: dayjs(historyConfig.fromDate).format(
-            "YYYY-MM-DDTHH:mm:ss"
+            "DD-MM-YYYYTHH:mm:ss"
           ),
-          endTime: dayjs(historyConfig.toDate).format("YYYY-MM-DDTHH:mm:ss"),
+          endTime: dayjs(historyConfig.toDate).format("DD-MM-YYYYTHH:mm:ss"),
         };
       }
 
@@ -271,12 +271,11 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
         const res = await triggerGetProtocols(payload).unwrap();
         toast.success("History configuration updated");
         const transformed = res.protocolsByRank.map((item) => {
-          const dateObj = new Date(item.timestamp);
-
+          const d = dayjs(item.timestamp);
           return {
-            timestamp: item.timestamp,
-            date: dateObj.toISOString().split("T")[0],
-            time: dateObj.toISOString().split("T")[1].replace("Z", ""),
+            timestamp: d.format("DD-MM-YYYYTHH:mm"),
+            date: d.format("DD-MM-YYYY"),
+            time: d.format("HH:mm"),
             device_ID: item.ofp_uid,
             ...item.data,
           };

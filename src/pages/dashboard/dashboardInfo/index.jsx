@@ -151,8 +151,8 @@ const DashboardInfo = () => {
           title="Network Time Protocol"
           buttonLabel="Refresh"
           onButtonClick={() => refetch()}
-          date={dayjs(ntpData?.data?.createdAt).format("YYYY-MM-DD")}
-          time={dayjs(ntpData?.data?.createdAt).format("hh:mm A")}
+          date={dayjs(ntpData?.data?.createdAt).format("DD-MM-YYYY")}
+          time={dayjs(ntpData?.data?.createdAt).format("hh:mm")}
           role={user?.role?.name}
           id={ntpData?.data?._id}
           buttonLoading={ntpFetching}

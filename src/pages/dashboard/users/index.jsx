@@ -62,7 +62,7 @@ const Users = () => {
         }
         return {
           ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           customer_name: item?.customer_name || "-",
           userName: {
             image: `${import.meta.env.VITE_IMAGE_BASE_URL}${

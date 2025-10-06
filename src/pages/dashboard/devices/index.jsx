@@ -122,7 +122,7 @@ const Devices = () => {
             : item?.device_data?.device_status;
         return {
           ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           deviceId:
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_uuid
@@ -158,7 +158,7 @@ const Devices = () => {
       groupData?.data?.map((item) => {
         return {
           ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
         };
       }) || [];
     setDeviceGroupData(deviceGroupData);
@@ -166,7 +166,7 @@ const Devices = () => {
       setData(deviceGroupData);
     } else if (activeTab === 1 && user?.role?.name === "user") {
       const data = devicesData2?.map((item) => ({
-        createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+        createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
         name: item?.device_data?.groups_data?.name,
         description: item?.device_data?.groups_data?.description,
       }));

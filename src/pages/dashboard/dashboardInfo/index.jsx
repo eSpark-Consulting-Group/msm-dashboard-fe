@@ -161,11 +161,11 @@ const DashboardInfo = () => {
       ),
     },
     {
-      label: "MQTTS",
+      label: "MQTT",
       component: (
         <InfoCard
           info={mqttProtocol(mqttData?.data)}
-          title="MQTTS Protocol"
+          title="MQTT Protocol"
           buttonLabel="Refresh"
           onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}

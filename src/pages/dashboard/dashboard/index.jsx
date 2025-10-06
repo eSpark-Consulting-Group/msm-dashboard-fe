@@ -134,7 +134,7 @@ const Dashboard = () => {
 
         return {
           ...item,
-          createdAt: dayjs(item?.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+          createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           deviceId:
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_uuid

@@ -233,8 +233,8 @@ const DashboardInfo = () => {
           })}
           title="Network Time Protocol"
           onButtonClick={() => refetch()}
-          date={dayjs(ntpData?.data?.createdAt).format("YYYY-MM-DD")}
-          time={dayjs(ntpData?.data?.createdAt).format("hh:mm A")}
+          date={dayjs(ntpData?.data?.createdAt).format("DD-MM-YYYY")}
+          time={dayjs(ntpData?.data?.createdAt).format("hh:mm")}
           role={user?.role?.name}
           id={ntpData?.data?._id}
           buttonLoading={ntpFetching}
@@ -243,7 +243,7 @@ const DashboardInfo = () => {
       ),
     },
     {
-      label: "MQTTS",
+      label: "MQTT",
       component: (
         <InfoCard
           info={mqttProtocol([
@@ -252,11 +252,11 @@ const DashboardInfo = () => {
               ...socketMqtt, // 👈 live merge for MQTT
             },
           ])}
-          title="MQTTS Protocol"
+          title="MQTT Protocol"
           onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}
           buttonLoading={mqttFetching}
-          type={"MQTTS"}
+          type={"MQTT"}
           id={mqttData?.data[0]?._id}
         />
       ),

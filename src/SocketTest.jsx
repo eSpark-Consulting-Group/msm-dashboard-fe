@@ -8,6 +8,7 @@ import {
   handleUnsubscribe,
 } from "./store/slices/telemetry";
 import { addMqttData } from "./store/slices/mqtt";
+import dayjs from "dayjs";
 import {
   updateDeviceInfo,
   updateMqttInfo,
@@ -33,7 +34,7 @@ export function useSocket() {
 
     socketInstance.on("mqtt_protocol", (obj) => {
       const transformed = {
-        timestamp: obj.timestamp,
+        timestamp: dayjs(obj.timestamp).format("DD-MM-YYYY HH:mm"),
         date: new Date(obj.timestamp).toISOString().split("T")[0],
         time: new Date(obj.timestamp)
           .toISOString()

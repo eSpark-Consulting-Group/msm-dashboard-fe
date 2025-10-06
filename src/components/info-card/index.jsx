@@ -214,7 +214,7 @@ const InfoCard = ({
                             onClick={() => {
                               setEditId("");
                               setIsEditMode(false);
-                              setNewValue("");
+                              setNewVal("");
                             }}
                           />
                           <CheckIcon

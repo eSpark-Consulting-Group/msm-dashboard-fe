@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { addDeviceStatus } from "./devices";
 
 const initialState = {
   limit: 5,
@@ -40,7 +41,22 @@ const mqttSlice = createSlice({
     handleMqttLoading: (state, payload) => {
       state.mqttDataHistoryLoading = payload?.payload;
     },
+    handleMqttDisconnect: (state) => {
+      state.mqttData = [];
+    },
   },
+  // extraReducers: (builder) => {
+  //   builder.addCase(addDeviceStatus, (state, action) => {
+  //     const device = action.payload;
+  //     if (device === false) {
+  //       state.currentData = 1;
+  //       state.dataState = 1;
+  //     } else if (device === true) {
+  //       state.currentData = 1;
+  //       state.dataState = 1;
+  //     }
+  //   });
+  // },
 });
 
 export const {
@@ -51,5 +67,6 @@ export const {
   addMqttHistoryData,
   addMqttMessage,
   handleMqttLoading,
+  handleMqttDisconnect,
 } = mqttSlice.actions;
 export default mqttSlice.reducer;

@@ -17,8 +17,10 @@ import {
   useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
 } from "../../../services/devices";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MeterReadingConfigPopover from "../../../components/meter-reading-modal";
+import { addDeviceStatus } from "../../../store/slices/devices";
+import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
 
 const Dashboard = () => {
   // const [open, setOpen] = useState(false);
@@ -34,6 +36,7 @@ const Dashboard = () => {
   const [sortOrder, setSortOrder] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const { isLoading, isError, error } = useGetAllDevicesQuery(
     {
@@ -202,11 +205,29 @@ const Dashboard = () => {
 
   const handleRowClick = (item) => {
     if (user?.role?.name === "user") {
+      dispatch(
+        addCurrentData(
+          item?.device_data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(
+        addMqttDataState(
+          item?.device_data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(addDeviceStatus(item?.device_data?.device_data?.device_status));
       item?.device_data?.device_data?.device_uuid &&
         navigate(
           `/dashboard/${item?.device_data?.device_data?.device_uuid}/info`
         );
     } else {
+      dispatch(
+        addCurrentData(item?.device_data?.device_status === false ? 1 : 0)
+      );
+      dispatch(
+        addMqttDataState(item?.device_data?.device_status === false ? 1 : 0)
+      );
+      dispatch(addDeviceStatus(item?.device_data?.device_status));
       item?.device_data?.device_uuid &&
         navigate(`/dashboard/${item?.device_data?.device_uuid}/info`);
     }

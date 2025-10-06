@@ -185,6 +185,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
   }
 
   const { limit, currentData } = useSelector((state) => state?.mqtt);
+  const { currentDevice } = useSelector((state) => state?.devices);
   const dispatch = useDispatch();
 
   const [triggerGetProtocols, { isLoading, isFetching }] =
@@ -208,7 +209,9 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
   const { emitEvent } = useSocket();
 
   const handleTabChange = (_, newValue) => {
-    dispatch(addCurrentData(newValue));
+    if (currentDevice !== false) {
+      dispatch(addCurrentData(newValue));
+    }
   };
   const handleTabChangeOfTimeWindow = (_, newValue) =>
     setTimeWindowTab(newValue);
@@ -223,11 +226,11 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
 
   const handleClose = () => {
     setRealtimeConfig(realtimeConfig);
-    setHistoryConfig({
-      ...historyConfig,
-      fromDate: new Date(),
-      toDate: new Date(),
-    });
+    // setHistoryConfig({
+    //   ...historyConfig,
+    //   fromDate: new Date(),
+    //   toDate: new Date(),
+    // });
     setTimeWindowTab(0);
     setAnchorEl(null);
   };
@@ -270,17 +273,18 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       try {
         const res = await triggerGetProtocols(payload).unwrap();
         toast.success("History configuration updated");
-        const transformed = res.protocolsByRank.map((item) => {
-          const dateObj = new Date(item.timestamp);
-
-          return {
-            timestamp: item.timestamp,
-            date: dateObj.toISOString().split("T")[0],
-            time: dateObj.toISOString().split("T")[1].replace("Z", ""),
-            device_ID: item.ofp_uid,
-            ...item.data,
-          };
-        });
+        const transformed = (res.protocolsByRank || [])
+          .filter((item) => item) // remove null/undefined entries
+          .map((item) => {
+            const dateObj = new Date(item.timestamp);
+            return {
+              timestamp: item.timestamp,
+              date: dateObj.toISOString().split("T")[0],
+              time: dateObj.toISOString().split("T")[1].replace("Z", ""),
+              device_ID: item.ofp_uid,
+              ...item.data,
+            };
+          });
         dispatch(addMqttHistoryData(transformed));
 
         handleClose();
@@ -289,27 +293,29 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
         console.error("API Error:", err);
       }
     } else {
-      emitEvent("mqtt_protocol", {
-        thing_name: id,
-        interval_time: realtimeConfig?.interval * 1000,
-        data_range: realtimeConfig?.limit,
-      });
-      dispatch(addMqttProtocol(realtimeConfig?.limit));
-      dispatch(addMqttDataState(currentData));
-      dispatch(
-        addMqttMessage(
-          `Realtime - ${
-            realtimeConfig?.interval < 60
-              ? `${realtimeConfig?.interval} sec`
-              : `${Math.floor(realtimeConfig?.interval / 60)} min ${
-                  realtimeConfig?.interval % 60
-                    ? (realtimeConfig?.interval % 60) + " sec"
-                    : ""
-                }`
-          }`
-        )
-      );
-      toast.success("Realtime configuration updated");
+      if (currentDevice !== false) {
+        emitEvent("mqtt_protocol", {
+          thing_name: id,
+          interval_time: realtimeConfig?.interval * 1000,
+          data_range: realtimeConfig?.limit,
+        });
+        dispatch(addMqttProtocol(realtimeConfig?.limit));
+        dispatch(addMqttDataState(currentData));
+        dispatch(
+          addMqttMessage(
+            `Realtime - ${
+              realtimeConfig?.interval < 60
+                ? `${realtimeConfig?.interval} sec`
+                : `${Math.floor(realtimeConfig?.interval / 60)} min ${
+                    realtimeConfig?.interval % 60
+                      ? (realtimeConfig?.interval % 60) + " sec"
+                      : ""
+                  }`
+            }`
+          )
+        );
+        toast.success("Realtime configuration updated");
+      }
       handleClose();
     }
   };
@@ -320,6 +326,67 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       limit,
     }));
   }, [limit]);
+
+  React.useEffect(() => {
+    if (currentDevice === false) {
+      dispatch(addMqttDataState(1));
+      dispatch(addCurrentData(1));
+      dispatch(
+        addMqttMessage(
+          `History - ${
+            timeWindowTab === 0
+              ? `last ${historyConfig.range_value} ${historyConfig.range_unit}`
+              : `range ${dayjs(historyConfig.fromDate).format(
+                  "DD-MM-YYYY HH:mm"
+                )} - ${dayjs(historyConfig.toDate).format("DD-MM-YYYY HH:mm")}`
+          }`
+        )
+      );
+      const fetchProtocols = async () => {
+        setHistoryConfig((prev) => ({
+          ...prev,
+          range_value: 5,
+          range_unit: "minutes",
+          timezone: getCurrentTimezoneOffset(),
+          limit: 100,
+        }));
+
+        const payload = {
+          range_value: 5,
+          range_unit: "minutes",
+          timezone: getCurrentTimezoneOffset(),
+          limit: 100,
+          device_uuid: id,
+        };
+
+        try {
+          const res = await triggerGetProtocols(payload).unwrap();
+          // toast.success("History configuration updated");
+
+          const transformed = (res.protocolsByRank || [])
+            .filter((item) => item) // remove null/undefined entries
+            .map((item) => {
+              const dateObj = new Date(item.timestamp);
+              return {
+                timestamp: item.timestamp,
+                date: dateObj.toISOString().split("T")[0],
+                time: dateObj.toISOString().split("T")[1].replace("Z", ""),
+                device_ID: item.ofp_uid,
+                ...item.data,
+              };
+            });
+
+          dispatch(addMqttHistoryData(transformed));
+          handleClose();
+        } catch (err) {
+          toast.error(err?.data?.message || "Failed to fetch protocols");
+          console.error("API Error:", err);
+        }
+      };
+
+      fetchProtocols();
+    }
+  }, [currentDevice]);
 
   React.useEffect(() => {
     if (isLoading || isFetching) {

@@ -279,9 +279,9 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
             const dateObj = new Date(item.timestamp);
             return {
               // timestamp: item.timestamp,
-              timestamp: dayjs(item.timestamp).format("DD-MM-YYYY HH:mm"),
-              date: dateObj.toISOString().split("T")[0],
-              time: dateObj.toISOString().split("T")[1].replace("Z", ""),
+              timestamp: item?.timestamp,
+              date: dayjs(item?.timestamp).format("DD-MM-YYYY"),
+              time: dayjs(item?.timestamp).format("HH:mm"),
               device_ID: item.ofp_uid,
               ...item.data,
             };
@@ -369,9 +369,9 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
             .map((item) => {
               const dateObj = new Date(item.timestamp);
               return {
-                timestamp: dayjs(item.timestamp).format("DD-MM-YYYY HH:mm"),
-                date: dateObj.toISOString().split("T")[0],
-                time: dateObj.toISOString().split("T")[1].replace("Z", ""),
+                timestamp: item?.timestamp,
+                date: dayjs(item?.timestamp).format("DD-MM-YYYY"),
+                time: dayjs(item?.timestamp).format("HH:mm"),
                 device_ID: item.ofp_uid,
                 ...item.data,
               };

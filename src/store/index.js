@@ -6,6 +6,7 @@ import dashboards from "./slices/dashboard";
 import devices from "./slices/devices";
 import telemetry from "./slices/telemetry";
 import mqtt from "./slices/mqtt";
+import info from "./slices/info";
 import { authApi } from "../services/auth";
 
 const store = configureStore({
@@ -17,6 +18,7 @@ const store = configureStore({
     devices,
     telemetry,
     mqtt,
+    info,
     [authApi.reducerPath]: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

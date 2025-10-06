@@ -5,6 +5,7 @@ const initialState = {
   devices: [],
   assignDevices: [],
   selectedDevice: null,
+  currentDevice: null,
 };
 
 const devicesSlice = createSlice({
@@ -14,6 +15,9 @@ const devicesSlice = createSlice({
     clearDevices: (state) => {
       state.devices = [];
       state.selectedDevice = null;
+    },
+    addDeviceStatus: (state, action) => {
+      state.currentDevice = action?.payload;
     },
   },
   extraReducers: (builder) => {
@@ -39,5 +43,5 @@ const devicesSlice = createSlice({
   },
 });
 
-export const { clearDevices } = devicesSlice.actions;
+export const { clearDevices, addDeviceStatus } = devicesSlice.actions;
 export default devicesSlice.reducer;

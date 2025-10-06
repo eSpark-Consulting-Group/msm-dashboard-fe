@@ -4,11 +4,14 @@ import NavigateHeader from "../navigate-header";
 import DynamicTabs2 from "../dynamic-tabs2";
 import { useState } from "react";
 import { home } from "../../assets";
+import { useSelector } from "react-redux";
 
 const DashboardWrapper = ({ loading, children }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
+
+  const { currentDevice } = useSelector((state) => state?.devices);
 
   const handleHome = () => {
     navigate(`/dashboard/${id}/home`);
@@ -63,38 +66,42 @@ const DashboardWrapper = ({ loading, children }) => {
             alignItems: "center",
           }}
         >
-          <Box
-            sx={{
-              position: "absolute",
-              top: -45,
-              right: 20,
-              width: 136,
-              height: 45,
-            }}
-          >
-            <Button
-              variant="contained"
+          {currentDevice === false ? (
+            <></>
+          ) : (
+            <Box
               sx={{
-                background: "linear-gradient(to right, #0095FF, #0886E0)",
-                gap: "8px",
-                border: "1px solid #0077FF",
-                borderTopLeftRadius: "12px",
-                borderTopRightRadius: "12px",
-                borderBottomLeftRadius: "0",
-                borderBottomRightRadius: "0",
+                position: "absolute",
+                top: -45,
+                right: 20,
+                width: 136,
+                height: 45,
               }}
-              onClick={handleHome}
             >
-              <img
-                src={home}
-                alt="Home"
-                width={18}
-                height={18}
-                style={{ display: "inline-block" }}
-              />{" "}
-              Home
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                sx={{
+                  background: "linear-gradient(to right, #0095FF, #0886E0)",
+                  gap: "8px",
+                  border: "1px solid #0077FF",
+                  borderTopLeftRadius: "12px",
+                  borderTopRightRadius: "12px",
+                  borderBottomLeftRadius: "0",
+                  borderBottomRightRadius: "0",
+                }}
+                onClick={handleHome}
+              >
+                <img
+                  src={home}
+                  alt="Home"
+                  width={18}
+                  height={18}
+                  style={{ display: "inline-block" }}
+                />{" "}
+                Home
+              </Button>
+            </Box>
+          )}
 
           {loading ? <LinearProgress sx={{ width: "100%" }} /> : children}
         </Card>

@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { useUpdateSftpMutation } from "../../services/sftp";
 import { pen } from "../../assets";
+import { useSelector } from "react-redux";
 
 const InfoCard = ({
   title,
@@ -33,6 +34,8 @@ const InfoCard = ({
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const { currentDevice } = useSelector((state) => state?.devices);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState("");
@@ -189,7 +192,8 @@ const InfoCard = ({
                     )}
                     {item.showIcon &&
                       role !== "user" &&
-                      editId !== item?.key && (
+                      editId !== item?.key &&
+                      currentDevice !== false && (
                         <img
                           src={pen}
                           alt="icon"

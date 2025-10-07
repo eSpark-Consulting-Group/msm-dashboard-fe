@@ -51,7 +51,7 @@ export const mapGeneralData = (telemetryData) => {
 
   const rme_voltage = data?.map((item) => {
     let phase = item?.phase?.toUpperCase() || "";
-    let heading = `PHASE ${phase}-RME VOLTAGE`;
+    let heading = `PHASE ${phase}-RMS VOLTAGE`;
     return {
       icon: flashBlack,
       // color: "red",
@@ -117,7 +117,7 @@ export const mapPowerData = (telemetryData) => {
       // color: "green",
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.avg_apparent_power}KVA`,
+      value: `${item?.avg_apparent_power}kVA`,
       // valueColor: "green",
       headingSize: "18.05px",
       phase,
@@ -130,7 +130,7 @@ export const mapPowerData = (telemetryData) => {
       icon: energy,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       heading,
-      value: `${item?.avg_active_power}KW`,
+      value: `${item?.avg_active_power}kW`,
       // valueColor: "green",
       headingSize: "19.5px",
       phase,
@@ -144,7 +144,7 @@ export const mapPowerData = (telemetryData) => {
       // color: "green",
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.avg_reactive_power}KVAR`,
+      value: `${item?.avg_reactive_power}kVAR`,
       // valueColor: "green",
       headingSize: "19.5px",
       phase,

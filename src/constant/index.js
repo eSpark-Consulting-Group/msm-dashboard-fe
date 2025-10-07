@@ -386,7 +386,7 @@ export const generalCards = [
   {
     icon: flashBlack,
     color: "red",
-    heading: "PHASE A-RME VOLTAGE",
+    heading: "PHASE A-RMS VOLTAGE",
     time: "Last update 3h ago",
     value: "248.64V",
     valueColor: "red",
@@ -395,7 +395,7 @@ export const generalCards = [
   {
     icon: flashBlack,
     color: "red",
-    heading: "PHASE B-RME VOLTAGE",
+    heading: "PHASE B-RMS VOLTAGE",
     time: "Last update 3h ago",
     value: "248.63V",
     valueColor: "red",
@@ -404,7 +404,7 @@ export const generalCards = [
   {
     icon: flashBlack,
     color: "red",
-    heading: "PHASE C-RME VOLTAGE",
+    heading: "PHASE C-RMS VOLTAGE",
     time: "Last update 3h ago",
     value: "248.63V",
     valueColor: "red",

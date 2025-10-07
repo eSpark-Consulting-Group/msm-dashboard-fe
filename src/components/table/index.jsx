@@ -179,6 +179,9 @@ const DynamicTable = ({
         </Stack>
       );
     }
+    if (typeof cell === "number" && !Number.isInteger(cell)) {
+      return cell.toFixed(2);
+    }
 
     return cell;
   };

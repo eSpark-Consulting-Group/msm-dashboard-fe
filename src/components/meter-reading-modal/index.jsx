@@ -240,7 +240,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
       let payload = {
         device_uuid: id,
         limit: historyConfig.limit || 10,
-        timezone: historyConfig.timezone,
+        timezone: historyConfig.timezone?.slice(3),
       };
       dispatch(addMqttDataState(currentData));
       dispatch(
@@ -264,9 +264,9 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
         payload = {
           ...payload,
           startTime: dayjs(historyConfig.fromDate).format(
-            "DD-MM-YYYYTHH:mm:ss"
+            "YYYY-MM-DDTHH:mm:ss"
           ),
-          endTime: dayjs(historyConfig.toDate).format("DD-MM-YYYYTHH:mm:ss"),
+          endTime: dayjs(historyConfig.toDate).format("YYYY-MM-DDTHH:mm:ss"),
         };
       }
 

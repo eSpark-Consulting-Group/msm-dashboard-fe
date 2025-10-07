@@ -302,43 +302,38 @@ const MqttProtocol = () => {
         setAnchorEl={setIsOpenRealTimePopup}
       />
 
-      {!mqttDataHistoryLoading &&
-      protocolData?.protocolsByRank?.length === 0 ? (
-        <></>
-      ) : (
-        <Box
-          sx={{
-            backgroundColor: "#E9EFF6",
-            width: "100%",
-            height: "auto",
-            mt: "10px",
-            borderRadius: "8px",
-            border: "1px solid #D8D8D8",
-            p: "10px",
-            maxHeight: "700px",
-            overflow: "auto",
-          }}
-        >
-          {mqttDataHistoryLoading ? (
-            <LinearProgress />
-          ) : (
-            <DynamicTable
-              data={data}
-              columns={columns}
-              isLoading={
-                dataState === 0 && data?.length === 0
-                  ? true
-                  : mqttDataHistoryLoading
-              }
-              page={page}
-              pageSize={pageSize}
-              handlePageChange={setPage}
-              total={total}
-              mqttTable={true}
-            />
-          )}
-        </Box>
-      )}
+      <Box
+        sx={{
+          backgroundColor: "#E9EFF6",
+          width: "100%",
+          height: "auto",
+          mt: "10px",
+          borderRadius: "8px",
+          border: "1px solid #D8D8D8",
+          p: "10px",
+          maxHeight: "700px",
+          overflow: "auto",
+        }}
+      >
+        {mqttDataHistoryLoading ? (
+          <LinearProgress />
+        ) : (
+          <DynamicTable
+            data={data}
+            columns={columns}
+            isLoading={
+              dataState === 0 && data?.length === 0
+                ? true
+                : mqttDataHistoryLoading
+            }
+            page={page}
+            pageSize={pageSize}
+            handlePageChange={setPage}
+            total={total}
+            mqttTable={true}
+          />
+        )}
+      </Box>
     </>
   );
 };

@@ -233,13 +233,13 @@ const telemetrySlice = createSlice({
 
       state.isSocketHasPower = true;
 
-      state.powerCards[phaseIndex].value = `${d.apparent_power}KVA`;
+      state.powerCards[phaseIndex].value = `${d.apparent_power}kVA`;
 
       state.powerCards[phaseIndex].time = `Last update ${dayjs(
         d.timestamp
       ).fromNow()}`;
-      state.powerCards[3 + phaseIndex].value = `${d.active_power}KW`;
-      state.powerCards[6 + phaseIndex].value = `${d.reactive_power}KVAR`;
+      state.powerCards[3 + phaseIndex].value = `${d.active_power}kW`;
+      state.powerCards[6 + phaseIndex].value = `${d.reactive_power}kVAR`;
 
       state.powerCards[6 + phaseIndex].time = `Last update ${dayjs(
         d.timestamp

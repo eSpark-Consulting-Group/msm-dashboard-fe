@@ -249,14 +249,14 @@ const DashboardInfo = () => {
           info={mqttProtocol([
             {
               ...(mqttData?.data?.[0] || {}),
-              ...socketMqtt, // 👈 live merge for MQTT
+              ...socketMqtt,
             },
           ])}
           title="MQTT Protocol"
           onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}
           buttonLoading={mqttFetching}
-          type={"MQTT"}
+          type={"MQTTS"}
           id={mqttData?.data[0]?._id}
         />
       ),

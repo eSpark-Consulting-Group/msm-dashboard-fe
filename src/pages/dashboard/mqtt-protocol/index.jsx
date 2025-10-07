@@ -1,6 +1,7 @@
 import { generateColumns } from "../../../columns/mqtt";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import {
+  Button,
   DynamicTable,
   DynamicTabs2,
   NavigateHeader,
@@ -181,9 +182,65 @@ const MqttProtocol = () => {
       />
 
       <Box sx={{ display: "flex", flexDirection: "column", rowGap: "3px" }}>
-        <Typography sx={{ fontSize: "18px", fontWeight: "700" }}>
-          MQTTS PROTOCOL
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography sx={{ fontSize: "18px", fontWeight: "700" }}>
+            MQTTS PROTOCOL
+          </Typography>
+          {dataState === 1 && data?.length > 0 && !mqttDataHistoryLoading && (
+            <Box sx={{ width: "200px" }}>
+              <Button
+                variant="contained"
+                disableRipple
+                onClick={() => {
+                  // 1️⃣ Prepare CSV headers
+                  const headers = Object.keys(data[0]);
+
+                  // 2️⃣ Convert array of objects → CSV rows
+                  const csvRows = [];
+                  csvRows.push(headers.join(",")); // Header row
+
+                  data.forEach((row) => {
+                    const values = headers.map((header) => {
+                      const cell = row[header] ?? "";
+                      // Escape double quotes
+                      return `"${String(cell).replace(/"/g, '""')}"`;
+                    });
+                    csvRows.push(values.join(","));
+                  });
+
+                  // 3️⃣ Join all rows
+                  const csvContent = csvRows.join("\n");
+
+                  // 4️⃣ Create blob & trigger download
+                  const blob = new Blob([csvContent], {
+                    type: "text/csv;charset=utf-8;",
+                  });
+                  const url = URL.createObjectURL(blob);
+
+                  const link = document.createElement("a");
+                  link.href = url;
+
+                  // Optional: add timestamped filename
+                  const now = new Date();
+                  const formattedTime = now.toISOString().replace(/[:.]/g, "-");
+                  link.download = `device_data_${formattedTime}.csv`;
+
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                Export CSV
+              </Button>
+            </Box>
+          )}
+        </Box>
         <Box
           onClick={handleOpen}
           sx={{

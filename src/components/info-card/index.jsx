@@ -8,7 +8,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OutlinedInput from "../input";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
@@ -19,6 +19,11 @@ import { useUpdateMqttMutation } from "../../services/mqtt";
 import { useUpdateSftpMutation } from "../../services/sftp";
 import { pen } from "../../assets";
 import { useSelector } from "react-redux";
+import DynamicModal from "../modal";
+import EditMqtt from "../edit-mqtt-modal";
+import NtpEditModal from "../ntp-edit-modal";
+import SftpEditModal from "../sftp-edit-modal";
+import dayjs from "dayjs";
 
 const InfoCard = ({
   title,
@@ -35,7 +40,16 @@ const InfoCard = ({
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { currentDevice } = useSelector((state) => state?.devices);
+  const { currentDevice, selectedDevice } = useSelector(
+    (state) => state?.devices
+  );
+
+  const [now, setNow] = useState(dayjs());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(dayjs()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState("");
@@ -43,11 +57,27 @@ const InfoCard = ({
   const [ntpData, { isLoading }] = useUpdateNtpMutation();
   const [mqtt, { isLoading: mqttLoading }] = useUpdateMqttMutation();
   const [sftp, { isLoading: sftpLoading }] = useUpdateSftpMutation();
+  const [editValues, setEditValues] = useState({});
+  const [mqttModal, setMqttModal] = useState(false);
+  const [ntpModal, setNtpModal] = useState(false);
+  const [sftpModal, setSftpModal] = useState(false);
 
   const handleEdit = (info) => {
-    setEditId(info?.key);
-    setIsEditMode(true);
-    setNewVal(info?.value);
+    const result = info.reduce((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
+    setEditValues({ ...result, id });
+    if (type === "MQTTS") {
+      setMqttModal(true);
+    } else if (type === "NTP") {
+      setNtpModal(true);
+    } else if (type === "SFTP") {
+      setSftpModal(true);
+    }
+    // setEditId(info?.key);
+    // setIsEditMode(true);
+    // setNewVal(info?.value);
   };
 
   const handleFinalEdit = async () => {
@@ -116,6 +146,32 @@ const InfoCard = ({
             {buttonLabel}
           </Button>
         )}
+        {type !== "INFO" &&
+          role !== "user" &&
+          selectedDevice !== null &&
+          selectedDevice?.device_data?.device_status === true && (
+            // <img
+            //   src={pen}
+            //   alt="icon"
+            //   style={{ width: 18, height: 18, cursor: "pointer" }}
+            //   // onClick={() => handleEdit(info)}
+            //   onClick={() => handleEdit(info)}
+            // />
+            <Button
+              sx={{
+                width: "103px",
+                border: "1px solid #0C89E2",
+                color: "#0C89E2",
+                borderRadius: "10px",
+                fontSize: "16px",
+              }}
+              variant="outlined"
+              size="small"
+              onClick={() => handleEdit(info)}
+            >
+              Edit
+            </Button>
+          )}
       </Box>
 
       <Box>
@@ -193,14 +249,16 @@ const InfoCard = ({
                     {item.showIcon &&
                       role !== "user" &&
                       editId !== item?.key &&
-                      currentDevice !== false && (
-                        <img
-                          src={pen}
-                          alt="icon"
-                          style={{ width: 18, height: 18, cursor: "pointer" }}
-                          // onClick={() => handleEdit(info)}
-                          onClick={() => handleEdit(item)}
-                        />
+                      selectedDevice !== null &&
+                      selectedDevice?.device_data?.device_status === true && (
+                        // <img
+                        //   src={pen}
+                        //   alt="icon"
+                        //   style={{ width: 18, height: 18, cursor: "pointer" }}
+                        //   // onClick={() => handleEdit(info)}
+                        //   onClick={() => handleEdit(info)}
+                        // />
+                        <></>
                       )}
                     {item.showIcon &&
                       role !== "user" &&
@@ -261,7 +319,9 @@ const InfoCard = ({
               }}
             >
               Date:
-              <div style={{ color: "#505050", marginTop: "8px" }}>{date}</div>
+              <div style={{ color: "#505050", marginTop: "8px" }}>
+                {now.format("DD-MM-YYYY")}
+              </div>
             </Box>
           )}
           {time && (
@@ -279,11 +339,60 @@ const InfoCard = ({
               }}
             >
               Time:
-              <div style={{ color: "#505050", marginTop: "8px" }}>{time}</div>
+              <div style={{ color: "#505050", marginTop: "8px" }}>
+                {now.format("HH:mm")}
+              </div>
             </Box>
           )}
         </Box>
       )}
+      <DynamicModal
+        open={mqttModal}
+        handleClose={() => {
+          setMqttModal(false);
+          setEditValues({});
+        }}
+      >
+        <EditMqtt
+          data={editValues}
+          handleCancel={() => {
+            setMqttModal(false);
+            setEditValues({});
+          }}
+        />
+      </DynamicModal>
+
+      <DynamicModal
+        open={ntpModal}
+        handleClose={() => {
+          setNtpModal(false);
+          setEditValues({});
+        }}
+      >
+        <NtpEditModal
+          data={editValues}
+          handleCancel={() => {
+            setNtpModal(false);
+            setEditValues({});
+          }}
+        />
+      </DynamicModal>
+
+      <DynamicModal
+        open={sftpModal}
+        handleClose={() => {
+          setSftpModal(false);
+          setEditValues({});
+        }}
+      >
+        <SftpEditModal
+          data={editValues}
+          handleCancel={() => {
+            setSftpModal(false);
+            setEditValues({});
+          }}
+        />
+      </DynamicModal>
     </>
   );
 };

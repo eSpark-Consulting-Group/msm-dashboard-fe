@@ -32,7 +32,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
           handleCancel();
         }
         if (res?.error) {
-          console.log(res?.error);
+          toast?.error(res?.error?.data?.message, { toastId: "SFTPError" });
           handleCancel();
         }
       } catch (error) {

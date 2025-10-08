@@ -228,6 +228,7 @@ const telemetrySlice = createSlice({
   reducers: {
     addPowerData: (state, action) => {
       const d = action.payload?.data;
+      // console.log(d.timestamp);
 
       const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
       if (phaseIndex === undefined) return;

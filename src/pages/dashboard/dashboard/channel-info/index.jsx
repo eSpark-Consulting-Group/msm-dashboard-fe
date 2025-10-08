@@ -19,6 +19,18 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { mapEnergyData, mapGeneralData, mapPowerData } from "../../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { handleTotalChannels } from "../../../../store/slices/telemetry";
+import {
+  addDeviceStatus,
+  handleSelectedDevice,
+} from "../../../../store/slices/devices";
+import {
+  addCurrentData,
+  addMqttDataState,
+} from "../../../../store/slices/mqtt";
+import {
+  useGetAssignDeviceByIdQuery,
+  useGetDeviceByIdQuery,
+} from "../../../../services/devices";
 
 dayjs.extend(relativeTime);
 
@@ -34,6 +46,8 @@ const ChannelInfo = () => {
   ];
 
   const { totalChannels } = useSelector((state) => state.telemetry);
+  const { user } = useSelector((state) => state?.auth);
+  const { selectedDevice } = useSelector((state) => state?.devices);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,6 +55,24 @@ const ChannelInfo = () => {
   const channelName = path[path.length - 1];
   const channelId = channelName?.split("-");
   const dynamicId = path[2];
+
+  const {
+    data: deviceData,
+    isLoading: deviceLoading,
+    isError: isDeviceError,
+  } = useGetDeviceByIdQuery(dynamicId, {
+    skip: !dynamicId || user?.role?.name === "user",
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    data: deviceData2,
+    isLoading: deviceLoading2,
+    isError: isDeviceError2,
+  } = useGetAssignDeviceByIdQuery(dynamicId, {
+    skip: !dynamicId || user?.role?.name !== "user",
+    refetchOnMountOrArgChange: true,
+  });
 
   const dispatch = useDispatch();
 
@@ -126,6 +158,63 @@ const ChannelInfo = () => {
       dispatch(handleTotalChannels(unique?.length));
     }
   }, [telemetryData2]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (user?.role?.name === "user") {
+      if (
+        selectedDevice &&
+        selectedDevice?.device_data?.device_data?.device_status === false
+      ) {
+        navigate(`/dashboard/${dynamicId}/info`);
+      }
+    } else {
+      if (
+        selectedDevice &&
+        selectedDevice?.device_data?.device_status === false
+      ) {
+        navigate(`/dashboard/${dynamicId}/info`);
+      }
+    }
+  }, [user, selectedDevice]);
+
+  useEffect(() => {
+    if (deviceData2) {
+      const data = deviceData2?.data;
+      dispatch(addDeviceStatus(data?.device_data?.device_data?.device_status));
+      dispatch(
+        addCurrentData(
+          data?.device_data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(
+        addMqttDataState(
+          data?.device_data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(handleSelectedDevice(data));
+
+      // requestDeviceInfo(id);
+    }
+  }, [deviceData2]);
+
+  useEffect(() => {
+    if (deviceData) {
+      dispatch(addDeviceStatus(deviceData?.data?.device_data?.device_status));
+      dispatch(
+        addCurrentData(
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(
+        addMqttDataState(
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+
+      // requestDeviceInfo(id);
+    }
+  }, [deviceData]);
 
   useEffect(() => {
     if (isTelemetryError && telemetryError) {

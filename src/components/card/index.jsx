@@ -11,7 +11,11 @@ const DashboardWrapper = ({ loading, children }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
 
-  const { currentDevice } = useSelector((state) => state?.devices);
+  const { currentDevice, selectedDevice } = useSelector(
+    (state) => state?.devices
+  );
+
+  const { user } = useSelector((state) => state?.auth);
 
   const handleHome = () => {
     navigate(`/dashboard/${id}/home`);
@@ -66,7 +70,10 @@ const DashboardWrapper = ({ loading, children }) => {
             alignItems: "center",
           }}
         >
-          {currentDevice === false ? (
+          {selectedDevice === null ||
+          (user?.role?.name === "user"
+            ? selectedDevice?.device_data?.device_data?.device_status === false
+            : selectedDevice?.device_data?.device_status === false) ? (
             <></>
           ) : (
             <Box

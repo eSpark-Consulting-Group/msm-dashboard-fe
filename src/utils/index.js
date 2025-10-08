@@ -83,7 +83,7 @@ export const mapGeneralData = (telemetryData) => {
     return {
       icon: energy,
       heading,
-      value: `${item?.rms_voltage}A`,
+      value: `${item?.current}A`,
       // valueColor: "green",
       headingSize: "20px",
       phase,

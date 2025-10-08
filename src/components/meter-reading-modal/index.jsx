@@ -185,7 +185,10 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
   }
 
   const { limit, currentData } = useSelector((state) => state?.mqtt);
-  const { currentDevice } = useSelector((state) => state?.devices);
+  const { currentDevice, selectedDevice } = useSelector(
+    (state) => state?.devices
+  );
+  const { user } = useSelector((state) => state?.auth);
   const dispatch = useDispatch();
 
   const [triggerGetProtocols, { isLoading, isFetching }] =
@@ -209,7 +212,12 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
   const { emitEvent } = useSocket();
 
   const handleTabChange = (_, newValue) => {
-    if (currentDevice !== false) {
+    if (
+      selectedDevice !== null &&
+      (user?.role?.name === "user"
+        ? selectedDevice?.device_data?.device_data?.device_status !== false
+        : selectedDevice?.device_data?.device_status !== false)
+    ) {
       dispatch(addCurrentData(newValue));
     }
   };
@@ -279,9 +287,9 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
             const dateObj = new Date(item.timestamp);
             return {
               // timestamp: item.timestamp,
-              timestamp: item?.timestamp,
-              date: dayjs(item?.timestamp).format("DD-MM-YYYY"),
-              time: dayjs(item?.timestamp).format("HH:mm"),
+              timestamp: dayjs(item?.timestamp).format("DD-MM-YYYY\nHH:mm"),
+              date: item?.date,
+              time: item?.time?.replace("-", ":"),
               device_ID: item.ofp_uid,
               ...item.data,
             };
@@ -294,7 +302,12 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
         console.error("API Error:", err);
       }
     } else {
-      if (currentDevice !== false) {
+      if (
+        selectedDevice !== null &&
+        (user?.role?.name === "user"
+          ? selectedDevice?.device_data?.device_data?.device_status !== false
+          : selectedDevice?.device_data?.device_status !== false)
+      ) {
         emitEvent("mqtt_protocol", {
           thing_name: id,
           interval_time: realtimeConfig?.interval * 1000,
@@ -329,7 +342,12 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
   }, [limit]);
 
   React.useEffect(() => {
-    if (currentDevice === false) {
+    if (
+      selectedDevice !== null &&
+      (user?.role?.name === "user"
+        ? selectedDevice?.device_data?.device_data?.device_status === false
+        : selectedDevice?.device_data?.device_status === false)
+    ) {
       dispatch(addMqttDataState(1));
       dispatch(addCurrentData(1));
       dispatch(

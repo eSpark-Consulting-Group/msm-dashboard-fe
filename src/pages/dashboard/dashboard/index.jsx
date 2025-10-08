@@ -19,7 +19,10 @@ import {
 } from "../../../services/devices";
 import { useDispatch, useSelector } from "react-redux";
 import MeterReadingConfigPopover from "../../../components/meter-reading-modal";
-import { addDeviceStatus } from "../../../store/slices/devices";
+import {
+  addDeviceStatus,
+  handleSelectedDevice,
+} from "../../../store/slices/devices";
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
 
 const Dashboard = () => {
@@ -204,6 +207,7 @@ const Dashboard = () => {
   };
 
   const handleRowClick = (item) => {
+    dispatch(handleSelectedDevice(item));
     if (user?.role?.name === "user") {
       dispatch(
         addCurrentData(

@@ -37,7 +37,9 @@ const MqttProtocol = () => {
   const [columns, setColumns] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
-  const { currentDevice } = useSelector((state) => state?.devices);
+  const { currentDevice, selectedDevice } = useSelector(
+    (state) => state?.devices
+  );
   const dispatch = useDispatch();
   const {
     mqttData,
@@ -79,7 +81,13 @@ const MqttProtocol = () => {
   useEffect(() => {
     if (!id || !socket) return;
 
-    if (socket.connected && currentDevice !== false) {
+    if (
+      socket.connected &&
+      selectedDevice !== null &&
+      (user?.role?.name === "user"
+        ? selectedDevice?.device_data?.device_data?.device_status === true
+        : selectedDevice?.device_data?.device_status === true)
+    ) {
       // send immediately if connected
       emitEvent("mqtt_protocol", {
         thing_name: id,
@@ -87,7 +95,12 @@ const MqttProtocol = () => {
         data_range: 5,
       });
       console.log("📤 Sent mqtt_protocol immediately");
-    } else if (currentDevice !== false) {
+    } else if (
+      selectedDevice !== null &&
+      (user?.role?.name === "user"
+        ? selectedDevice?.device_data?.device_data?.device_status === true
+        : selectedDevice?.device_data?.device_status === true)
+    ) {
       // wait for connection
       socket.once("connect", () => {
         emitEvent("mqtt_protocol", {
@@ -198,12 +211,22 @@ const MqttProtocol = () => {
                 variant="contained"
                 disableRipple
                 onClick={() => {
+                  if (!data?.length) return;
+
                   // 1️⃣ Prepare CSV headers
                   const headers = Object.keys(data[0]);
 
-                  // 2️⃣ Convert array of objects → CSV rows
+                  const formatHeader = (header) => {
+                    const parts = header.split("_");
+                    if (parts.length > 1) {
+                      const last = parts.pop();
+                      return `${parts.join("_")}(${last})`;
+                    }
+                    return header;
+                  };
+
                   const csvRows = [];
-                  csvRows.push(headers.join(",")); // Header row
+                  csvRows.push(headers.map(formatHeader).join(","));
 
                   data.forEach((row) => {
                     const values = headers.map((header) => {

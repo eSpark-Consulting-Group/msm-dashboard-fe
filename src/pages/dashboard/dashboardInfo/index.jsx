@@ -20,9 +20,12 @@ import {
 import { useGetNtpDevicesByIdQuery } from "../../../services/ntp";
 import { useGetSftpDevicesByIdQuery } from "../../../services/sftp";
 import { useGetMqttByDeviceIdQuery } from "../../../services/mqtt";
-import { addDeviceStatus } from "../../../store/slices/devices";
+import {
+  addDeviceStatus,
+  handleSelectedDevice,
+} from "../../../store/slices/devices";
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
-import { useSocket } from "../../../SocketTest";
+// import { useSocket } from "../../../SocketTest";
 
 const DashboardInfo = () => {
   const { id } = useParams();
@@ -37,12 +40,12 @@ const DashboardInfo = () => {
     sftp: socketSftp,
   } = useSelector((state) => state.info);
 
-  const {
-    requestDeviceInfo,
-    requestNtpInfo,
-    requestMqttInfo,
-    requestSftpInfo,
-  } = useSocket();
+  // const {
+  //   requestDeviceInfo,
+  //   requestNtpInfo,
+  //   requestMqttInfo,
+  //   requestSftpInfo,
+  // } = useSocket();
 
   const {
     data: deviceData,
@@ -148,8 +151,9 @@ const DashboardInfo = () => {
           data?.device_data?.device_data?.device_status === false ? 1 : 0
         )
       );
+      dispatch(handleSelectedDevice(data));
 
-      requestDeviceInfo(id);
+      // requestDeviceInfo(id);
     }
   }, [deviceData2]);
 
@@ -167,25 +171,25 @@ const DashboardInfo = () => {
         )
       );
 
-      requestDeviceInfo(id);
+      // requestDeviceInfo(id);
     }
   }, [deviceData]);
 
   useEffect(() => {
     if (ntpData?.data) {
-      requestNtpInfo(id);
+      // requestNtpInfo(id);
     }
   }, [ntpData]);
 
   useEffect(() => {
     if (mqttData?.data) {
-      requestMqttInfo(id);
+      // requestMqttInfo(id);
     }
   }, [mqttData]);
 
   useEffect(() => {
     if (sftpData?.data) {
-      requestSftpInfo(id);
+      // requestSftpInfo(id);
     }
   }, [sftpData]);
 
@@ -229,7 +233,7 @@ const DashboardInfo = () => {
         <InfoCard
           info={networkProtocol({
             ...ntpData?.data,
-            data: { ...ntpData?.data?.data, ...socketNtp }, // 👈 live merge for NTP
+            data: { ...ntpData?.data?.data, ...socketNtp },
           })}
           title="Network Time Protocol"
           onButtonClick={() => refetch()}

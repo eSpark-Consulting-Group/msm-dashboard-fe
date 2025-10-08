@@ -32,7 +32,7 @@ const NtpEditModal = ({ data, handleCancel }) => {
           handleCancel();
         }
         if (res?.error) {
-          console.log(res?.error);
+          toast?.error(res?.error?.data?.message, { toastId: "NTPError" });
           handleCancel();
         }
       } catch (error) {

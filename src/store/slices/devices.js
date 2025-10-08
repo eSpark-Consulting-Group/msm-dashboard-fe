@@ -5,7 +5,7 @@ const initialState = {
   devices: [],
   assignDevices: [],
   selectedDevice: null,
-  currentDevice: null,
+  currentDevice: false,
 };
 
 const devicesSlice = createSlice({
@@ -18,6 +18,69 @@ const devicesSlice = createSlice({
     },
     addDeviceStatus: (state, action) => {
       state.currentDevice = action?.payload;
+    },
+    handleSelectedDevice: (state, action) => {
+      state.selectedDevice = action?.payload;
+    },
+    handleUpdateDevice: (state, action) => {
+      const updated = action.payload;
+
+      // ✅ Update device inside the list
+      const device = state.devices?.find(
+        (item) => item?.device_data?.device_uuid === updated?.device_uuid
+      );
+
+      if (device) {
+        Object.keys(device.device_data).forEach((key) => {
+          if (updated.hasOwnProperty(key)) {
+            device.device_data[key] = updated[key];
+          }
+        });
+      }
+
+      // ✅ Also update the selectedDevice if it matches the same UUID
+      if (
+        state.selectedDevice &&
+        state.selectedDevice.device_data?.device_uuid === updated?.device_uuid
+      ) {
+        Object.keys(state.selectedDevice.device_data).forEach((key) => {
+          if (updated.hasOwnProperty(key)) {
+            state.selectedDevice.device_data[key] = updated[key];
+          }
+        });
+      }
+    },
+    handleUpdateAssignDevice: (state, action) => {
+      const updated = action.payload;
+
+      // ✅ Update inside assignDevices array
+      const assigned = state.assignDevices?.find(
+        (item) =>
+          item?.device_data?.device_data?.device_uuid === updated?.device_uuid
+      );
+
+      if (assigned) {
+        Object.keys(assigned.device_data.device_data).forEach((key) => {
+          if (updated.hasOwnProperty(key)) {
+            assigned.device_data.device_data[key] = updated[key];
+          }
+        });
+      }
+
+      // ✅ Also update selectedDevice if it matches
+      if (
+        state.selectedDevice &&
+        state.selectedDevice.device_data?.device_data?.device_uuid ===
+          updated?.device_uuid
+      ) {
+        Object.keys(state.selectedDevice.device_data.device_data).forEach(
+          (key) => {
+            if (updated.hasOwnProperty(key)) {
+              state.selectedDevice.device_data.device_data[key] = updated[key];
+            }
+          }
+        );
+      }
     },
   },
   extraReducers: (builder) => {
@@ -43,5 +106,11 @@ const devicesSlice = createSlice({
   },
 });
 
-export const { clearDevices, addDeviceStatus } = devicesSlice.actions;
+export const {
+  clearDevices,
+  addDeviceStatus,
+  handleSelectedDevice,
+  handleUpdateDevice,
+  handleUpdateAssignDevice,
+} = devicesSlice.actions;
 export default devicesSlice.reducer;

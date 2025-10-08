@@ -13,8 +13,20 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGetTelemetryByDeviceQuery } from "../../../../services/telemetry";
 import MeterReadingConfigPopover from "../../../../components/meter-reading-modal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { handleTotalChannels } from "../../../../store/slices/telemetry";
+import {
+  useGetAssignDeviceByIdQuery,
+  useGetDeviceByIdQuery,
+} from "../../../../services/devices";
+import {
+  addDeviceStatus,
+  handleSelectedDevice,
+} from "../../../../store/slices/devices";
+import {
+  addCurrentData,
+  addMqttDataState,
+} from "../../../../store/slices/mqtt";
 
 const DashboardHome = () => {
   const { id } = useParams();
@@ -22,6 +34,28 @@ const DashboardHome = () => {
   const dispatch = useDispatch();
 
   const [channelsData, setChannelsData] = useState([]);
+  const { user } = useSelector((state) => state?.auth);
+  const { selectedDevice } = useSelector((state) => state?.devices);
+
+  const {
+    data: deviceData,
+    isLoading: deviceLoading,
+    isError: isDeviceError,
+    error: deviceError,
+  } = useGetDeviceByIdQuery(id, {
+    skip: !id || user?.role?.name === "user",
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    data: deviceData2,
+    isLoading: deviceLoading2,
+    isError: isDeviceError2,
+    error: deviceError2,
+  } = useGetAssignDeviceByIdQuery(id, {
+    skip: !id || user?.role?.name !== "user",
+    refetchOnMountOrArgChange: true,
+  });
 
   const {
     data: telemetryData,
@@ -77,6 +111,63 @@ const DashboardHome = () => {
       setChannelsData(data);
     }
   }, [telemetryData]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (user?.role?.name === "user") {
+      if (
+        selectedDevice &&
+        selectedDevice?.device_data?.device_data?.device_status === false
+      ) {
+        navigate(`/dashboard/${id}/info`);
+      }
+    } else {
+      if (
+        selectedDevice &&
+        selectedDevice?.device_data?.device_status === false
+      ) {
+        navigate(`/dashboard/${id}/info`);
+      }
+    }
+  }, [user, selectedDevice]);
+
+  useEffect(() => {
+    if (deviceData2) {
+      const data = deviceData2?.data;
+      dispatch(addDeviceStatus(data?.device_data?.device_data?.device_status));
+      dispatch(
+        addCurrentData(
+          data?.device_data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(
+        addMqttDataState(
+          data?.device_data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(handleSelectedDevice(data));
+
+      // requestDeviceInfo(id);
+    }
+  }, [deviceData2]);
+
+  useEffect(() => {
+    if (deviceData) {
+      dispatch(addDeviceStatus(deviceData?.data?.device_data?.device_status));
+      dispatch(
+        addCurrentData(
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+      dispatch(
+        addMqttDataState(
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0
+        )
+      );
+
+      // requestDeviceInfo(id);
+    }
+  }, [deviceData]);
 
   // if (telemetryLoading) {
   //   return (

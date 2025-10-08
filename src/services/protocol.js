@@ -44,7 +44,5 @@ export const protocolApi = api.injectEndpoints({
 });
 
 // Normal query (page mount par chalegi)
-export const {
-  useGetAllProtocolsQuery,
-  useLazyGetAllProtocolsQuery, // Lazy query (button click / popover open pe chalegi)
-} = protocolApi;
+export const { useGetAllProtocolsQuery, useLazyGetAllProtocolsQuery } =
+  protocolApi;

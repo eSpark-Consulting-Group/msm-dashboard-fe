@@ -219,6 +219,7 @@ const initialState = {
   ],
   isSocketHasPower: false,
   isSocketHasEnergy: false,
+  totalChannels: 0,
 };
 
 const telemetrySlice = createSlice({
@@ -271,9 +272,16 @@ const telemetrySlice = createSlice({
       state.isSocketHasEnergy = false;
       state.isSocketHasPower = false;
     },
+    handleTotalChannels: (state, action) => {
+      state.totalChannels = action.payload;
+    },
   },
 });
 
-export const { addPowerData, addEnergyData, handleUnsubscribe } =
-  telemetrySlice.actions;
+export const {
+  addPowerData,
+  addEnergyData,
+  handleUnsubscribe,
+  handleTotalChannels,
+} = telemetrySlice.actions;
 export default telemetrySlice.reducer;

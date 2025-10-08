@@ -9,11 +9,16 @@ import General from "./general";
 import Power from "./power";
 import Energy from "./energy";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGetTelemetryByDeviceAndChannelQuery } from "../../../../services/telemetry";
+import {
+  useGetTelemetryByDeviceAndChannelQuery,
+  useGetTelemetryByDeviceQuery,
+} from "../../../../services/telemetry";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { mapEnergyData, mapGeneralData, mapPowerData } from "../../../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { handleTotalChannels } from "../../../../store/slices/telemetry";
 
 dayjs.extend(relativeTime);
 
@@ -28,13 +33,16 @@ const ChannelInfo = () => {
     { label: "Energy", component: <Energy data={energyData} /> },
   ];
 
+  const { totalChannels } = useSelector((state) => state.telemetry);
+
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname.split("/");
   const channelName = path[path.length - 1];
   const channelId = channelName?.split("-");
   const dynamicId = path[2];
-  const [totalCHannel, setTotalCHannel] = useState(null);
+
+  const dispatch = useDispatch();
 
   const {
     data: telemetryData,
@@ -50,6 +58,21 @@ const ChannelInfo = () => {
     { skip: !dynamicId || !channelId[1] }
   );
 
+  const {
+    data: telemetryData2,
+    isLoading: telemetryLoading2,
+    isError: isTelemetryError2,
+    error: telemetryError2,
+    isSuccess,
+  } = useGetTelemetryByDeviceQuery(
+    {
+      device_uuid: dynamicId,
+      page: 1,
+      limit: 12,
+    },
+    { skip: totalChannels !== 0 }
+  );
+
   const handleBack = () => {
     navigate(`/dashboard/${dynamicId}/home`);
   };
@@ -57,7 +80,7 @@ const ChannelInfo = () => {
   const handlePageForward = () => {
     const number = channelName.split("-");
     const newNumber = Number(number[1]);
-    if (newNumber + 1 <= totalCHannel) {
+    if (newNumber + 1 <= totalChannels) {
       navigate(
         `/dashboard/${dynamicId}/info/channel-${newNumber + 1 > 9 ? "" : "0"}${
           newNumber + 1
@@ -81,12 +104,28 @@ const ChannelInfo = () => {
   useEffect(() => {
     if (telemetryData) {
       let data = telemetryData?.data || [];
-      setTotalCHannel(data?.length);
+      // setTotalCHannel(data?.length);
       setGeneralData(mapGeneralData(data));
       setPowerData(mapPowerData(data));
       setEnergyData(mapEnergyData(data));
     }
   }, [telemetryData]);
+
+  useEffect(() => {
+    if (telemetryData2) {
+      const myMap = {};
+      const unique = [];
+
+      for (const item of telemetryData2?.data) {
+        if (!myMap[item.channel_id]) {
+          myMap[item.channel_id] = true;
+          unique.push(item);
+        }
+      }
+
+      dispatch(handleTotalChannels(unique?.length));
+    }
+  }, [telemetryData2]);
 
   useEffect(() => {
     if (isTelemetryError && telemetryError) {

@@ -13,10 +13,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGetTelemetryByDeviceQuery } from "../../../../services/telemetry";
 import MeterReadingConfigPopover from "../../../../components/meter-reading-modal";
+import { useDispatch } from "react-redux";
+import { handleTotalChannels } from "../../../../store/slices/telemetry";
 
 const DashboardHome = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [channelsData, setChannelsData] = useState([]);
 
@@ -70,6 +73,7 @@ const DashboardHome = () => {
           item?.channel_id > 9 ? item?.channel_id : `0${item?.channel_id}`
         }`,
       }));
+      dispatch(handleTotalChannels(data?.length));
       setChannelsData(data);
     }
   }, [telemetryData]);

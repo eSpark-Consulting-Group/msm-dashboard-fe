@@ -292,7 +292,12 @@ const Devices = () => {
       >
         <DynamicTabs tabs={tabs} />
         <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-          <SearchBar value={search} onChange={(val) => setSearch(val)} />
+          <SearchBar
+            value={search}
+            onChange={(val) => setSearch(val)}
+            label={"Type Device Name to Search"}
+            placeholder="Enter Device Name"
+          />
         </Box>
       </Box>
       <DynamicTable

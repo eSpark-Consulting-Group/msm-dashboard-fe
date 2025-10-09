@@ -44,6 +44,8 @@ const InfoCard = ({
     (state) => state?.devices
   );
 
+  const { user } = useSelector((state) => state?.auth);
+
   const [now, setNow] = useState(dayjs());
 
   useEffect(() => {
@@ -142,6 +144,13 @@ const InfoCard = ({
             size="small"
             onClick={onButtonClick}
             loading={buttonLoading}
+            disabled={
+              selectedDevice !== null &&
+              (user?.role?.name === "user"
+                ? selectedDevice?.device_data?.device_data?.device_status ===
+                  false
+                : selectedDevice?.device_data?.device_status === false)
+            }
           >
             {buttonLabel}
           </Button>

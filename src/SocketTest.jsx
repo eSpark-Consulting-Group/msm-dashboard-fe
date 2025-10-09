@@ -31,7 +31,11 @@ export function useSocket() {
   // ✅ Track currently selected device UUID
   useEffect(() => {
     if (selectedDevice) {
-      setDeviceId(selectedDevice?.device_data?.device_uuid);
+      setDeviceId(
+        user?.role?.name === "user"
+          ? selectedDevice?.device_data?.device_data?.device_uuid
+          : selectedDevice?.device_data?.device_uuid
+      );
     }
   }, [selectedDevice]);
 
@@ -57,17 +61,27 @@ export function useSocket() {
       };
       dispatch(addMqttData(transformed));
     });
+  }
 
-    // ✅ Device status update event
+  // ✅ Move device_status_updated listener here — always respects latest user
+  useEffect(() => {
+    if (!socketInstance) return;
+
+    // socketInstance.off("device_status_updated");
+
     socketInstance.on("device_status_updated", (data) => {
       console.log("📡 device_status_updated from server:", data);
       if (user?.role?.name !== "user") {
         dispatch(handleUpdateDevice(data));
-      } else if (user?.role?.name !== "user") {
+      } else if (user?.role?.name === "user") {
         dispatch(handleUpdateAssignDevice(data));
       }
     });
-  }
+
+    // return () => {
+    //   socketInstance.off("device_status_updated");
+    // };
+  }, [user, dispatch]);
 
   // ✅ Device-specific info events (re-attach when deviceid changes)
   useEffect(() => {

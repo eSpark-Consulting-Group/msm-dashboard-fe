@@ -113,7 +113,12 @@ const MqttProtocol = () => {
     }
 
     dispatch(addMqttProtocol(5));
-    if (currentDevice !== false) {
+    if (
+      selectedDevice !== null &&
+      (user?.role?.name === "user"
+        ? selectedDevice?.device_data?.device_data?.device_status === true
+        : selectedDevice?.device_data?.device_status === true)
+    ) {
       dispatch(addMqttMessage("Realtime - 5 seconds"));
     }
 
@@ -127,7 +132,7 @@ const MqttProtocol = () => {
       // socket.off("mqtt_protocol");
       console.log("🧹 MqttProtocol cleanup done & mqtt_protocol_stop emitted");
     };
-  }, [id, emitEvent, dispatch, socket, currentDevice]);
+  }, [id]);
 
   // ✅ Manage table data updates
   useEffect(() => {

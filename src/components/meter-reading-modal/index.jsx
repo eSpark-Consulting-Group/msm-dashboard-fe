@@ -301,7 +301,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
         toast.error(err?.data?.message || "Failed to fetch protocols");
         console.error("API Error:", err);
       }
-    } else {
+    } else if (currentData === 0) {
       if (
         selectedDevice !== null &&
         (user?.role?.name === "user"
@@ -405,7 +405,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
 
       fetchProtocols();
     }
-  }, [currentDevice]);
+  }, [selectedDevice, user]);
 
   React.useEffect(() => {
     if (isLoading || isFetching) {

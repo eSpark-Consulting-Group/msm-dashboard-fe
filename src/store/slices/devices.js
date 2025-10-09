@@ -24,6 +24,7 @@ const devicesSlice = createSlice({
     },
     handleUpdateDevice: (state, action) => {
       const updated = action.payload;
+      // console.log("update");
 
       // ✅ Update device inside the list
       const device = state.devices?.find(
@@ -52,6 +53,7 @@ const devicesSlice = createSlice({
     },
     handleUpdateAssignDevice: (state, action) => {
       const updated = action.payload;
+      // console.log("assign");
 
       // ✅ Update inside assignDevices array
       const assigned = state.assignDevices?.find(

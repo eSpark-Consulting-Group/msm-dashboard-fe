@@ -65,7 +65,7 @@ const OutlinedInput = ({
         disabled={disabled}
         multiline={multiline}
         onBlur={onBlur}
-        type={type === "password" && !showPassword ? "password" : "text"}
+        type={type === "password" ? (showPassword ? "text" : "password") : type}
         InputProps={{
           startAdornment: startAdornment && (
             <InputAdornment position="start">

@@ -1,5 +1,5 @@
 // useSocket.js
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,6 +9,7 @@ import {
 } from "./store/slices/telemetry";
 import { addMqttData } from "./store/slices/mqtt";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import {
   updateDeviceInfo,
   updateMqttInfo,
@@ -20,15 +21,17 @@ import {
   handleUpdateDevice,
 } from "./store/slices/devices";
 
-let socketInstance = null; // Singleton socket
+dayjs.extend(utc);
+let socketInstance = null;
 
 export function useSocket() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state?.auth);
   const { selectedDevice } = useSelector((state) => state?.devices);
   const [deviceid, setDeviceId] = useState("");
+  const activeSubscriptions = useRef([]); // ✅ Store re-emittable events
 
-  // ✅ Track currently selected device UUID
+  // Track selected device
   useEffect(() => {
     if (selectedDevice) {
       setDeviceId(
@@ -39,81 +42,69 @@ export function useSocket() {
     }
   }, [selectedDevice]);
 
-  // ✅ Initialize socket only once
+  // ✅ Create singleton socket
   if (!socketInstance) {
     socketInstance = io(import.meta.env.VITE_SOCKET_URL, {
       transports: ["websocket"],
       autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 3000,
     });
 
     socketInstance.on("connect", () => {
       console.log("✅ Connected:", socketInstance.id);
+
+      // 🔁 Re-emit all previous protocol subscriptions
+      if (activeSubscriptions.current.length > 0) {
+        console.log("🔁 Re-sending subscriptions after reconnect...");
+        activeSubscriptions.current.forEach(({ event, payload }) => {
+          socketInstance.emit(event, payload);
+        });
+      }
     });
 
-    // ✅ MQTT data listener (general)
+    // General MQTT data listener
     socketInstance.on("mqtt_protocol", (obj) => {
       const transformed = {
-        timestamp: dayjs(obj.timestamp).format("DD-MM-YYYY\nHH:mm"),
-        date: obj?.date,
-        time: obj?.time?.replace("-", ":"),
-        device_ID: obj.ofp_uid,
+        timestamp: dayjs(obj.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
+        date: dayjs(obj?.created_at).format("DD-MM-YYYY"),
+        time: dayjs(obj?.created_at).format("HH:mm"),
         ...obj.data,
       };
       dispatch(addMqttData(transformed));
     });
   }
 
-  // ✅ Move device_status_updated listener here — always respects latest user
+  // Device status updates
   useEffect(() => {
     if (!socketInstance) return;
 
-    // socketInstance.off("device_status_updated");
-
+    socketInstance.off("device_status_updated");
     socketInstance.on("device_status_updated", (data) => {
-      console.log("📡 device_status_updated from server:", data);
       if (user?.role?.name !== "user") {
         dispatch(handleUpdateDevice(data));
-      } else if (user?.role?.name === "user") {
+      } else {
         dispatch(handleUpdateAssignDevice(data));
       }
     });
-
-    // return () => {
-    //   socketInstance.off("device_status_updated");
-    // };
   }, [user, dispatch]);
 
-  // ✅ Device-specific info events (re-attach when deviceid changes)
+  // Device info listeners
   useEffect(() => {
     if (!deviceid || !socketInstance) return;
 
-    console.log("🔗 Subscribing to device info events for:", deviceid);
-
-    const handleDeviceInfo = (data) => {
-      console.log("📥 device_info:", data);
-      dispatch(updateDeviceInfo(data));
-    };
-    const handleNtpInfo = (data) => {
-      console.log("📥 ntp_info:", data);
-      dispatch(updateNtpInfo(data));
-    };
-    const handleMqttInfo = (data) => {
-      console.log("📥 mqtt_info:", data);
-      dispatch(updateMqttInfo(data));
-    };
-    const handleSftpInfo = (data) => {
-      console.log("📥 sftp_info:", data);
-      dispatch(updateSftpInfo(data));
-    };
+    const handleDeviceInfo = (data) => dispatch(updateDeviceInfo(data));
+    const handleNtpInfo = (data) => dispatch(updateNtpInfo(data));
+    const handleMqttInfo = (data) => dispatch(updateMqttInfo(data));
+    const handleSftpInfo = (data) => dispatch(updateSftpInfo(data));
 
     socketInstance.on(`device_info:${deviceid}`, handleDeviceInfo);
     socketInstance.on(`ntp_info:${deviceid}`, handleNtpInfo);
     socketInstance.on(`mqtt_info:${deviceid}`, handleMqttInfo);
     socketInstance.on(`sftp_info:${deviceid}`, handleSftpInfo);
 
-    // Cleanup when device changes or unmounts
     return () => {
-      console.log("🧹 Cleaning up listeners for:", deviceid);
       socketInstance.off(`device_info:${deviceid}`, handleDeviceInfo);
       socketInstance.off(`ntp_info:${deviceid}`, handleNtpInfo);
       socketInstance.off(`mqtt_info:${deviceid}`, handleMqttInfo);
@@ -121,13 +112,13 @@ export function useSocket() {
     };
   }, [deviceid, dispatch]);
 
-  // ✅ Subscribe to telemetry
+  // Telemetry
   const subscribeToTelemetry = useCallback(
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
       socketInstance?.on(eventName, (data) => {
         if (data?.data?.channel_id) {
-          // console.log(data?.data?.channel_id, data);
+          // console.log(data?.data?.channel_id, data?.data);
           dispatch(addPowerData(data));
           dispatch(addEnergyData(data));
         }
@@ -136,20 +127,42 @@ export function useSocket() {
     [dispatch]
   );
 
-  // ✅ Unsubscribe from telemetry
+  const stopEvent = useCallback((eventName, payload) => {
+    if (!socketInstance) return;
+
+    // Remove from remembered subscriptions
+    activeSubscriptions.current = activeSubscriptions.current.filter(
+      (e) =>
+        !(
+          e.event === eventName &&
+          JSON.stringify(e.payload) === JSON.stringify(payload)
+        )
+    );
+
+    socketInstance.emit(eventName, payload);
+  }, []);
+
   const unsubscribeFromTelemetry = useCallback(
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
-      console.log("🛑 Unsubscribing:", eventName);
       dispatch(handleUnsubscribe());
       socketInstance?.off(eventName);
     },
     [dispatch]
   );
 
-  // ✅ Emit helper (auto on reconnect)
-  const emitEvent = useCallback((eventName, payload) => {
+  // ✅ Improved emitEvent — remembers subscriptions
+  const emitEvent = useCallback((eventName, payload, remember = false) => {
     if (!socketInstance) return;
+    if (remember) {
+      const exists = activeSubscriptions.current.some(
+        (e) =>
+          e.event === eventName &&
+          JSON.stringify(e.payload) === JSON.stringify(payload)
+      );
+      if (!exists)
+        activeSubscriptions.current.push({ event: eventName, payload });
+    }
 
     if (socketInstance.connected) {
       socketInstance.emit(eventName, payload);
@@ -160,17 +173,14 @@ export function useSocket() {
     }
   }, []);
 
-  // ✅ Info request helpers (consistent naming)
+  // Info request helpers
   const requestDeviceInfo = (id) => emitEvent(`device_info:${id}`, {});
   const requestNtpInfo = (id) => emitEvent(`ntp_info:${id}`, {});
   const requestMqttInfo = (id) => emitEvent(`mqtt_info:${id}`, {});
   const requestSftpInfo = (id) => emitEvent(`sftp_info:${id}`, {});
 
-  // ✅ Ensure socket connects as soon as the app renders
   useEffect(() => {
-    if (socketInstance && !socketInstance.connected) {
-      socketInstance.connect();
-    }
+    if (socketInstance && !socketInstance.connected) socketInstance.connect();
   }, []);
 
   return {
@@ -182,5 +192,6 @@ export function useSocket() {
     requestNtpInfo,
     requestMqttInfo,
     requestSftpInfo,
+    stopEvent,
   };
 }

@@ -241,6 +241,9 @@ const telemetrySlice = createSlice({
         d.timestamp
       ).fromNow()}`;
       state.powerCards[3 + phaseIndex].value = `${d.active_power}kW`;
+      state.powerCards[3 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
       state.powerCards[6 + phaseIndex].value = `${d.reactive_power}kVAR`;
 
       state.powerCards[6 + phaseIndex].time = `Last update ${dayjs(
@@ -260,14 +263,33 @@ const telemetrySlice = createSlice({
 
       state.isSocketHasEnergy = true;
 
-      state.energyData[phaseIndex].value = `${d.active_energy_positive}KWh`;
-      state.energyData[3 + phaseIndex].value = `${d.active_energy_negative}KWh`;
+      state.energyData[phaseIndex].value = `${d.active_energy_positive}kWh`;
+
+      state.energyData[phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+
+      state.energyData[3 + phaseIndex].value = `${d.active_energy_negative}kWh`;
+
+      state.energyData[3 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+
       state.energyData[
         6 + phaseIndex
-      ].value = `${d.reactive_energy_positive}KWh`;
+      ].value = `${d.reactive_energy_positive}kWh`;
+
+      state.energyData[6 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+
       state.energyData[
         9 + phaseIndex
-      ].value = `${d.reactive_energy_negative}KWh`;
+      ].value = `${d.reactive_energy_negative}kWh`;
+
+      state.energyData[9 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
     },
     handleUnsubscribe: (state) => {
       state.isSocketHasEnergy = false;

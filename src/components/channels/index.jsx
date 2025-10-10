@@ -22,9 +22,9 @@ const Channels = ({ variant, name, onClick }) => {
         justifyContent: "center",
         alignItems: "center",
         width: { xs: "100%", sm: "45%", md: "216px" },
-        cursor: "pointer",
+        cursor: variant === "connected" ? "pointer" : "not-allowed",
       }}
-      onClick={onClick}
+      onClick={variant === "connected" ? onClick : () => {}}
     >
       <Box
         sx={{

@@ -1,8 +1,12 @@
-import { useState } from "react";
-import { Tabs, Tab, Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Tabs, Tab, Box, Typography } from "@mui/material";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
+import { useSelector } from "react-redux";
 
 const DynamicTabs2 = ({ tabs, defaultActive, onTabChange, linksTab }) => {
   const [activeTab, setActiveTab] = useState(defaultActive || 0);
+  const { user } = useSelector((state) => state?.auth);
+  const { selectedDevice } = useSelector((state) => state?.devices);
 
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -37,16 +41,50 @@ const DynamicTabs2 = ({ tabs, defaultActive, onTabChange, linksTab }) => {
         {tabs.map((tab, index) => (
           <Tab
             key={tab.id}
-            label={tab.label}
+            label={
+              <Box
+                component="span"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  columnGap: "10px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    color: index === activeTab ? "#0C89E2" : "#A6A7A7",
+                  }}
+                >
+                  {tab.label}
+                </Typography>
+                {index === activeTab && (
+                  <>
+                    {user?.role?.name === "user"
+                      ? selectedDevice?.device_data?.device_data
+                          ?.device_status === false && (
+                          <InfoOutlineIcon
+                            sx={{ color: "red" }}
+                            titleAccess="Device is Inactive"
+                          />
+                        )
+                      : selectedDevice?.device_data?.device_status ===
+                          false && (
+                          <InfoOutlineIcon
+                            sx={{ color: "red" }}
+                            titleAccess="Device is Inactive"
+                          />
+                        )}
+                  </>
+                )}
+              </Box>
+            }
             sx={{
               textTransform: "none",
-              fontWeight: "600",
-
               minHeight: "40px",
-              color: "#A6A7A7", // default inactive color
-              "&.Mui-selected": {
-                color: "#0C89E2", // active color
-              },
+              color: "#A6A7A7",
+              "&.Mui-selected": { color: "#0C89E2" },
             }}
             disableRipple
           />

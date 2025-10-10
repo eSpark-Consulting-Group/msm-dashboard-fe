@@ -1,10 +1,11 @@
 export const columns = (role) => {
   const baseColumns = [
-    { name: "Created Time", key: "createdAt", sortable: true },
-    { name: "Device ID", key: "deviceId" },
     { name: "Device Name", key: "name" },
-    { name: "Status", key: "status", chip: true, sortable: true },
+    { name: "Device ID", key: "deviceId" },
     { name: "Group", key: "group" },
+    { name: "Created Time", key: "createdAt", sortable: true },
+    { name: "Last Activity", key: "lastUpdated", sortable: true },
+    { name: "Status", key: "status", chip: true, sortable: true },
   ];
 
   if (role !== "user") {

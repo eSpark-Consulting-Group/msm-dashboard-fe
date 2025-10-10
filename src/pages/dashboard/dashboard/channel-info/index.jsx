@@ -31,6 +31,7 @@ import {
   useGetAssignDeviceByIdQuery,
   useGetDeviceByIdQuery,
 } from "../../../../services/devices";
+import { useSearchParams } from "react-router-dom";
 
 dayjs.extend(relativeTime);
 
@@ -38,9 +39,15 @@ const ChannelInfo = () => {
   const [generalData, setGeneralData] = useState([]);
   const [powerData, setPowerData] = useState([]);
   const [energyData, setEnergyData] = useState([]);
+  const [temperature, setTemperature] = useState("");
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab");
 
   const tabs = [
-    { label: "General", component: <General data={generalData} /> },
+    {
+      label: "General",
+      component: <General data={generalData} temperature={temperature} />,
+    },
     { label: "Power", component: <Power data={powerData} /> },
     { label: "Energy", component: <Energy data={energyData} /> },
   ];
@@ -140,6 +147,7 @@ const ChannelInfo = () => {
       setGeneralData(mapGeneralData(data));
       setPowerData(mapPowerData(data));
       setEnergyData(mapEnergyData(data));
+      setTemperature(data[0]?.temperature);
     }
   }, [telemetryData]);
 
@@ -275,7 +283,7 @@ const ChannelInfo = () => {
         </Typography>
       </Box>
       <Paper sx={{ padding: { xs: "10px 0px", lg: "30px" } }}>
-        {telemetryLoading || telemetryFetching ? (
+        {telemetryLoading ? (
           <LinearProgress />
         ) : (
           <Box
@@ -285,14 +293,31 @@ const ChannelInfo = () => {
               justifyContent: "center",
               alignItems: "center",
               flexDirection: "column",
+              position: "relative",
             }}
           >
-            <DynamicTabs tabs={tabs} />
+            <DynamicTabs tabs={tabs} temperature={true} />
             <ChannelPagination
               channelName={channelName}
               handlePageBack={handlePageBack}
               handlePageForward={handlePageForward}
             />
+
+            {(tab === null || tab == 0) && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  right: 10,
+                  top: 15,
+                  transform: "translateY(-50%)",
+                  display: { xs: "none", lg: "block" },
+                }}
+              >
+                <Typography sx={{ fontSize: "24px", fontWeight: "700" }}>
+                  Temperature: {Number(temperature).toFixed(2)} °C
+                </Typography>
+              </Box>
+            )}
           </Box>
         )}
       </Paper>

@@ -112,7 +112,7 @@ const PhaseCards = ({
             const num = parseFloat(match[1]);
             const unit = match[2] || "";
 
-            return `${num.toFixed(2)}${unit}`;
+            return `${num.toFixed(2)} ${unit}`;
           })()}
         </Typography>
       </Box>

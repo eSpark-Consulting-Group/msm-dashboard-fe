@@ -87,6 +87,7 @@ export const mapGeneralData = (telemetryData) => {
       // valueColor: "green",
       headingSize: "20px",
       phase,
+      time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
     };
   });
   const line_frequency = data?.map((item) => {
@@ -125,7 +126,7 @@ export const mapPowerData = (telemetryData) => {
   });
   const active_power = data?.map((item) => {
     let phase = item?.phase?.toUpperCase() || "";
-    let heading = `PHASE ${phase}-Aactive Power`;
+    let heading = `PHASE ${phase}-Active Power`;
     return {
       icon: energy,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
@@ -152,7 +153,7 @@ export const mapPowerData = (telemetryData) => {
   });
   const power_factor = data?.map((item) => {
     let phase = item?.phase?.toUpperCase() || "";
-    let heading = `PHASE ${phase}-Reactive Power`;
+    let heading = `PHASE ${phase}-Power factor`;
     return {
       icon: flashBlack,
       // color: "green",
@@ -182,7 +183,7 @@ export const mapEnergyData = (telemetryData) => {
       icon: energy,
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.avg_active_energy_positive}KWh`,
+      value: `${item?.avg_active_energy_positive}kWh`,
       // valueColor: "green",
       headingSize: "19.5px",
       phase,
@@ -195,7 +196,7 @@ export const mapEnergyData = (telemetryData) => {
       icon: energy,
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.avg_active_energy_negative}KWh`,
+      value: `${item?.avg_active_energy_negative}kWh`,
       // valueColor: "green",
       headingSize: "19.5px",
       phase,
@@ -208,7 +209,7 @@ export const mapEnergyData = (telemetryData) => {
       icon: energy,
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.avg_reactive_energy_positive}KWh`,
+      value: `${item?.avg_reactive_energy_positive}kWh`,
       // valueColor: "green",
       headingSize: "19.5px",
       phase,
@@ -221,7 +222,7 @@ export const mapEnergyData = (telemetryData) => {
       icon: energy,
       heading,
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
-      value: `${item?.avg_reactive_energy_negative}KWh`,
+      value: `${item?.avg_reactive_energy_negative}kWh`,
       // valueColor: "green",
       headingSize: "19.5px",
       phase,

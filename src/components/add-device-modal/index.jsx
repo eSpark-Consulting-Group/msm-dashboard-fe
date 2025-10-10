@@ -48,7 +48,7 @@ const credentials = [
   { name: "device_uuid", label: "Device ID", placeholder: "device Id" },
   {
     name: "password",
-    label: "MQTTS Password",
+    label: "Device Password",
     placeholder: "Password",
     type: "password",
   },
@@ -63,7 +63,10 @@ const AddDeviceModal = ({ onCancel }) => {
     data: groupsData,
     isLoading: groupsLoading,
     error: groupsError,
-  } = useGetAllGroupsQuery({ page: 1, limit: 100, search: "" }, { refetchOnMountOrArgChange: true });
+  } = useGetAllGroupsQuery(
+    { page: 1, limit: 100, search: "" },
+    { refetchOnMountOrArgChange: true }
+  );
 
   useEffect(() => {
     if (groupsData?.data) {
@@ -77,9 +80,9 @@ const AddDeviceModal = ({ onCancel }) => {
 
   useEffect(() => {
     if (groupsError) {
-      toast.error(groupsError?.data?.message || "Failed to fetch groups")
+      toast.error(groupsError?.data?.message || "Failed to fetch groups");
     }
-  }, [groupsError])
+  }, [groupsError]);
 
   const formik = useFormik({
     initialValues: {
@@ -112,20 +115,19 @@ const AddDeviceModal = ({ onCancel }) => {
         // mqtt_client_id: values?.clientId,
         // mqtt_user: values?.user,
         // mqtt_username: values?.userName,
-        mqtt_password: values?.password
-      }
-      addDevice(bodyToSend)
-        .then((res) => {
-          if (res?.error) {
-            toast.error(res?.error?.data?.message || "Failed to add device");
-            return;
-          }
-          if (res?.data) {
-            toast.success(res?.data?.message || "Device added successfully");
-            onCancel()
-          }
-        })
-    }
+        mqtt_password: values?.password,
+      };
+      addDevice(bodyToSend).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to add device");
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "Device added successfully");
+          onCancel();
+        }
+      });
+    },
   });
 
   const renderInput = ({ name, label, placeholder, type }) => (
@@ -146,11 +148,17 @@ const AddDeviceModal = ({ onCancel }) => {
   );
 
   if (groupsLoading) {
-    return <Stack justifyContent="center" alignItems="center" ><CircularProgress /></Stack>
+    return (
+      <Stack justifyContent="center" alignItems="center">
+        <CircularProgress />
+      </Stack>
+    );
   }
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit}
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
       sx={{
         display: "flex",
         flexWrap: "wrap",
@@ -171,8 +179,16 @@ const AddDeviceModal = ({ onCancel }) => {
           options={groupOptions}
           value={formik.values.groups}
           handleChange={formik.handleChange}
-          error={groupOptions <= 0 ? true : formik.touched.groups && Boolean(formik.errors.groups)}
-          helperText={groupOptions <= 0 ? "Groups not found. please add group" : formik.touched.groups && formik.errors.groups}
+          error={
+            groupOptions <= 0
+              ? true
+              : formik.touched.groups && Boolean(formik.errors.groups)
+          }
+          helperText={
+            groupOptions <= 0
+              ? "Groups not found. please add group"
+              : formik.touched.groups && formik.errors.groups
+          }
           renderValueSx={{
             color: "#000",
             fontWeight: 400,
@@ -186,7 +202,9 @@ const AddDeviceModal = ({ onCancel }) => {
         />
       </Box>
 
-      <Button onClick={() => setOpenGroupModal(true)} variant="contained">Add Group</Button>
+      <Button onClick={() => setOpenGroupModal(true)} variant="contained">
+        Add Group
+      </Button>
 
       <Box sx={{ width: "100%" }}>
         <Typography sx={{ fontSize: "18.43px", fontWeight: "700" }}>
@@ -226,9 +244,7 @@ const AddDeviceModal = ({ onCancel }) => {
         handleClose={() => setOpenGroupModal(false)}
         heading={"Add Entity Group"}
       >
-        <AddGroupModal
-          handleCancel={() => setOpenGroupModal(false)}
-        />
+        <AddGroupModal handleCancel={() => setOpenGroupModal(false)} />
       </DynamicModal>
     </Box>
   );

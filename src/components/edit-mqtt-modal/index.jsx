@@ -47,7 +47,7 @@ const EditMqtt = ({ data, handleCancel }) => {
   return (
     <div>
       <Typography variant="h6" fontWeight="bold" fontSize="25px" color="#000">
-        MQTTS Protocol
+        MQTT Protocol
       </Typography>
       <Box
         sx={{
@@ -73,6 +73,36 @@ const EditMqtt = ({ data, handleCancel }) => {
             helperText={formik.touched.broker_ip && formik.errors.broker_ip}
           />
         </Box>
+        <Box sx={{ width: "100%" }}>
+          <OutlinedInput
+            label="Broker Port"
+            placeholder="Broker Port"
+            type="number"
+            name="broker_port"
+            value={formik.values.broker_port}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.broker_port && Boolean(formik.errors.broker_port)
+            }
+            helperText={formik.touched.broker_port && formik.errors.broker_port}
+          />
+        </Box>
+        <Box sx={{ width: "100%" }}>
+          <OutlinedInput
+            label="Broker User"
+            placeholder="Broker User"
+            type="text"
+            name="broker_user"
+            value={formik.values.broker_user}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.broker_user && Boolean(formik.errors.broker_user)
+            }
+            helperText={formik.touched.broker_user && formik.errors.broker_user}
+          />
+        </Box>
 
         <Box sx={{ width: "100%" }}>
           <OutlinedInput
@@ -92,38 +122,6 @@ const EditMqtt = ({ data, handleCancel }) => {
 
         <Box sx={{ width: "100%" }}>
           <OutlinedInput
-            label="Broker Port"
-            placeholder="Broker Port"
-            type="number"
-            name="broker_port"
-            value={formik.values.broker_port}
-            onInputChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.broker_port && Boolean(formik.errors.broker_port)
-            }
-            helperText={formik.touched.broker_port && formik.errors.broker_port}
-          />
-        </Box>
-
-        <Box sx={{ width: "100%" }}>
-          <OutlinedInput
-            label="Broker User"
-            placeholder="Broker User"
-            type="text"
-            name="broker_user"
-            value={formik.values.broker_user}
-            onInputChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.broker_user && Boolean(formik.errors.broker_user)
-            }
-            helperText={formik.touched.broker_user && formik.errors.broker_user}
-          />
-        </Box>
-
-        <Box sx={{ width: "100%" }}>
-          <OutlinedInput
             label="Data Interval"
             placeholder="Data Interval"
             type="number"
@@ -138,6 +136,8 @@ const EditMqtt = ({ data, handleCancel }) => {
             helperText={
               formik.touched.data_interval && formik.errors.data_interval
             }
+            endAdornment={"Seconds"}
+            isEndorementText={true}
           />
         </Box>
 

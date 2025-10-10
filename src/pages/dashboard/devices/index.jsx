@@ -139,6 +139,11 @@ const Devices = () => {
             label: status ? "Active" : "Inactive",
             variant: status ? "green" : "red",
           },
+          lastUpdated: dayjs(
+            user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_status_updated_at
+              : item?.device_data?.device_status_updated_at
+          ).format("DD-MM-YYYY HH:mm"),
         };
       }) || [];
     setDeviceData(deviceData);
@@ -301,7 +306,7 @@ const Devices = () => {
         </Box>
       </Box>
       <DynamicTable
-        data={data}
+        data={getSortedData()}
         columns={
           activeTab === 0
             ? columns(user?.role?.name)

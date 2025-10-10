@@ -26,6 +26,7 @@ const OutlinedInput = ({
   onBlur,
   endAdornment,
   labelStyle,
+  isEndorementText,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -111,7 +112,7 @@ const OutlinedInput = ({
               )}
               {endAdornment && (
                 <InputAdornment position="end" sx={{ mr: "5px" }}>
-                  {typeof endAdornment === "string" ? (
+                  {typeof endAdornment === "string" && !isEndorementText ? (
                     <img
                       src={endAdornment}
                       alt="icon"

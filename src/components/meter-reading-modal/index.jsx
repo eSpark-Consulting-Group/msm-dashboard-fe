@@ -4,6 +4,7 @@ import RealtimeConfig from "../meter-reading-realtime";
 import HistoryConfig from "../meter-reading-history";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { useSocket } from "../../SocketTest";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -286,11 +287,10 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
           .map((item) => {
             const dateObj = new Date(item.timestamp);
             return {
-              // timestamp: item.timestamp,
-              timestamp: dayjs(item?.timestamp).format("DD-MM-YYYY\nHH:mm"),
-              date: item?.date,
-              time: item?.time?.replace("-", ":"),
-              device_ID: item.ofp_uid,
+              timestamp: dayjs(item?.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
+              date: dayjs(item?.created_at).format("DD-MM-YYYY"),
+              time: dayjs(item?.created_at).format("HH:mm"),
+              // device_ID: item.ofp_uid,
               ...item.data,
             };
           });
@@ -308,11 +308,15 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
           ? selectedDevice?.device_data?.device_data?.device_status !== false
           : selectedDevice?.device_data?.device_status !== false)
       ) {
-        emitEvent("mqtt_protocol", {
-          thing_name: id,
-          interval_time: realtimeConfig?.interval * 1000,
-          data_range: realtimeConfig?.limit,
-        });
+        emitEvent(
+          "mqtt_protocol",
+          {
+            thing_name: id,
+            interval_time: realtimeConfig?.interval * 1000,
+            data_range: realtimeConfig?.limit,
+          },
+          true
+        );
         dispatch(addMqttProtocol(realtimeConfig?.limit));
         dispatch(addMqttDataState(currentData));
         dispatch(
@@ -387,10 +391,12 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
             .map((item) => {
               const dateObj = new Date(item.timestamp);
               return {
-                timestamp: item?.timestamp,
-                date: dayjs(item?.timestamp).format("DD-MM-YYYY"),
-                time: dayjs(item?.timestamp).format("HH:mm"),
-                device_ID: item.ofp_uid,
+                timestamp: dayjs
+                  .utc(item?.timestamp)
+                  .format("DD-MM-YYYY\nHH:mm"),
+                date: dayjs(item?.created_at).format("DD-MM-YYYY"),
+                time: dayjs(item?.created_at).format("HH:mm"),
+                // device_ID: item.ofp_uid,
                 ...item.data,
               };
             });

@@ -53,7 +53,7 @@ const MqttProtocol = () => {
   const [isOpenRealTimePopup, setIsOpenRealTimePopup] = useState(null);
 
   const navigate = useNavigate();
-  const { emitEvent, socket } = useSocket();
+  const { emitEvent, socket, stopEvent } = useSocket();
   const { data: protocolData, isLoading: protocolLoading } =
     useGetAllProtocolsQuery({ device_uuid: id }, { skip: !id });
 
@@ -89,11 +89,15 @@ const MqttProtocol = () => {
         : selectedDevice?.device_data?.device_status === true)
     ) {
       // send immediately if connected
-      emitEvent("mqtt_protocol", {
-        thing_name: id,
-        interval_time: 5 * 1000,
-        data_range: 5,
-      });
+      emitEvent(
+        "mqtt_protocol",
+        {
+          thing_name: id,
+          interval_time: 5 * 1000,
+          data_range: 5,
+        },
+        true
+      );
       console.log("📤 Sent mqtt_protocol immediately");
     } else if (
       selectedDevice !== null &&
@@ -103,11 +107,15 @@ const MqttProtocol = () => {
     ) {
       // wait for connection
       socket.once("connect", () => {
-        emitEvent("mqtt_protocol", {
-          thing_name: id,
-          interval_time: 5 * 1000,
-          data_range: 5,
-        });
+        emitEvent(
+          "mqtt_protocol",
+          {
+            thing_name: id,
+            interval_time: 5 * 1000,
+            data_range: 5,
+          },
+          true
+        );
         console.log("📤 Sent mqtt_protocol after connect");
       });
     }
@@ -126,7 +134,8 @@ const MqttProtocol = () => {
       // ✅ Notify server to stop MQTT protocol
       dispatch(handleMqttDisconnect());
       setData([]);
-      socket.emit("mqtt_protocol_stop", { thing_name: id });
+      // socket.emit("mqtt_protocol_stop", { thing_name: id });
+      stopEvent("mqtt_protocol_stop", { thing_name: id });
 
       // ✅ Local cleanup
       // socket.off("mqtt_protocol");
@@ -154,6 +163,7 @@ const MqttProtocol = () => {
 
   useEffect(() => {
     if (deviceData2) {
+      const data = deviceData2?.data;
       dispatch(addDeviceStatus(data?.device_data?.device_data?.device_status));
       dispatch(
         addCurrentData(

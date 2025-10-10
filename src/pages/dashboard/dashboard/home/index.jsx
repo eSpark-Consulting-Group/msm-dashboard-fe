@@ -69,8 +69,10 @@ const DashboardHome = () => {
     limit: 12,
   });
 
-  const handleNavigate = (channelId) => {
-    navigate(`/dashboard/${id}/info/channel-${channelId}`);
+  const handleNavigate = (channel) => {
+    if (channel?.variant === "connected") {
+      navigate(`/dashboard/${id}/info/channel-${channel?.id}`);
+    }
   };
 
   const handleInfo = () => {
@@ -89,7 +91,15 @@ const DashboardHome = () => {
   };
 
   useEffect(() => {
-    if (telemetryData) {
+    // 1️⃣ Start with default 12 disabled channels
+    const defaultChannels = Array.from({ length: 12 }, (_, i) => ({
+      id: i + 1,
+      variant: "disable",
+      name: `Channel ${i + 1 > 9 ? i + 1 : `0${i + 1}`}`,
+    }));
+
+    // 2️⃣ If telemetry data exists, map existing IDs to their status
+    if (telemetryData?.data?.length) {
       const myMap = {};
       const unique = [];
 
@@ -100,15 +110,24 @@ const DashboardHome = () => {
         }
       }
 
-      const data = unique?.map((item) => ({
-        id: item?.channel_id,
-        variant: item?.channel_status ? "connected" : "disable",
-        name: `Channel ${
-          item?.channel_id > 9 ? item?.channel_id : `0${item?.channel_id}`
-        }`,
-      }));
-      dispatch(handleTotalChannels(data?.length));
-      setChannelsData(data);
+      // 3️⃣ Update only matching channels (1–12)
+      const updatedChannels = defaultChannels.map((ch) => {
+        const found = unique.find((u) => u.channel_id === ch.id);
+        if (found) {
+          return {
+            ...ch,
+            variant: found?.channel_status ? "connected" : "unfilled",
+          };
+        }
+        return ch; // keep default
+      });
+
+      dispatch(handleTotalChannels(updatedChannels.length));
+      setChannelsData(updatedChannels);
+    } else {
+      // No data → just show default 12 disabled
+      dispatch(handleTotalChannels(defaultChannels.length));
+      setChannelsData(defaultChannels);
     }
   }, [telemetryData]);
 
@@ -190,9 +209,7 @@ const DashboardHome = () => {
         onTabChange={handleTabChange}
       />
 
-      {telemetryLoading ? (
-        <LinearProgress />
-      ) : telemetryData?.data?.length === 0 ? (
+      {telemetryData?.data?.length === 0 ? (
         <>
           <Typography sx={{ fontSize: "25.19px", fontWeight: "700" }}>
             No Channels Found
@@ -241,7 +258,7 @@ const DashboardHome = () => {
                   key={item?.id}
                   variant={item?.variant}
                   name={item?.name}
-                  onClick={() => handleNavigate(item?.id)}
+                  onClick={() => handleNavigate(item)}
                 />
               ))}
             </Box>

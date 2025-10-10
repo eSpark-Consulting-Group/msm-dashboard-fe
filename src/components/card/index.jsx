@@ -104,8 +104,8 @@ const DashboardWrapper = ({ loading, children }) => {
                   width={18}
                   height={18}
                   style={{ display: "inline-block" }}
-                />{" "}
-                Home
+                />
+                &nbsp;Home
               </Button>
             </Box>
           )}

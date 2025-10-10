@@ -443,6 +443,7 @@ export const generalCards = [
     value: "0A",
     valueColor: "green",
     headingSize: "20px",
+    time: "Last update 3h ago",
   },
   {
     icon: energy,
@@ -450,6 +451,7 @@ export const generalCards = [
     value: "0A",
     valueColor: "green",
     headingSize: "20px",
+    time: "Last update 3h ago",
   },
   {
     icon: energy,
@@ -457,6 +459,7 @@ export const generalCards = [
     value: "0A",
     valueColor: "green",
     headingSize: "20px",
+    time: "Last update 3h ago",
   },
   {
     icon: flashBlack,
@@ -657,19 +660,19 @@ export const infoData = (realData) => {
 export const networkProtocol = (realData) => {
   return [
     {
-      label: realData?.device_uuid,
+      label: "Server 1",
       value: realData?.data?.server_1,
       key: "server_1",
       showIcon: true,
     },
     {
-      label: realData?.device_uuid,
+      label: "Server 2",
       value: realData?.data?.server_2,
       key: "server_2",
       showIcon: true,
     },
     {
-      label: realData?.device_uuid,
+      label: "Server 3",
       value: realData?.data?.server_3,
       key: "server_3",
       showIcon: true,
@@ -711,7 +714,7 @@ export const mqttProtocol = (realData) => {
       showIcon: true,
     },
     {
-      label: "MQTTS_TOPIC",
+      label: "MQTT-TOPIC",
       value: mainData?.mqtt_topic,
       key: "mqtt_topic",
       showIcon: true,

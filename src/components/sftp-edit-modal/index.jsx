@@ -132,6 +132,8 @@ const SftpEditModal = ({ data, handleCancel }) => {
             helperText={
               formik.touched.data_interval && formik.errors.data_interval
             }
+            endAdornment={"Seconds"}
+            isEndorementText={true}
           />
         </Box>
 

@@ -85,7 +85,7 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
   const formik = useFormik({
     initialValues: {
       deviceId: data?.deviceId || "",
-      deviceName: data?.deviceName || "",
+      deviceName: data?.name || "",
       label: data?.label || "",
       // customerName: data?.customerName || "",
       groups: data?.groups_data?._id || "",

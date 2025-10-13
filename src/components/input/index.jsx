@@ -27,6 +27,8 @@ const OutlinedInput = ({
   endAdornment,
   labelStyle,
   isEndorementText,
+  min,
+  max,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -128,6 +130,14 @@ const OutlinedInput = ({
 
           readOnly: readOnly,
         }}
+        inputProps={
+          type === "number"
+            ? {
+                min,
+                max,
+              }
+            : {}
+        }
         error={error}
       />
       <Typography variant="caption" color="red" sx={{ display: "block" }}>

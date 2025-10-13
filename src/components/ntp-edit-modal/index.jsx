@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import Button from "../buttons";
 import { useUpdateNtpMutation } from "../../services/ntp";
 import { toast } from "react-toastify";
+import { ntpSettingsSchema } from "../../schemas";
 
 const NtpEditModal = ({ data, handleCancel }) => {
   const [ntpData, { isLoading }] = useUpdateNtpMutation();
@@ -14,6 +15,7 @@ const NtpEditModal = ({ data, handleCancel }) => {
       server_3: data?.server_3 ?? "",
       id: data?.id ?? "",
     },
+    validationSchema: ntpSettingsSchema,
     onSubmit: async (values) => {
       try {
         const objToSend = {

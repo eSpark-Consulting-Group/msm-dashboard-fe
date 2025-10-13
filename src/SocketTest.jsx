@@ -59,6 +59,7 @@ export function useSocket() {
       if (activeSubscriptions.current.length > 0) {
         console.log("🔁 Re-sending subscriptions after reconnect...");
         activeSubscriptions.current.forEach(({ event, payload }) => {
+          console.log("↩️ Re-emitting:", event, payload);
           socketInstance.emit(event, payload);
         });
       }
@@ -66,9 +67,10 @@ export function useSocket() {
 
     // General MQTT data listener
     socketInstance.on("mqtt_protocol", (obj) => {
+      console.log("📥 Received: mqtt_protocol", obj);
       const transformed = {
         timestamp: dayjs(obj.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
-        date: dayjs(obj?.created_at).format("DD-MM-YYYY"),
+        date: dayjs(obj?.created_at).format("DD/MM/YYYY"),
         time: dayjs(obj?.created_at).format("HH:mm"),
         ...obj.data,
       };
@@ -82,6 +84,7 @@ export function useSocket() {
 
     socketInstance.off("device_status_updated");
     socketInstance.on("device_status_updated", (data) => {
+      console.log("📥 Received: device_status_updated", data);
       if (user?.role?.name !== "user") {
         dispatch(handleUpdateDevice(data));
       } else {
@@ -94,10 +97,22 @@ export function useSocket() {
   useEffect(() => {
     if (!deviceid || !socketInstance) return;
 
-    const handleDeviceInfo = (data) => dispatch(updateDeviceInfo(data));
-    const handleNtpInfo = (data) => dispatch(updateNtpInfo(data));
-    const handleMqttInfo = (data) => dispatch(updateMqttInfo(data));
-    const handleSftpInfo = (data) => dispatch(updateSftpInfo(data));
+    const handleDeviceInfo = (data) => {
+      console.log(`📥 Received: device_info:${deviceid}`, data);
+      dispatch(updateDeviceInfo(data));
+    };
+    const handleNtpInfo = (data) => {
+      console.log(`📥 Received: ntp_info:${deviceid}`, data);
+      dispatch(updateNtpInfo(data));
+    };
+    const handleMqttInfo = (data) => {
+      console.log(`📥 Received: mqtt_info:${deviceid}`, data);
+      dispatch(updateMqttInfo(data));
+    };
+    const handleSftpInfo = (data) => {
+      console.log(`📥 Received: sftp_info:${deviceid}`, data);
+      dispatch(updateSftpInfo(data));
+    };
 
     socketInstance.on(`device_info:${deviceid}`, handleDeviceInfo);
     socketInstance.on(`ntp_info:${deviceid}`, handleNtpInfo);
@@ -112,13 +127,13 @@ export function useSocket() {
     };
   }, [deviceid, dispatch]);
 
-  // Telemetry
+  // Telemetry subscription
   const subscribeToTelemetry = useCallback(
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
       socketInstance?.on(eventName, (data) => {
+        console.log(`📥 Received: ${eventName}`, data);
         if (data?.data?.channel_id) {
-          // console.log(data?.data?.channel_id, data?.data);
           dispatch(addPowerData(data));
           dispatch(addEnergyData(data));
         }
@@ -127,10 +142,11 @@ export function useSocket() {
     [dispatch]
   );
 
+  // Stop event (unsubscribe type)
   const stopEvent = useCallback((eventName, payload) => {
     if (!socketInstance) return;
+    console.log(`🛑 Stop event emit: ${eventName}`, payload);
 
-    // Remove from remembered subscriptions
     activeSubscriptions.current = activeSubscriptions.current.filter(
       (e) =>
         !(
@@ -145,6 +161,7 @@ export function useSocket() {
   const unsubscribeFromTelemetry = useCallback(
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
+      console.log(`🛑 Unsubscribed from ${eventName}`);
       dispatch(handleUnsubscribe());
       socketInstance?.off(eventName);
     },
@@ -154,6 +171,14 @@ export function useSocket() {
   // ✅ Improved emitEvent — remembers subscriptions
   const emitEvent = useCallback((eventName, payload, remember = false) => {
     if (!socketInstance) return;
+
+    console.log(
+      `📤 Emitting event: ${eventName}`,
+      payload,
+      "remember:",
+      remember
+    );
+
     if (remember) {
       const exists = activeSubscriptions.current.some(
         (e) =>
@@ -168,6 +193,7 @@ export function useSocket() {
       socketInstance.emit(eventName, payload);
     } else {
       socketInstance.once("connect", () => {
+        console.log(`🔁 Deferred emit on connect: ${eventName}`, payload);
         socketInstance.emit(eventName, payload);
       });
     }

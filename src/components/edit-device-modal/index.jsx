@@ -1,4 +1,11 @@
-import { Box, CircularProgress, Menu, MenuItem, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
 import OutlinedInput from "../input";
 import { DropDownIcon, pencil } from "../../assets";
 import { useFormik } from "formik";
@@ -8,6 +15,7 @@ import { useGetAllGroupsQuery } from "../../services/groups";
 import { toast } from "react-toastify";
 import Dropdown from "../drop-down";
 import { useUpdateDeviceMutation } from "../../services/devices";
+import { deviceSchema, editDeviceSchema } from "../../schemas";
 
 const sharedInputStyles = {
   "& .MuiOutlinedInput-root": {
@@ -30,7 +38,10 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
     data: groupsData,
     isLoading: groupsLoading,
     error: groupsError,
-  } = useGetAllGroupsQuery({ page: 1, limit: 100, search: "" }, { refetchOnMountOrArgChange: true });
+  } = useGetAllGroupsQuery(
+    { page: 1, limit: 100, search: "" },
+    { refetchOnMountOrArgChange: true }
+  );
 
   useEffect(() => {
     if (groupsData?.data) {
@@ -44,9 +55,9 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
 
   useEffect(() => {
     if (groupsError) {
-      toast.error(groupsError?.data?.message || "Failed to fetch groups")
+      toast.error(groupsError?.data?.message || "Failed to fetch groups");
     }
-  }, [groupsError])
+  }, [groupsError]);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -80,29 +91,36 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
       groups: data?.groups_data?._id || "",
       // status: "Active",
     },
+    validationSchema: editDeviceSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
       const bodyToSend = {
         device_uuid: values?.data?.device_data?.device_uuid,
         name: values?.deviceName,
         group_id: values?.groups,
-      }
-      editDevice({ id: data?.device_data?.device_uuid, formData: bodyToSend })
-        .then((res) => {
-          if (res?.error) {
-            toast.error(res?.error?.data?.message || "Failed to edit device");
-            return;
-          }
-          if (res?.data) {
-            toast.success(res?.data?.message || "Device edited successfully");
-            handleModalClose()
-          }
-        })
-    }
+      };
+      editDevice({
+        id: data?.device_data?.device_uuid,
+        formData: bodyToSend,
+      }).then((res) => {
+        if (res?.error) {
+          toast.error(res?.error?.data?.message || "Failed to edit device");
+          return;
+        }
+        if (res?.data) {
+          toast.success(res?.data?.message || "Device edited successfully");
+          handleModalClose();
+        }
+      });
+    },
   });
 
   if (groupsLoading) {
-    return <Stack justifyContent="center" alignItems="center" ><CircularProgress /></Stack>
+    return (
+      <Stack justifyContent="center" alignItems="center">
+        <CircularProgress />
+      </Stack>
+    );
   }
 
   return (
@@ -127,6 +145,7 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
         onBlur={formik.handleBlur}
         error={formik.touched.deviceId && Boolean(formik.errors.deviceId)}
         helperText={formik.touched.deviceId && formik.errors.deviceId}
+        disabled={true}
       />
       <OutlinedInput
         label={"Device Name"}
@@ -189,8 +208,16 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
         options={groupOptions}
         value={formik.values.groups}
         handleChange={formik.handleChange}
-        error={groupOptions <= 0 ? true : formik.touched.groups && Boolean(formik.errors.groups)}
-        helperText={groupOptions <= 0 ? "Groups not found. please add group" : formik.touched.groups && formik.errors.groups}
+        error={
+          groupOptions <= 0
+            ? true
+            : formik.touched.groups && Boolean(formik.errors.groups)
+        }
+        helperText={
+          groupOptions <= 0
+            ? "Groups not found. please add group"
+            : formik.touched.groups && formik.errors.groups
+        }
         renderValueSx={{
           color: "#000",
           fontWeight: 400,
@@ -247,8 +274,13 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
           </Button>
         </Box>
         <Box sx={{ width: "203.70px", height: "50px" }}>
-          <Button disabled={isLoading}
-            loading={isLoading} variant="contained" disableRipple type="submit">
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            variant="contained"
+            disableRipple
+            type="submit"
+          >
             Save
           </Button>
         </Box>

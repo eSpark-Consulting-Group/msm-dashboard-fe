@@ -288,7 +288,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
             const dateObj = new Date(item.timestamp);
             return {
               timestamp: dayjs(item?.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
-              date: dayjs(item?.created_at).format("DD-MM-YYYY"),
+              date: dayjs(item?.created_at).format("DD/MM/YYYY"),
               time: dayjs(item?.created_at).format("HH:mm"),
               // device_ID: item.ofp_uid,
               ...item.data,
@@ -394,7 +394,7 @@ const MeterReadingConfigPopover = ({ open, anchorEl, id, setAnchorEl }) => {
                 timestamp: dayjs
                   .utc(item?.timestamp)
                   .format("DD-MM-YYYY\nHH:mm"),
-                date: dayjs(item?.created_at).format("DD-MM-YYYY"),
+                date: dayjs(item?.created_at).format("DD/MM/YYYY"),
                 time: dayjs(item?.created_at).format("HH:mm"),
                 // device_ID: item.ofp_uid,
                 ...item.data,

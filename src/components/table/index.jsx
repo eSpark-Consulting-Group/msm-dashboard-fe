@@ -183,7 +183,7 @@ const DynamicTable = ({
       return cell.toFixed(2);
     }
 
-    return cell;
+    return <Typography sx={{ whiteSpace: "pre-line" }}>{cell}</Typography>;
   };
 
   return (
@@ -285,6 +285,7 @@ const DynamicTable = ({
                           textAlign: "center",
                           pl: "0px",
                           cursor: onRowClick ? "pointer" : "auto",
+                          whiteSpace: "pre-line",
                         }}
                         key={column.key}
                         onClick={onRowClick ? () => onRowClick(item) : () => {}}

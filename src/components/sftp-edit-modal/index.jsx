@@ -5,6 +5,7 @@ import OutlinedInput from "../input";
 import Button from "../buttons";
 import { useUpdateSftpMutation } from "../../services/sftp";
 import { toast } from "react-toastify";
+import { sftpSettingsSchema } from "../../schemas";
 
 const SftpEditModal = ({ data, handleCancel }) => {
   const [sftp, { isLoading }] = useUpdateSftpMutation();
@@ -17,6 +18,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
       data_interval: data?.data_interval ?? "",
       id: data?.id ?? "",
     },
+    validationSchema: sftpSettingsSchema,
     onSubmit: async (values) => {
       try {
         const obj = {
@@ -134,6 +136,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
             }
             endAdornment={"Seconds"}
             isEndorementText={true}
+            min={1}
           />
         </Box>
 

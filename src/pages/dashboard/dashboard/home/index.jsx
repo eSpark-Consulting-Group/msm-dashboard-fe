@@ -63,11 +63,18 @@ const DashboardHome = () => {
     isError: isTelemetryError,
     error: telemetryError,
     isSuccess,
-  } = useGetTelemetryByDeviceQuery({
-    device_uuid: id,
-    page: 1,
-    limit: 12,
-  });
+  } = useGetTelemetryByDeviceQuery(
+    {
+      device_uuid: id,
+      page: 1,
+      limit: 12,
+    },
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }
+  );
 
   const handleNavigate = (channel) => {
     if (channel?.variant === "connected") {

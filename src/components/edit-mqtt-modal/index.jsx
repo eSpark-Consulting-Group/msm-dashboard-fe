@@ -4,6 +4,7 @@ import OutlinedInput from "../input";
 import Button from "../buttons";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { toast } from "react-toastify";
+import { mqttSettingsSchema } from "../../schemas";
 
 const EditMqtt = ({ data, handleCancel }) => {
   const [mqtt, { isLoading }] = useUpdateMqttMutation();
@@ -18,6 +19,7 @@ const EditMqtt = ({ data, handleCancel }) => {
       mqtt_topic: data?.mqtt_topic ?? "",
       id: data?.id ?? "",
     },
+    validationSchema: mqttSettingsSchema,
     onSubmit: async (values) => {
       try {
         const obj = {
@@ -108,7 +110,7 @@ const EditMqtt = ({ data, handleCancel }) => {
           <OutlinedInput
             label="Broker Pass"
             placeholder="Broker Pass"
-            type="text"
+            type="password"
             name="broker_pass"
             value={formik.values.broker_pass}
             onInputChange={formik.handleChange}
@@ -138,6 +140,7 @@ const EditMqtt = ({ data, handleCancel }) => {
             }
             endAdornment={"Seconds"}
             isEndorementText={true}
+            min={1}
           />
         </Box>
 

@@ -219,7 +219,128 @@ const initialState = {
   ],
   isSocketHasPower: false,
   isSocketHasEnergy: false,
+  isSocketHasGeneral: false,
   totalChannels: 0,
+  temperatureValue: null,
+  generalData: [
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE A-RMS VOLTAGE",
+      time: "Last update 3h ago",
+      value: "0V",
+      // valueColor: "red",
+      headingSize: "20px",
+      phase: "A",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE B-RMS VOLTAGE",
+      time: "Last update 3h ago",
+      value: "0V",
+      // valueColor: "red",
+      headingSize: "20px",
+      phase: "B",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE C-RMS VOLTAGE",
+      time: "Last update 3h ago",
+      value: "0V",
+      // valueColor: "red",
+      headingSize: "20px",
+      phase: "C",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE A-LINE VOLTAGE",
+      time: "Last update 3h ago",
+      value: "0V",
+      // valueColor: "red",
+      headingSize: "20px",
+      phase: "A",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE B-LINE VOLTAGE",
+      time: "Last update 3h ago",
+      value: "0V",
+      // valueColor: "red",
+      headingSize: "20px",
+      phase: "B",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE C-LINE VOLTAGE",
+      time: "Last update 3h ago",
+      value: "0V",
+      // valueColor: "red",
+      headingSize: "20px",
+      phase: "C",
+    },
+    {
+      icon: energy,
+      heading: "PHASE A-RMS CURRENT",
+      value: "0A",
+      // valueColor: "green",
+      headingSize: "20px",
+      time: "Last update 3h ago",
+      phase: "A",
+    },
+    {
+      icon: energy,
+      heading: "PHASE B-RMS CURRENT",
+      value: "0A",
+      // valueColor: "green",
+      headingSize: "20px",
+      time: "Last update 3h ago",
+      phase: "B",
+    },
+    {
+      icon: energy,
+      heading: "PHASE C-RMS CURRENT",
+      value: "0A",
+      // valueColor: "green",
+      headingSize: "20px",
+      time: "Last update 3h ago",
+      phase: "C",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE A-LINE FREQUENCY",
+      time: "Last update 3h ago",
+      value: "0Hz",
+      // valueColor: "red",
+      headingSize: "17px",
+      phase: "A",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE B-LINE FREQUENCY",
+      time: "Last update 3h ago",
+      value: "0Hz",
+      // valueColor: "red",
+      headingSize: "17px",
+      phase: "B",
+    },
+    {
+      icon: flashBlack,
+      // color: "red",
+      heading: "PHASE C-LINE FREQUENCY",
+      time: "Last update 3h ago",
+      value: "0Hz",
+      // valueColor: "red",
+      headingSize: "17px",
+      phase: "C",
+    },
+  ],
 };
 
 const telemetrySlice = createSlice({
@@ -291,9 +412,43 @@ const telemetrySlice = createSlice({
         d.timestamp
       ).fromNow()}`;
     },
+    addGeneralData: (state, action) => {
+      const d = action.payload?.data;
+      state.temperatureValue = d.temperature;
+
+      const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
+      if (phaseIndex === undefined) return;
+
+      state.isSocketHasGeneral = true;
+
+      state.generalData[phaseIndex].value = `${d.rms_voltage}V`;
+
+      state.generalData[phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+
+      state.generalData[3 + phaseIndex].value = `${d.line_voltage}V`;
+
+      state.generalData[3 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+
+      state.generalData[6 + phaseIndex].value = `${d.current}A`;
+
+      state.generalData[6 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+
+      state.generalData[9 + phaseIndex].value = `${d.frequency}Hz`;
+
+      state.generalData[9 + phaseIndex].time = `Last update ${dayjs(
+        d.timestamp
+      ).fromNow()}`;
+    },
     handleUnsubscribe: (state) => {
       state.isSocketHasEnergy = false;
       state.isSocketHasPower = false;
+      state.isSocketHasGeneral = false;
     },
     handleTotalChannels: (state, action) => {
       state.totalChannels = action.payload;
@@ -306,5 +461,6 @@ export const {
   addEnergyData,
   handleUnsubscribe,
   handleTotalChannels,
+  addGeneralData,
 } = telemetrySlice.actions;
 export default telemetrySlice.reducer;

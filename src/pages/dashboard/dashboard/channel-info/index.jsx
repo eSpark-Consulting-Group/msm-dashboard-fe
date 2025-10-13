@@ -43,6 +43,10 @@ const ChannelInfo = () => {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab");
 
+  const { isSocketHasGeneral, temperatureValue } = useSelector(
+    (state) => state?.telemetry
+  );
+
   const tabs = [
     {
       label: "General",
@@ -150,6 +154,12 @@ const ChannelInfo = () => {
       setTemperature(data[0]?.temperature);
     }
   }, [telemetryData]);
+
+  useEffect(() => {
+    if (isSocketHasGeneral) {
+      setTemperature(temperatureValue);
+    }
+  }, [isSocketHasGeneral, temperatureValue]);
 
   useEffect(() => {
     if (telemetryData2) {

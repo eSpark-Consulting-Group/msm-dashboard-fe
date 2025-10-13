@@ -2,10 +2,25 @@ import { Box, Grid, Typography } from "@mui/material";
 import { generalCards } from "../../../../constant";
 import { PhaseCards } from "../../../../components";
 import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const General = ({ data, temperature }) => {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab");
+  const { generalData, isSocketHasGeneral } = useSelector(
+    (state) => state?.telemetry
+  );
+  const [realTimeData, setRealTimeData] = useState([]);
+
+  useEffect(() => {
+    if (isSocketHasGeneral) {
+      setRealTimeData(generalData);
+    } else {
+      setRealTimeData(data);
+    }
+  }, [isSocketHasGeneral, generalData, data]);
+
   return (
     <Grid container spacing={2}>
       {(tab === null || tab == 0) && (
@@ -29,10 +44,10 @@ const General = ({ data, temperature }) => {
           </Typography>
         </Grid>
       )}
-      {data &&
-        Array.isArray(data) &&
-        data?.length > 0 &&
-        data?.map((item, index) => (
+      {realTimeData &&
+        Array.isArray(realTimeData) &&
+        realTimeData?.length > 0 &&
+        realTimeData?.map((item, index) => (
           <PhaseCards
             color={item?.color}
             heading={item?.heading}

@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addEnergyData,
+  addGeneralData,
   addPowerData,
   handleUnsubscribe,
 } from "./store/slices/telemetry";
@@ -57,9 +58,9 @@ export function useSocket() {
 
       // 🔁 Re-emit all previous protocol subscriptions
       if (activeSubscriptions.current.length > 0) {
-        console.log("🔁 Re-sending subscriptions after reconnect...");
+        // console.log("🔁 Re-sending subscriptions after reconnect...");
         activeSubscriptions.current.forEach(({ event, payload }) => {
-          console.log("↩️ Re-emitting:", event, payload);
+          // console.log("↩️ Re-emitting:", event, payload);
           socketInstance.emit(event, payload);
         });
       }
@@ -67,7 +68,7 @@ export function useSocket() {
 
     // General MQTT data listener
     socketInstance.on("mqtt_protocol", (obj) => {
-      console.log("📥 Received: mqtt_protocol", obj);
+      // console.log("📥 Received: mqtt_protocol", obj);
       const transformed = {
         timestamp: dayjs(obj.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
         date: dayjs(obj?.created_at).format("DD/MM/YYYY"),
@@ -84,7 +85,7 @@ export function useSocket() {
 
     socketInstance.off("device_status_updated");
     socketInstance.on("device_status_updated", (data) => {
-      console.log("📥 Received: device_status_updated", data);
+      // console.log("📥 Received: device_status_updated", data);
       if (user?.role?.name !== "user") {
         dispatch(handleUpdateDevice(data));
       } else {
@@ -132,10 +133,10 @@ export function useSocket() {
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
       socketInstance?.on(eventName, (data) => {
-        console.log(`📥 Received: ${eventName}`, data);
         if (data?.data?.channel_id) {
           dispatch(addPowerData(data));
           dispatch(addEnergyData(data));
+          dispatch(addGeneralData(data));
         }
       });
     },
@@ -172,12 +173,12 @@ export function useSocket() {
   const emitEvent = useCallback((eventName, payload, remember = false) => {
     if (!socketInstance) return;
 
-    console.log(
-      `📤 Emitting event: ${eventName}`,
-      payload,
-      "remember:",
-      remember
-    );
+    // console.log(
+    //   `📤 Emitting event: ${eventName}`,
+    //   payload,
+    //   "remember:",
+    //   remember
+    // );
 
     if (remember) {
       const exists = activeSubscriptions.current.some(

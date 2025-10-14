@@ -36,6 +36,9 @@ const DashboardHome = () => {
   const [channelsData, setChannelsData] = useState([]);
   const { user } = useSelector((state) => state?.auth);
   const { selectedDevice } = useSelector((state) => state?.devices);
+  const { allChannels, getAllChannels } = useSelector(
+    (state) => state?.telemetry
+  );
 
   const {
     data: deviceData,
@@ -77,7 +80,7 @@ const DashboardHome = () => {
   );
 
   const handleNavigate = (channel) => {
-    if (channel?.variant === "connected") {
+    if (channel?.variant === "connected" || channel?.variant === "unfilled") {
       navigate(`/dashboard/${id}/info/channel-${channel?.id}`);
     }
   };
@@ -98,45 +101,59 @@ const DashboardHome = () => {
   };
 
   useEffect(() => {
-    // 1️⃣ Start with default 12 disabled channels
     const defaultChannels = Array.from({ length: 12 }, (_, i) => ({
       id: i + 1,
       variant: "disable",
       name: `Channel ${i + 1 > 9 ? i + 1 : `0${i + 1}`}`,
     }));
+    setChannelsData(defaultChannels);
+    dispatch(handleTotalChannels(defaultChannels.length));
+  }, [dispatch]);
 
-    // 2️⃣ If telemetry data exists, map existing IDs to their status
-    if (telemetryData?.data?.length) {
-      const myMap = {};
-      const unique = [];
-
-      for (const item of telemetryData?.data) {
-        if (!myMap[item.channel_id]) {
-          myMap[item.channel_id] = true;
-          unique.push(item);
-        }
+  useEffect(() => {
+    if (getAllChannels) {
+      if (Array.isArray(allChannels)) {
+        setChannelsData((prev) => {
+          const updated = [...prev];
+          updated.splice(0, 12, ...allChannels);
+          return updated;
+        });
       }
+    }
+  }, [getAllChannels, allChannels]);
 
-      // 3️⃣ Update only matching channels (1–12)
-      const updatedChannels = defaultChannels.map((ch) => {
-        const found = unique.find((u) => u.channel_id === ch.id);
-        if (found) {
-          return {
-            ...ch,
-            variant: found?.channel_status ? "connected" : "unfilled",
-          };
-        }
-        return ch; // keep default
+  useEffect(() => {
+    if (!telemetryData?.data) return;
+
+    if (getAllChannels && Array.isArray(allChannels) && allChannels.length > 0)
+      return;
+
+    const apiMap = {};
+    const unique = [];
+    for (const item of telemetryData.data) {
+      if (!apiMap[item.channel_id]) {
+        apiMap[item.channel_id] = true;
+        unique.push(item);
+      }
+    }
+
+    setChannelsData(() => {
+      const merged = Array.from({ length: 12 }, (_, i) => {
+        const found = unique.find((u) => u.channel_id === i + 1);
+        return {
+          id: i + 1,
+          name: `Channel ${i + 1 > 9 ? i + 1 : `0${i + 1}`}`,
+          variant: found
+            ? found.channel_status
+              ? "connected"
+              : "unfilled"
+            : "disable",
+        };
       });
 
-      dispatch(handleTotalChannels(updatedChannels.length));
-      setChannelsData(updatedChannels);
-    } else {
-      // No data → just show default 12 disabled
-      dispatch(handleTotalChannels(defaultChannels.length));
-      setChannelsData(defaultChannels);
-    }
-  }, [telemetryData]);
+      return merged;
+    });
+  }, [telemetryData, getAllChannels, allChannels]);
 
   useEffect(() => {
     if (!user) return;

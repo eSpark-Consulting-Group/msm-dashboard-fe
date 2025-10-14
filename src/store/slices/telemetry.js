@@ -341,6 +341,12 @@ const initialState = {
       phase: "C",
     },
   ],
+  firstSixChannels: [],
+  lastSixChannels: [],
+  gotFirstSix: false,
+  gotLastSix: false,
+  allChannels: [],
+  getAllChannels: false,
 };
 
 const telemetrySlice = createSlice({
@@ -453,6 +459,76 @@ const telemetrySlice = createSlice({
     handleTotalChannels: (state, action) => {
       state.totalChannels = action.payload;
     },
+    handleFirstSixChannels: (state, action) => {
+      state.gotFirstSix = true;
+      const payload = Array.isArray(action.payload) ? action.payload : [];
+      const data = [];
+
+      for (let index = 1; index <= 6; index++) {
+        const element = payload[index - 1];
+        data.push({
+          id: index,
+          variant: element
+            ? element.status
+              ? "connected"
+              : "unfilled"
+            : "disable",
+          name: `Channel ${index > 9 ? index : `0${index}`}`,
+        });
+      }
+
+      state.firstSixChannels = data;
+    },
+
+    handleLastSixChannels: (state, action) => {
+      state.gotLastSix = true;
+      const payload = Array.isArray(action.payload) ? action.payload : [];
+      const data = [];
+
+      for (let index = 7; index <= 12; index++) {
+        const element = payload[index - 7];
+        data.push({
+          id: index,
+          variant: element
+            ? element.status
+              ? "connected"
+              : "unfilled"
+            : "disable",
+          name: `Channel ${index > 9 ? index : `0${index}`}`,
+        });
+      }
+
+      state.lastSixChannels = data;
+    },
+    handleAllChannels: (state, action) => {
+      state.getAllChannels = true;
+      const payload = Array.isArray(action.payload) ? action.payload : [];
+      const data = [];
+
+      for (let index = 1; index <= 12; index++) {
+        const element = payload.find((ch) => ch.ID === index);
+        data.push({
+          id: index,
+          variant: element
+            ? element.status
+              ? "connected"
+              : "unfilled"
+            : "disable",
+          name: `Channel ${index > 9 ? index : `0${index}`}`,
+        });
+      }
+
+      state.allChannels = data;
+    },
+
+    resetChannelFlags: (state) => {
+      state.gotFirstSix = false;
+      state.gotLastSix = false;
+      state.firstSixChannels = [];
+      state.lastSixChannels = [];
+      state.allChannels = [];
+      state.getAllChannels = false;
+    },
   },
 });
 
@@ -462,5 +538,9 @@ export const {
   handleUnsubscribe,
   handleTotalChannels,
   addGeneralData,
+  handleFirstSixChannels,
+  handleLastSixChannels,
+  resetChannelFlags,
+  handleAllChannels,
 } = telemetrySlice.actions;
 export default telemetrySlice.reducer;

@@ -6,7 +6,11 @@ import {
   addEnergyData,
   addGeneralData,
   addPowerData,
+  handleAllChannels,
+  handleFirstSixChannels,
+  handleLastSixChannels,
   handleUnsubscribe,
+  resetChannelFlags,
 } from "./store/slices/telemetry";
 import { addMqttData } from "./store/slices/mqtt";
 import dayjs from "dayjs";
@@ -68,14 +72,15 @@ export function useSocket() {
 
     // General MQTT data listener
     socketInstance.on("mqtt_protocol", (obj) => {
-      // console.log("📥 Received: mqtt_protocol", obj);
-      const transformed = {
-        timestamp: dayjs(obj.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
-        date: dayjs(obj?.created_at).format("DD/MM/YYYY"),
-        time: dayjs(obj?.created_at).format("HH:mm"),
-        ...obj.data,
-      };
-      dispatch(addMqttData(transformed));
+      if (obj) {
+        const transformed = {
+          timestamp: dayjs(obj?.timestamp).format("DD-MM-YYYY\nHH:mm:ss"),
+          date: dayjs(obj?.created_at).format("DD/MM/YYYY"),
+          time: dayjs(obj?.created_at).format("HH:mm"),
+          ...obj?.data,
+        };
+        dispatch(addMqttData(transformed));
+      }
     });
   }
 
@@ -125,6 +130,69 @@ export function useSocket() {
       socketInstance.off(`ntp_info:${deviceid}`, handleNtpInfo);
       socketInstance.off(`mqtt_info:${deviceid}`, handleMqttInfo);
       socketInstance.off(`sftp_info:${deviceid}`, handleSftpInfo);
+    };
+  }, [deviceid, dispatch]);
+
+  // Common telemetry listeners for grouped channels (safe version)
+  useEffect(() => {
+    if (!deviceid || !socketInstance) return;
+
+    // Handler for channels 1 to 6
+    const handleChannels1to6 = (data) => {
+      // if (data?.device_id && data.device_id !== deviceid) return;
+
+      console.log(`📥 Received telemetry for ${deviceid}: channels 1–6`);
+      console.log(data?.data);
+      dispatch(handleFirstSixChannels(data?.data));
+
+      // Optional: Dispatch to Redux if needed
+      // dispatch(addPowerData(data));
+      // dispatch(addEnergyData(data));
+      // dispatch(addGeneralData(data));
+    };
+
+    const handleChannels7to12 = (data) => {
+      // if (data?.device_id && data.device_id !== deviceid) return;
+
+      console.log(`📥 Received telemetry for ${deviceid}: channels 7–12`);
+      console.log(data?.data);
+      dispatch(handleLastSixChannels(data?.data));
+    };
+
+    const handleAll = (data) => {
+      // console.log(data?.data);
+      if (deviceid === data?.deviceUuid) {
+        // console.log("ALL CHANNEL SOCKET DATA");
+        dispatch(handleAllChannels(data?.data));
+      }
+    };
+
+    // socketInstance.on(
+    //   `telemetry:${deviceid}:channels:1to6`,
+    //   handleChannels1to6
+    // );
+    // socketInstance.on(
+    //   `telemetry:${deviceid}:channels:7to12`,
+    //   handleChannels7to12
+    // );
+    socketInstance.on(`telemetry:${deviceid}:channels:all`, handleAll);
+
+    console.log(`✅ Subscribed to grouped telemetry for ${deviceid}`);
+
+    return () => {
+      console.log(`🧹 Cleaning up telemetry listeners for ${deviceid}`);
+
+      // socketInstance.off(
+      //   `telemetry:${deviceid}:channels:1to6`,
+      //   handleChannels1to6
+      // );
+      // socketInstance.off(
+      //   `telemetry:${deviceid}:channels:7to12`,
+      //   handleChannels7to12
+      // );
+      socketInstance.off(`telemetry:${deviceid}:channels:all`, handleAll);
+
+      dispatch(resetChannelFlags());
     };
   }, [deviceid, dispatch]);
 

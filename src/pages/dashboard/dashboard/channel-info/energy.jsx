@@ -41,13 +41,13 @@ const Energy = ({ data }) => {
 
   const channelNum = Number(currentChannel);
 
-  useEffect(() => {
-    if (!id || !channelNum) return;
-    subscribeToTelemetry(id, channelNum);
-    return () => {
-      unsubscribeFromTelemetry(id, channelNum);
-    };
-  }, [id, channelNum, subscribeToTelemetry, unsubscribeFromTelemetry]);
+  // useEffect(() => {
+  //   if (!id || !channelNum) return;
+  //   subscribeToTelemetry(id, channelNum);
+  //   return () => {
+  //     unsubscribeFromTelemetry(id, channelNum);
+  //   };
+  // }, [id, channelNum, subscribeToTelemetry, unsubscribeFromTelemetry]);
 
   const { data: graphData, isLoading: graphLoading } =
     useGetLastTenTelemetryQuery(

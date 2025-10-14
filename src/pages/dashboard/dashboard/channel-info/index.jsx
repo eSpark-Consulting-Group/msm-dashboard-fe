@@ -32,6 +32,7 @@ import {
   useGetDeviceByIdQuery,
 } from "../../../../services/devices";
 import { useSearchParams } from "react-router-dom";
+import { useSocket } from "../../../../SocketTest";
 
 dayjs.extend(relativeTime);
 
@@ -59,6 +60,7 @@ const ChannelInfo = () => {
   const { totalChannels } = useSelector((state) => state.telemetry);
   const { user } = useSelector((state) => state?.auth);
   const { selectedDevice } = useSelector((state) => state?.devices);
+  const { subscribeToTelemetry, unsubscribeFromTelemetry } = useSocket();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,6 +68,16 @@ const ChannelInfo = () => {
   const channelName = path[path.length - 1];
   const channelId = channelName?.split("-");
   const dynamicId = path[2];
+
+  const channelNum = Number(channelId[1]);
+
+  useEffect(() => {
+    if (!dynamicId || !channelNum) return;
+    subscribeToTelemetry(dynamicId, channelNum);
+    return () => {
+      unsubscribeFromTelemetry(dynamicId, channelNum);
+    };
+  }, [dynamicId, channelNum, subscribeToTelemetry, unsubscribeFromTelemetry]);
 
   const {
     data: deviceData,

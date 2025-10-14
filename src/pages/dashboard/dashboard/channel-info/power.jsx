@@ -16,17 +16,17 @@ const Power = ({ data }) => {
 
   const { subscribeToTelemetry, unsubscribeFromTelemetry } = useSocket();
 
-  useEffect(() => {
-    if (!id || !channelNum) return;
+  // useEffect(() => {
+  //   if (!id || !channelNum) return;
 
-    // Subscribe
-    subscribeToTelemetry(id, channelNum);
+  //   // Subscribe
+  //   subscribeToTelemetry(id, channelNum);
 
-    // Cleanup runs when channelId or id changes too
-    return () => {
-      unsubscribeFromTelemetry(id, channelNum);
-    };
-  }, [id, channelNum, subscribeToTelemetry, unsubscribeFromTelemetry]);
+  //   // Cleanup runs when channelId or id changes too
+  //   return () => {
+  //     unsubscribeFromTelemetry(id, channelNum);
+  //   };
+  // }, [id, channelNum, subscribeToTelemetry, unsubscribeFromTelemetry]);
 
   const [realTimeData, setRealTimeData] = useState([]);
 

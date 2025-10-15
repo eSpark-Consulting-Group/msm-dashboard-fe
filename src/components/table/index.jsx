@@ -141,9 +141,12 @@ const DynamicTable = ({
     }
 
     if (column.chipArray && Array.isArray(cell)) {
+      const filtered = cell.filter(
+        (val) => val !== undefined && val !== null && val !== ""
+      );
       const maxVisible = 3; // show 3 chips max
-      const visibleChips = cell.slice(0, maxVisible);
-      const hiddenCount = cell.length - maxVisible;
+      const visibleChips = filtered.slice(0, maxVisible);
+      const hiddenCount = filtered.length - maxVisible;
 
       return (
         <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1}>
@@ -179,6 +182,7 @@ const DynamicTable = ({
         </Stack>
       );
     }
+
     if (typeof cell === "number" && !Number.isInteger(cell)) {
       return cell.toFixed(2);
     }

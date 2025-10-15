@@ -300,7 +300,7 @@ const Devices = () => {
           <SearchBar
             value={search}
             onChange={(val) => setSearch(val)}
-            label={"Type Device Name to Search"}
+            label={activeTab === 0 ? "Type Device Name to Search" : null}
             placeholder="Enter Device Name"
           />
         </Box>

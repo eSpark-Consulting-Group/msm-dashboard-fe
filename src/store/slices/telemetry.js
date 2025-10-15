@@ -355,7 +355,24 @@ const telemetrySlice = createSlice({
   reducers: {
     addPowerData: (state, action) => {
       const d = action.payload?.data;
-      // console.log(d.timestamp);
+      // console.log(d.timestamp, "TIMESTAMP");
+      const timestamp = d?.timestamp;
+      let myTimeString = "";
+
+      if (!timestamp || isNaN(new Date(timestamp).getTime())) {
+        myTimeString = "Last update unknown";
+      } else {
+        const diffMs = new Date() - new Date(timestamp);
+        const diffMinutes = Math.floor(diffMs / 60000);
+
+        if (diffMinutes <= 0) {
+          myTimeString = "Last update few seconds ago";
+        } else {
+          myTimeString = `Last update ${diffMinutes} minute${
+            diffMinutes > 1 ? "s" : ""
+          } ago`;
+        }
+      }
 
       const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
       if (phaseIndex === undefined) return;
@@ -364,26 +381,35 @@ const telemetrySlice = createSlice({
 
       state.powerCards[phaseIndex].value = `${d.apparent_power}kVA`;
 
-      state.powerCards[phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.powerCards[phaseIndex].time = myTimeString;
       state.powerCards[3 + phaseIndex].value = `${d.active_power}kW`;
-      state.powerCards[3 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.powerCards[3 + phaseIndex].time = myTimeString;
       state.powerCards[6 + phaseIndex].value = `${d.reactive_power}kVAR`;
 
-      state.powerCards[6 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.powerCards[6 + phaseIndex].time = myTimeString;
       state.powerCards[9 + phaseIndex].value = `${d.power_factor}%`;
 
-      state.powerCards[9 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.powerCards[9 + phaseIndex].time = myTimeString;
     },
     addEnergyData: (state, action) => {
       const d = action.payload?.data;
+      const timestamp = d?.timestamp;
+      let myTimeString = "";
+
+      if (!timestamp || isNaN(new Date(timestamp).getTime())) {
+        myTimeString = "Last update unknown";
+      } else {
+        const diffMs = new Date() - new Date(timestamp);
+        const diffMinutes = Math.floor(diffMs / 60000);
+
+        if (diffMinutes <= 0) {
+          myTimeString = "Last update few seconds ago";
+        } else {
+          myTimeString = `Last update ${diffMinutes} minute${
+            diffMinutes > 1 ? "s" : ""
+          } ago`;
+        }
+      }
 
       const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
       if (phaseIndex === undefined) return;
@@ -392,35 +418,44 @@ const telemetrySlice = createSlice({
 
       state.energyData[phaseIndex].value = `${d.active_energy_positive}kWh`;
 
-      state.energyData[phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.energyData[phaseIndex].time = myTimeString;
 
       state.energyData[3 + phaseIndex].value = `${d.active_energy_negative}kWh`;
 
-      state.energyData[3 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.energyData[3 + phaseIndex].time = myTimeString;
 
       state.energyData[
         6 + phaseIndex
       ].value = `${d.reactive_energy_positive}kWh`;
 
-      state.energyData[6 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.energyData[6 + phaseIndex].time = myTimeString;
 
       state.energyData[
         9 + phaseIndex
       ].value = `${d.reactive_energy_negative}kWh`;
 
-      state.energyData[9 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.energyData[9 + phaseIndex].time = myTimeString;
     },
     addGeneralData: (state, action) => {
       const d = action.payload?.data;
       state.temperatureValue = d.temperature;
+      const timestamp = d?.timestamp;
+      let myTimeString = "";
+
+      if (!timestamp || isNaN(new Date(timestamp).getTime())) {
+        myTimeString = "Last update unknown";
+      } else {
+        const diffMs = new Date() - new Date(timestamp);
+        const diffMinutes = Math.floor(diffMs / 60000);
+
+        if (diffMinutes <= 0) {
+          myTimeString = "Last update few seconds ago";
+        } else {
+          myTimeString = `Last update ${diffMinutes} minute${
+            diffMinutes > 1 ? "s" : ""
+          } ago`;
+        }
+      }
 
       const phaseIndex = { a: 0, b: 1, c: 2 }[d.phase];
       if (phaseIndex === undefined) return;
@@ -429,27 +464,19 @@ const telemetrySlice = createSlice({
 
       state.generalData[phaseIndex].value = `${d.rms_voltage}V`;
 
-      state.generalData[phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.generalData[phaseIndex].time = myTimeString;
 
       state.generalData[3 + phaseIndex].value = `${d.line_voltage}V`;
 
-      state.generalData[3 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.generalData[3 + phaseIndex].time = myTimeString;
 
       state.generalData[6 + phaseIndex].value = `${d.current}A`;
 
-      state.generalData[6 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.generalData[6 + phaseIndex].time = myTimeString;
 
       state.generalData[9 + phaseIndex].value = `${d.frequency}Hz`;
 
-      state.generalData[9 + phaseIndex].time = `Last update ${dayjs(
-        d.timestamp
-      ).fromNow()}`;
+      state.generalData[9 + phaseIndex].time = myTimeString;
     },
     handleUnsubscribe: (state) => {
       state.isSocketHasEnergy = false;

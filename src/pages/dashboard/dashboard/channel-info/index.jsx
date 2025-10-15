@@ -16,7 +16,14 @@ import {
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { mapEnergyData, mapGeneralData, mapPowerData } from "../../../../utils";
+import {
+  mapEnergyData,
+  mapEnergyRTData,
+  mapGeneralData,
+  mapGeneralRTData,
+  mapPowerData,
+  mapPowerRTData,
+} from "../../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { handleTotalChannels } from "../../../../store/slices/telemetry";
 import {
@@ -43,6 +50,8 @@ const ChannelInfo = () => {
   const [temperature, setTemperature] = useState("");
   const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab");
+  const [powerRealTime, setPowerRealTime] = useState([]);
+  const [energrealTime, setEnergyRealTime] = useState([]);
 
   const { isSocketHasGeneral, temperatureValue } = useSelector(
     (state) => state?.telemetry
@@ -53,8 +62,14 @@ const ChannelInfo = () => {
       label: "General",
       component: <General data={generalData} temperature={temperature} />,
     },
-    { label: "Power", component: <Power data={powerData} /> },
-    { label: "Energy", component: <Energy data={energyData} /> },
+    {
+      label: "Power",
+      component: <Power data={powerData} newData={powerRealTime} />,
+    },
+    {
+      label: "Energy",
+      component: <Energy data={energyData} newData={energrealTime} />,
+    },
   ];
 
   const { totalChannels } = useSelector((state) => state.telemetry);
@@ -110,7 +125,12 @@ const ChannelInfo = () => {
       device_uuid: dynamicId,
       channel_id: channelId[1],
     },
-    { skip: !dynamicId || !channelId[1] }
+    {
+      skip: !dynamicId || !channelId[1],
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }
   );
 
   const {
@@ -136,7 +156,7 @@ const ChannelInfo = () => {
     const number = channelName.split("-")[1];
     let newNumber = Number(number) + 1;
 
-    if (newNumber > 12) newNumber = 1; // wrap back to 1
+    if (newNumber > 12) newNumber = 1;
 
     navigate(
       `/dashboard/${dynamicId}/home/channel-${
@@ -162,10 +182,13 @@ const ChannelInfo = () => {
     if (telemetryData) {
       let data = telemetryData?.data || [];
       // setTotalCHannel(data?.length);
-      setGeneralData(mapGeneralData(data));
-      setPowerData(mapPowerData(data));
-      setEnergyData(mapEnergyData(data));
-      setTemperature(data[0]?.temperature);
+      // setGeneralData(mapGeneralData(data?.slice(0, 3)));
+      setPowerData(mapPowerData(data?.slice(0, 3)));
+      setEnergyData(mapEnergyData(data?.slice(0, 3)));
+      setGeneralData(mapGeneralRTData(data[3]?.latestPhases));
+      setPowerRealTime(mapPowerRTData(data[3]?.latestPhases));
+      setEnergyRealTime(mapEnergyRTData(data[3]?.latestPhases));
+      setTemperature(data[3]?.latestPhases[0]?.temperature);
     }
   }, [telemetryData]);
 
@@ -307,7 +330,7 @@ const ChannelInfo = () => {
         </Typography>
       </Box>
       <Paper sx={{ padding: { xs: "10px 0px", lg: "30px" } }}>
-        {telemetryLoading ? (
+        {telemetryLoading && !isSocketHasGeneral ? (
           <LinearProgress />
         ) : (
           <Box

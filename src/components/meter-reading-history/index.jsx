@@ -150,7 +150,7 @@ const HistoryConfig = ({
               value={historyConfig.limit}
               onChange={(_, val) => updateHistoryConfig("limit", val)}
               step={5}
-              min={0}
+              min={1}
               max={METER_READING_MODAL_DATA.maxValues.history}
               sx={METER_READING_MODAL_STYLE.slider}
             />
@@ -160,14 +160,14 @@ const HistoryConfig = ({
             value={historyConfig.limit}
             onChange={(e) => {
               let value = Number(e.target.value);
-              if (value < 0) value = 0;
+              if (value < 1) value = 1;
               if (value > 1000) value = 1000;
               updateHistoryConfig("limit", value);
             }}
             size="small"
             sx={METER_READING_MODAL_STYLE.numberInputHistory}
             inputProps={{
-              min: 0,
+              min: 1,
               max: 1000,
             }}
           />

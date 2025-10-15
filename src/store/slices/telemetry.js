@@ -366,7 +366,7 @@ const telemetrySlice = createSlice({
         const diffMinutes = Math.floor(diffMs / 60000);
 
         if (diffMinutes <= 0) {
-          myTimeString = "Last update few seconds ago";
+          myTimeString = "Last update a few seconds ago";
         } else {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
@@ -403,7 +403,7 @@ const telemetrySlice = createSlice({
         const diffMinutes = Math.floor(diffMs / 60000);
 
         if (diffMinutes <= 0) {
-          myTimeString = "Last update few seconds ago";
+          myTimeString = "Last update a few seconds ago";
         } else {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
@@ -449,7 +449,7 @@ const telemetrySlice = createSlice({
         const diffMinutes = Math.floor(diffMs / 60000);
 
         if (diffMinutes <= 0) {
-          myTimeString = "Last update few seconds ago";
+          myTimeString = "Last update a few seconds ago";
         } else {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""

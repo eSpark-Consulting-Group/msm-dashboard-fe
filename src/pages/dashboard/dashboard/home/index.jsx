@@ -233,7 +233,7 @@ const DashboardHome = () => {
         onTabChange={handleTabChange}
       />
 
-      {telemetryData?.data?.length === 0 ? (
+      {channelsData?.length === 0 ? (
         <>
           <Typography sx={{ fontSize: "25.19px", fontWeight: "700" }}>
             No Channels Found

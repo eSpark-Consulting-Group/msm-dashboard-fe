@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSocket } from "../../../../SocketTest";
 
-const Power = ({ data }) => {
+const Power = ({ data, newData }) => {
   const { powerCards, isSocketHasPower } = useSelector(
     (state) => state?.telemetry
   );
@@ -34,9 +34,9 @@ const Power = ({ data }) => {
     if (isSocketHasPower) {
       setRealTimeData(powerCards);
     } else {
-      setRealTimeData(data);
+      setRealTimeData(newData);
     }
-  }, [isSocketHasPower, powerCards, data]);
+  }, [isSocketHasPower, powerCards, newData]);
 
   const tabs = [
     {

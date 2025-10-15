@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
-const Energy = ({ data }) => {
+const Energy = ({ data, newData }) => {
   const { energyData, isSocketHasEnergy } = useSelector(
     (state) => state?.telemetry
   );
@@ -62,11 +62,11 @@ const Energy = ({ data }) => {
 
   useEffect(() => {
     if (!isSocketHasEnergy) {
-      setRealTimeData(data);
+      setRealTimeData(newData);
     } else {
       setRealTimeData(energyData);
     }
-  }, [isSocketHasEnergy, data]);
+  }, [isSocketHasEnergy, newData]);
 
   useEffect(() => {
     if (graphData) {

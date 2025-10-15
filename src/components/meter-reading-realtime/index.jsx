@@ -57,7 +57,7 @@ const RealtimeConfig = ({ realtimeConfig, updateRealtimeConfig }) => {
             value={realtimeConfig.limit}
             onChange={(_, val) => updateRealtimeConfig("limit", val)}
             step={5}
-            min={0}
+            min={1}
             max={METER_READING_MODAL_DATA.maxValues.realtime}
             sx={METER_READING_MODAL_STYLE.slider}
           />
@@ -66,14 +66,14 @@ const RealtimeConfig = ({ realtimeConfig, updateRealtimeConfig }) => {
             value={realtimeConfig.limit}
             onChange={(e) => {
               let value = Number(e.target.value);
-              if (value < 0) value = 0;
+              if (value < 1) value = 1;
               if (value > 200) value = 200;
               updateRealtimeConfig("limit", value);
             }}
             size="small"
             sx={METER_READING_MODAL_STYLE.numberInput}
             inputProps={{
-              min: 0,
+              min: 1,
               max: 200,
             }}
           />

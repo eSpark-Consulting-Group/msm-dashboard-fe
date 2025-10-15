@@ -66,10 +66,12 @@ const InfoCard = ({
 
   const handleEdit = (info) => {
     const result = info.reduce((acc, item) => {
-      acc[item.key] = item.value;
+      acc[item.key] = item.value2 ?? item.value;
       return acc;
     }, {});
+
     setEditValues({ ...result, id });
+
     if (type === "MQTTS") {
       setMqttModal(true);
     } else if (type === "NTP") {
@@ -77,9 +79,6 @@ const InfoCard = ({
     } else if (type === "SFTP") {
       setSftpModal(true);
     }
-    // setEditId(info?.key);
-    // setIsEditMode(true);
-    // setNewVal(info?.value);
   };
 
   const handleFinalEdit = async () => {

@@ -23,7 +23,7 @@ const General = ({ data, temperature }) => {
 
   return (
     <Grid container spacing={2}>
-      {(tab === null || tab == 0) && (
+      {
         <Grid
           sx={{
             color: "#0C89E2",
@@ -43,7 +43,7 @@ const General = ({ data, temperature }) => {
             Temprature: {temperature} °C
           </Typography>
         </Grid>
-      )}
+      }
       {realTimeData &&
         Array.isArray(realTimeData) &&
         realTimeData?.length > 0 &&

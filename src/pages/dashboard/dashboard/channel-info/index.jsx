@@ -133,27 +133,29 @@ const ChannelInfo = () => {
   };
 
   const handlePageForward = () => {
-    const number = channelName.split("-");
-    const newNumber = Number(number[1]);
-    if (newNumber + 1 <= totalChannels) {
-      navigate(
-        `/dashboard/${dynamicId}/info/channel-${newNumber + 1 > 9 ? "" : "0"}${
-          newNumber + 1
-        }${location?.search}`
-      );
-    }
+    const number = channelName.split("-")[1];
+    let newNumber = Number(number) + 1;
+
+    if (newNumber > 12) newNumber = 1; // wrap back to 1
+
+    navigate(
+      `/dashboard/${dynamicId}/home/channel-${
+        newNumber < 10 ? "0" : ""
+      }${newNumber}${location?.search}`
+    );
   };
 
   const handlePageBack = () => {
-    const number = channelName.split("-");
-    const newNumber = Number(number[1]);
-    if (newNumber - 1 > 0) {
-      navigate(
-        `/dashboard/${dynamicId}/info/channel-${newNumber - 1 > 9 ? "" : "0"}${
-          newNumber - 1
-        }${location?.search}`
-      );
-    }
+    const number = channelName.split("-")[1];
+    let newNumber = Number(number) - 1;
+
+    if (newNumber < 1) newNumber = 12; // wrap to 12
+
+    navigate(
+      `/dashboard/${dynamicId}/home/channel-${
+        newNumber < 10 ? "0" : ""
+      }${newNumber}${location?.search}`
+    );
   };
 
   useEffect(() => {
@@ -325,7 +327,7 @@ const ChannelInfo = () => {
               handlePageForward={handlePageForward}
             />
 
-            {(tab === null || tab == 0) && (
+            {
               <Box
                 sx={{
                   position: "absolute",
@@ -339,7 +341,7 @@ const ChannelInfo = () => {
                   Temperature: {Number(temperature).toFixed(2)} °C
                 </Typography>
               </Box>
-            )}
+            }
           </Box>
         )}
       </Paper>

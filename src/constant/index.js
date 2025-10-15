@@ -645,7 +645,7 @@ export const infoData = (realData) => {
     { label: "DEVICE IMEI", value: realData?.device_imei, key: "device_imei" },
     { label: "DEVICE IP", value: realData?.device_ip, key: "device_ip" },
     {
-      label: "MQTTS STATUS",
+      label: "MQTT STATUS",
       value: realData?.mqtt_status ? "Server Connected" : "No Connection",
       key: "mqtt_status",
     },
@@ -703,9 +703,12 @@ export const mqttProtocol = (realData) => {
     },
     {
       label: "BROKER-PASS",
-      value: mainData?.broker_pass,
+      value: mainData?.broker_pass
+        ? "•".repeat(mainData.broker_pass.length)
+        : "",
       key: "broker_pass",
       showIcon: true,
+      value2: mainData?.broker_pass,
     },
     {
       label: "DATA-INTERVAL (Seconds)",
@@ -744,9 +747,10 @@ export const sftp = (realData) => {
     },
     {
       label: "PASSWORD",
-      value: realData?.password,
+      value: realData?.password ? "•".repeat(realData.password.length) : "",
       showIcon: true,
       key: "password",
+      value2: realData?.password,
     },
     {
       label: "DATA INTERVAL (Seconds)",

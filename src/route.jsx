@@ -50,7 +50,7 @@ const Router = () => {
 
           <Route path="/dashboard/:id/home" element={<DashboardHome />} />
           <Route
-            path="/dashboard/:id/info/:channelId"
+            path="/dashboard/:id/home/:channelId"
             element={<ChannelInfo />}
           />
           <Route path="/dashboard/:id" element={<MqttProtocol />} />

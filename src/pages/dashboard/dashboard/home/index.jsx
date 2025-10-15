@@ -81,7 +81,7 @@ const DashboardHome = () => {
 
   const handleNavigate = (channel) => {
     if (channel?.variant === "connected" || channel?.variant === "unfilled") {
-      navigate(`/dashboard/${id}/info/channel-${channel?.id}`);
+      navigate(`/dashboard/${id}/home/channel-${channel?.id}`);
     }
   };
 

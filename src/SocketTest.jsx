@@ -173,7 +173,7 @@ export function useSocket() {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
       socketInstance?.on(eventName, (data) => {
         if (data?.data?.channel_id) {
-          console.log(data?.data?.channel_id, data?.data);
+          // console.log(data?.data?.channel_id, data?.data);
           dispatch(addPowerData(data));
           dispatch(addEnergyData(data));
           dispatch(addGeneralData(data));

@@ -56,7 +56,7 @@ const ProfileModal = ({ handleClose }) => {
   const imageRef = useRef(null);
   const logoRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(
-    `${import.meta.env.VITE_IMAGE_BASE_URL}${user?.profile_image}`
+    `${import.meta.env.VITE_IMAGE_BASE_URL}/${user?.profile_image}`
   );
   const [previewUrl2, setPreviewUrl2] = useState(
     `${import.meta.env.VITE_IMAGE_BASE_URL}${user?.logo}`
@@ -77,7 +77,7 @@ const ProfileModal = ({ handleClose }) => {
       profileImg: user?.profile_image || null,
     },
     validationSchema: profileSchema,
-    enableReinitialize: true,
+    // enableReinitialize: true,
     onSubmit: (values) => {
       const formData = new FormData();
       if (values?.name) formData.append("name", values?.name);
@@ -188,7 +188,7 @@ const ProfileModal = ({ handleClose }) => {
             <Box sx={{ width: "132px", height: "130px", position: "relative" }}>
               <Avatar
                 sx={{ width: "100%", height: "100%" }}
-                alt="User"
+                alt={user?.name ?? "User"}
                 src={previewUrl}
               />
               {isEditAble && (

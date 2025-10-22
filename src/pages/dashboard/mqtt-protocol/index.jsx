@@ -77,18 +77,21 @@ const MqttProtocol = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  useEffect(() => {
+    if (
+      user?.role?.name === "user"
+        ? selectedDevice?.device_data?.device_data?.device_status !== false
+        : selectedDevice?.device_data?.device_status !== false
+    ) {
+      dispatch(addMqttMessage("Realtime - 5 sec"));
+    }
+  }, [selectedDevice]);
+
   // ✅ Subscribe to MQTT once when component mounts
   useEffect(() => {
     if (!id || !socket) return;
 
-    if (
-      socket.connected &&
-      selectedDevice !== null &&
-      (user?.role?.name === "user"
-        ? selectedDevice?.device_data?.device_data?.device_status === true
-        : selectedDevice?.device_data?.device_status === true)
-    ) {
-      // send immediately if connected
+    const sendMqttEvent = () => {
       emitEvent(
         "mqtt_protocol",
         {
@@ -98,50 +101,27 @@ const MqttProtocol = () => {
         },
         true
       );
-      console.log("📤 Sent mqtt_protocol immediately");
-    } else if (
-      selectedDevice !== null &&
-      (user?.role?.name === "user"
-        ? selectedDevice?.device_data?.device_data?.device_status === true
-        : selectedDevice?.device_data?.device_status === true)
-    ) {
-      // wait for connection
+      console.log("📤 mqtt_protocol event sent");
+    };
+
+    // ✅ If socket is already connected
+    if (socket.connected) {
+      sendMqttEvent();
+    } else {
+      // ✅ Wait for socket connection (will also work on page refresh)
       socket.once("connect", () => {
-        emitEvent(
-          "mqtt_protocol",
-          {
-            thing_name: id,
-            interval_time: 5 * 1000,
-            data_range: 5,
-          },
-          true
-        );
-        console.log("📤 Sent mqtt_protocol after connect");
+        console.log("🔌 Socket connected (refresh case)");
+        sendMqttEvent();
       });
     }
 
-    dispatch(addMqttProtocol(5));
-    if (
-      selectedDevice !== null &&
-      (user?.role?.name === "user"
-        ? selectedDevice?.device_data?.device_data?.device_status === true
-        : selectedDevice?.device_data?.device_status === true)
-    ) {
-      dispatch(addMqttMessage("Realtime - 5 seconds"));
-    }
-
+    // ✅ Always clean up on unmount
     return () => {
-      // ✅ Notify server to stop MQTT protocol
-      dispatch(handleMqttDisconnect());
-      setData([]);
-      // socket.emit("mqtt_protocol_stop", { thing_name: id });
       stopEvent("mqtt_protocol_stop", { thing_name: id });
-
-      // ✅ Local cleanup
-      // socket.off("mqtt_protocol");
-      console.log("🧹 MqttProtocol cleanup done & mqtt_protocol_stop emitted");
+      console.log("🧹 Cleaned up mqtt_protocol");
+      dispatch(handleMqttDisconnect());
     };
-  }, [id]);
+  }, [id, socket]);
 
   // ✅ Manage table data updates
   useEffect(() => {

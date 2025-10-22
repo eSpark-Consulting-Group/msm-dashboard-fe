@@ -34,7 +34,8 @@ export function useSocket() {
   const { user } = useSelector((state) => state?.auth);
   const { selectedDevice } = useSelector((state) => state?.devices);
   const [deviceid, setDeviceId] = useState("");
-  const activeSubscriptions = useRef([]); // ✅ Store re-emittable events
+  const activeSubscriptions = useRef([]);
+  const lastSubscribedDevice = useRef(null); // ✅ Prevent duplicate listeners
 
   // Track selected device
   useEffect(() => {
@@ -45,7 +46,7 @@ export function useSocket() {
           : selectedDevice?.device_data?.device_uuid
       );
     }
-  }, [selectedDevice]);
+  }, [selectedDevice, user]);
 
   // ✅ Create singleton socket
   if (!socketInstance) {
@@ -60,17 +61,15 @@ export function useSocket() {
     socketInstance.on("connect", () => {
       console.log("✅ Connected:", socketInstance.id);
 
-      // 🔁 Re-emit all previous protocol subscriptions
+      // 🔁 Re-emit all remembered subscriptions
       if (activeSubscriptions.current.length > 0) {
-        // console.log("🔁 Re-sending subscriptions after reconnect...");
         activeSubscriptions.current.forEach(({ event, payload }) => {
-          // console.log("↩️ Re-emitting:", event, payload);
           socketInstance.emit(event, payload);
         });
       }
     });
 
-    // General MQTT data listener
+    // MQTT listener
     socketInstance.on("mqtt_protocol", (obj) => {
       if (obj) {
         const transformed = {
@@ -90,7 +89,6 @@ export function useSocket() {
 
     socketInstance.off("device_status_updated");
     socketInstance.on("device_status_updated", (data) => {
-      // console.log("📥 Received: device_status_updated", data);
       if (user?.role?.name !== "user") {
         dispatch(handleUpdateDevice(data));
       } else {
@@ -103,22 +101,10 @@ export function useSocket() {
   useEffect(() => {
     if (!deviceid || !socketInstance) return;
 
-    const handleDeviceInfo = (data) => {
-      console.log(`📥 Received: device_info:${deviceid}`, data);
-      dispatch(updateDeviceInfo(data));
-    };
-    const handleNtpInfo = (data) => {
-      console.log(`📥 Received: ntp_info:${deviceid}`, data);
-      dispatch(updateNtpInfo(data));
-    };
-    const handleMqttInfo = (data) => {
-      console.log(`📥 Received: mqtt_info:${deviceid}`, data);
-      dispatch(updateMqttInfo(data));
-    };
-    const handleSftpInfo = (data) => {
-      console.log(`📥 Received: sftp_info:${deviceid}`, data);
-      dispatch(updateSftpInfo(data));
-    };
+    const handleDeviceInfo = (data) => dispatch(updateDeviceInfo(data));
+    const handleNtpInfo = (data) => dispatch(updateNtpInfo(data));
+    const handleMqttInfo = (data) => dispatch(updateMqttInfo(data));
+    const handleSftpInfo = (data) => dispatch(updateSftpInfo(data));
 
     socketInstance.on(`device_info:${deviceid}`, handleDeviceInfo);
     socketInstance.on(`ntp_info:${deviceid}`, handleNtpInfo);
@@ -133,36 +119,22 @@ export function useSocket() {
     };
   }, [deviceid, dispatch]);
 
-  // Common telemetry listeners for grouped channels (safe version)
+  // Telemetry listeners
   useEffect(() => {
     if (!deviceid || !socketInstance) return;
 
-    // Handler for channels 1 to 6
-    const handleChannels1to6 = (data) => {
-      // if (data?.device_id && data.device_id !== deviceid) return;
+    // ✅ Prevent duplicate subscription for same device
+    if (lastSubscribedDevice.current === deviceid) return;
+    lastSubscribedDevice.current = deviceid;
 
-      console.log(`📥 Received telemetry for ${deviceid}: channels 1–6`);
-      console.log(data?.data);
-      dispatch(handleFirstSixChannels(data?.data));
-
-      // Optional: Dispatch to Redux if needed
-      // dispatch(addPowerData(data));
-      // dispatch(addEnergyData(data));
-      // dispatch(addGeneralData(data));
-    };
-
-    const handleChannels7to12 = (data) => {
-      // if (data?.device_id && data.device_id !== deviceid) return;
-
-      console.log(`📥 Received telemetry for ${deviceid}: channels 7–12`);
-      console.log(data?.data);
-      dispatch(handleLastSixChannels(data?.data));
-    };
-
+    // const handleChannels1to6 = (data) => {
+    //   dispatch(handleFirstSixChannels(data?.data));
+    // };
+    // const handleChannels7to12 = (data) => {
+    //   dispatch(handleLastSixChannels(data?.data));
+    // };
     const handleAll = (data) => {
-      // console.log(data?.data);
       if (deviceid === data?.deviceUuid) {
-        // console.log("ALL CHANNEL SOCKET DATA");
         dispatch(handleAllChannels(data?.data));
       }
     };
@@ -177,11 +149,10 @@ export function useSocket() {
     // );
     socketInstance.on(`telemetry:${deviceid}:channels:all`, handleAll);
 
-    console.log(`✅ Subscribed to grouped telemetry for ${deviceid}`);
+    console.log(`✅ Subscribed telemetry for ${deviceid}`);
 
     return () => {
-      console.log(`🧹 Cleaning up telemetry listeners for ${deviceid}`);
-
+      console.log(`🧹 Cleaning telemetry for ${deviceid}`);
       // socketInstance.off(
       //   `telemetry:${deviceid}:channels:1to6`,
       //   handleChannels1to6
@@ -191,28 +162,38 @@ export function useSocket() {
       //   handleChannels7to12
       // );
       socketInstance.off(`telemetry:${deviceid}:channels:all`, handleAll);
-
       dispatch(resetChannelFlags());
+      lastSubscribedDevice.current = null;
     };
   }, [deviceid, dispatch]);
 
-  // Telemetry subscription
+  // Per-channel telemetry subscribe
   const subscribeToTelemetry = useCallback(
     (deviceId, channelId) => {
       const eventName = `telemetry:${deviceId}:channel:${channelId}`;
       socketInstance?.on(eventName, (data) => {
-        // console.log(data?.data?.channel_id, data?.data);
         if (data?.data?.channel_id) {
+          console.log(data?.data?.channel_id, data?.data);
           dispatch(addPowerData(data));
           dispatch(addEnergyData(data));
           dispatch(addGeneralData(data));
         }
       });
+      console.log(`✅ Subscribed to ${eventName}`);
     },
     [dispatch]
   );
 
-  // Stop event (unsubscribe type)
+  const unsubscribeFromTelemetry = useCallback(
+    (deviceId, channelId) => {
+      const eventName = `telemetry:${deviceId}:channel:${channelId}`;
+      console.log(`🛑 Unsubscribed from ${eventName}`);
+      dispatch(handleUnsubscribe());
+      socketInstance?.off(eventName);
+    },
+    [dispatch]
+  );
+
   const stopEvent = useCallback((eventName, payload) => {
     if (!socketInstance) return;
     console.log(`🛑 Stop event emit: ${eventName}`, payload);
@@ -228,26 +209,9 @@ export function useSocket() {
     socketInstance.emit(eventName, payload);
   }, []);
 
-  const unsubscribeFromTelemetry = useCallback(
-    (deviceId, channelId) => {
-      const eventName = `telemetry:${deviceId}:channel:${channelId}`;
-      console.log(`🛑 Unsubscribed from ${eventName}`);
-      dispatch(handleUnsubscribe());
-      socketInstance?.off(eventName);
-    },
-    [dispatch]
-  );
-
   // ✅ Improved emitEvent — remembers subscriptions
   const emitEvent = useCallback((eventName, payload, remember = false) => {
     if (!socketInstance) return;
-
-    // console.log(
-    //   `📤 Emitting event: ${eventName}`,
-    //   payload,
-    //   "remember:",
-    //   remember
-    // );
 
     if (remember) {
       const exists = activeSubscriptions.current.some(
@@ -263,7 +227,6 @@ export function useSocket() {
       socketInstance.emit(eventName, payload);
     } else {
       socketInstance.once("connect", () => {
-        console.log(`🔁 Deferred emit on connect: ${eventName}`, payload);
         socketInstance.emit(eventName, payload);
       });
     }

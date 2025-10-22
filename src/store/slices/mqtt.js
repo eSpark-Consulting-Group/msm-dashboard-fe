@@ -6,7 +6,7 @@ const initialState = {
   mqttData: [],
   mqttDataHistory: [],
   mqttDataHistoryLoading: false,
-  mqttMessage: "Realtime",
+  mqttMessage: "Realtime - 5 sec",
   currentData: 0,
   dataState: 0,
 };

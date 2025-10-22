@@ -100,12 +100,11 @@ const Header = ({ open, setOpen }) => {
           <Notifications icon={bellIcon} count={6} /> */}
           <Avatar
             sx={{ cursor: "pointer" }}
-            alt="User"
+            alt={user?.name ?? "User"}
             onClick={handleAvatarClick}
-            src={
-              `${import.meta.env.VITE_IMAGE_BASE_URL}${user?.profile_image}` ||
-              null
-            }
+            src={`${import.meta.env.VITE_IMAGE_BASE_URL}/${
+              user?.profile_image
+            }`}
           />
         </Box>
       </Box>

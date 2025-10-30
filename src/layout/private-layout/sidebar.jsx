@@ -82,6 +82,8 @@ const Sidebar = ({ open, setOpen }) => {
                   : "#FFF",
               cursor: "pointer",
               img: {
+                width: "33px",
+                height: "28px",
                 filter:
                   pathname === item.title?.toLowerCase() ||
                   (pathname === "" &&

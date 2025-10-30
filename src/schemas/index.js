@@ -196,6 +196,12 @@ export const mqttSettingsSchema = Yup.object().shape({
   mqtt_topic: Yup.string().required("MQTT Topic is required"),
 });
 
+export const mqttsSettingsSchema = Yup.object().shape({
+  mqtts_endpoint: Yup.string().required("MQTTs Endpoint is required"),
+  mqtts_port: Yup.string().required("MQTTs Port is required"),
+  mqtts_interval: Yup.string().required("MQTTs Interval is required")
+});
+
 export const sftpSettingsSchema = Yup.object().shape({
   server_ip: Yup.string().required("Server IP is required"),
 

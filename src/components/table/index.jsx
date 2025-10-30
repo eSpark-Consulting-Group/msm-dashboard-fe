@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Chip,
+  Checkbox,
   LinearProgress,
   Pagination,
   Stack,
@@ -36,6 +37,9 @@ const DynamicTable = ({
   sortKey,
   sortOrder,
   onSortChange,
+  selectedRows = [],
+  onSelectRow,
+  onSelectAll,
 }) => {
   // keep key as string for sorting, arrows
   // add keyPath for nested object access
@@ -43,6 +47,14 @@ const DynamicTable = ({
     ...column,
     keyPath: column.key.split("."),
   }));
+
+  const allStatusFalse = data.every((item) => item?.status?.label === "Inactive");
+  const enabledRows = data.filter((item) => item?.status?.label !== "Inactive");
+  const allSelected =
+    enabledRows.length > 0 &&
+    enabledRows
+      .filter((item) => item?.status?.label !== "Inactive")
+      .every((item) => selectedRows.includes(item.id));
 
   const generateCell = (column, item) => {
     const cell = column.component
@@ -96,7 +108,7 @@ const DynamicTable = ({
 
     if (column.chip) {
       return (
-        <Chip onClick={() => {}} label={cell?.label} variant={cell?.variant} />
+        <Chip onClick={() => { }} label={cell?.label} variant={cell?.variant} />
       );
     }
 
@@ -219,6 +231,17 @@ const DynamicTable = ({
               }}
             >
               <TableRow>
+                {onSelectRow &&
+                  <TableCell sx={{ width: "40px", textAlign: "center" }}>
+                    <Checkbox
+                      sx={{ color: "#000" }}
+                      checked={allSelected}
+                      disabled={allStatusFalse}
+                      indeterminate={allSelected}
+                      onChange={(e) => onSelectAll?.(e.target.checked)}
+                    />
+                  </TableCell>}
+
                 {extendedColumns?.map((column, index) => (
                   <TableCell
                     key={`${index}`}
@@ -283,6 +306,17 @@ const DynamicTable = ({
               >
                 {data?.map((item, index) => (
                   <TableRow key={index}>
+                    {/* Row Checkbox */}
+                    {onSelectRow &&
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <Checkbox
+                          sx={{ color: "#000" }}
+                          checked={selectedRows.includes(item.id)}
+                          onChange={(e) => onSelectRow?.(item.id, e.target.checked)}
+                          disabled={item?.status?.label === "Inactive"}
+                        />
+                      </TableCell>
+                    }
                     {extendedColumns?.map((column) => (
                       <TableCell
                         sx={{
@@ -292,7 +326,7 @@ const DynamicTable = ({
                           whiteSpace: "pre-line",
                         }}
                         key={column.key}
-                        onClick={onRowClick ? () => onRowClick(item) : () => {}}
+                        onClick={onRowClick ? () => onRowClick(item) : () => { }}
                       >
                         {generateCell(column, item)}
                       </TableCell>
@@ -320,7 +354,7 @@ const DynamicTable = ({
             variant="outlined"
             shape="rounded"
             onChange={
-              handlePageChange ? (_, page) => handlePageChange(page) : () => {}
+              handlePageChange ? (_, page) => handlePageChange(page) : () => { }
             }
             count={Math.ceil((total || 1) / pageSize)}
           />

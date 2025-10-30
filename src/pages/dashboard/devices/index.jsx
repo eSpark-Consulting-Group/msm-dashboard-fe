@@ -295,7 +295,7 @@ const Devices = () => {
           alignItems: "center",
         }}
       >
-        <DynamicTabs tabs={tabs} />
+        <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} />
         <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
           <SearchBar
             value={search}
@@ -352,9 +352,8 @@ const Devices = () => {
         loading={deleteGroupLoading || deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          {`Are you sure you want to delete this ${
-            activeTab === 0 ? "device" : "group"
-          }`}
+          {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"
+            }`}
         </Typography>
       </DeleteModal>
       <DynamicModal

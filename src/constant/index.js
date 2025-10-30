@@ -2,6 +2,8 @@ import {
   dashboardIcon,
   devicesIcon,
   userIcon,
+  measurementIcon,
+  otaIcon,
   supportIcon,
   reportIcon,
   settingsIcon,
@@ -40,6 +42,16 @@ export const sidebarTabs = (role) => {
           icon: userIcon,
           title: "Users",
           link: "/users",
+        },
+        {
+          icon: measurementIcon,
+          title: "Measurement",
+          link: "/measurement",
+        },
+        {
+          icon: otaIcon,
+          title: "OTA updates",
+          link: "/ota",
         },
         // {
         //   icon: supportIcon,
@@ -642,6 +654,7 @@ export const energyCards = [
 export const infoData = (realData) => {
   return [
     { label: "DEVICE ID", value: realData?.device_uuid, key: "device_uuid" },
+    { label: "DEVICE PASSWORD", value: realData?.device_uuid, key: "device_uuid", password: true },
     { label: "DEVICE IMEI", value: realData?.device_imei, key: "device_imei" },
     { label: "DEVICE IP", value: realData?.device_ip, key: "device_ip" },
     {
@@ -653,6 +666,21 @@ export const infoData = (realData) => {
       label: "SFTP STATUS",
       value: realData?.sftp_status ? "Server Connected" : "No Connection",
       key: "sftp_status",
+    },
+    {
+      label: "MQTTs STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "mqtts_status",
+    },
+    {
+      label: "GSM STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "gsm_status",
+    },
+    {
+      label: "NTP STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "ntp_status",
     },
   ];
 };
@@ -758,6 +786,90 @@ export const sftp = (realData) => {
       showIcon: true,
       key: "data_interval",
     },
+  ];
+};
+
+export const ctRatioData = () => {
+  return [
+    { label: "DEVICE ID", value: "1002121", key: "device_uuid" },
+    { label: "DEVICE IMEI", value: "31231231", key: "device_imei" },
+    { label: "DEVICE IP", value: "1323123123", key: "device_ip" },
+    {
+      label: "MQTT STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "mqtt_status",
+    },
+    {
+      label: "SFTP STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "sftp_status",
+    },
+  ];
+};
+
+export const voltageData = () => {
+  return [
+    { label: "DEVICE ID", value: "1002121", key: "device_uuid" },
+    { label: "DEVICE IMEI", value: "31231231", key: "device_imei" },
+    { label: "DEVICE IP", value: "1323123123", key: "device_ip" },
+    {
+      label: "MQTT STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "mqtt_status",
+    },
+    {
+      label: "SFTP STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "sftp_status",
+    },
+  ];
+};
+
+export const ccData = () => {
+  return [
+    { label: "DEVICE ID", value: "1002121", key: "device_uuid" },
+    { label: "DEVICE IMEI", value: "31231231", key: "device_imei" },
+    { label: "DEVICE IP", value: "1323123123", key: "device_ip" },
+    {
+      label: "MQTT STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "mqtt_status",
+    },
+    {
+      label: "SFTP STATUS",
+      value: true ? "Server Connected" : "No Connection",
+      key: "sftp_status",
+    },
+  ];
+};
+
+export const mqttsProtocol = (realData) => {
+  return [
+    {
+      label: "MQTTs_ENDPOINT",
+      value: "",
+      key: "mqtts_endpoint",
+      showIcon: true,
+    },
+    {
+      label: "MQTTs_PORT",
+      value: "8883",
+      key: "mqtts_port",
+      showIcon: true,
+    },
+    {
+      label: "MQTTs_INTERVAL",
+      value: "",
+      key: "mqtts_interval",
+      showIcon: true,
+    },
+  ];
+};
+
+export const otaData = (realData) => {
+  return [
+    { label: "Current Version", value: "1.2.1", key: "current_version" },
+    { label: "Last Update", value: "2025-10-15T23:12:53", key: "current_version" },
   ];
 };
 

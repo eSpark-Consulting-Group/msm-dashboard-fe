@@ -9,7 +9,9 @@ import DynamicTabs from "../../../components/tabs";
 import {
   infoData,
   mqttProtocol,
+  mqttsProtocol,
   networkProtocol,
+  otaData,
   sftp,
 } from "../../../constant";
 import {
@@ -260,7 +262,7 @@ const DashboardInfo = () => {
           onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}
           buttonLoading={mqttFetching}
-          type={"MQTTS"}
+          type={"MQTT"}
           id={mqttData?.data[0]?._id}
         />
       ),
@@ -282,6 +284,40 @@ const DashboardInfo = () => {
         />
       ),
     },
+    {
+      label: "MQTTS",
+      component: (
+        <InfoCard
+          info={mqttsProtocol([])}
+          title="MQTTS Protocol"
+          // onButtonClick={() => mqttRefetch()}
+          role={user?.role?.name}
+          // buttonLoading={mqttFetching}
+          type={"MQTTS"}
+          // id={mqttData?.data[0]?._id}
+        />
+      ),
+    },
+    {
+      label: "OTA",
+      component: (
+        <InfoCard
+          info={otaData({
+            ...(user?.role?.name === "user"
+              ? assignDeviceData
+              : deviceData?.data?.device_data),
+            ...socketInfo,
+          })}
+          title="OTA"
+          buttonLabel="Check updates"
+          onButtonClick={() => console.log("check updates")}
+          role={user?.role?.name}
+          // buttonLoading={mqttFetching}
+          type={"OTA"}
+        // id={mqttData?.data[0]?._id}
+        />
+      ),
+    },
   ];
 
   return (
@@ -294,7 +330,7 @@ const DashboardInfo = () => {
         deviceLoading2
       }
     >
-      <DynamicTabs tabs={tabs} />
+      <DynamicTabs tabs={tabs} width="100%" maxWidth="100%" />
     </DashboardWrapper>
   );
 };

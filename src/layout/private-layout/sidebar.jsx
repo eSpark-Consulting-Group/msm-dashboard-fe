@@ -10,9 +10,6 @@ const Sidebar = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.auth);
   const { pathname: path } = useLocation();
   let pathname = `/${path?.split("/")[1]}`;
-  if (pathname[0] === "/") {
-    pathname = pathname.slice(1);
-  }
   const navigate = useNavigate();
 
   const handleNavigate = (link) => {
@@ -76,8 +73,8 @@ const Sidebar = ({ open, setOpen }) => {
               alignItems: "center",
               gap: "10px",
               background:
-                pathname === item.title?.toLowerCase() ||
-                (pathname === "" && item?.title?.toLowerCase() === "dashboard")
+                pathname === item.link ||
+                  (item.link === "/" && pathname === "/dashboard")
                   ? "#0077FF"
                   : "#FFF",
               cursor: "pointer",
@@ -85,17 +82,15 @@ const Sidebar = ({ open, setOpen }) => {
                 width: "33px",
                 height: "28px",
                 filter:
-                  pathname === item.title?.toLowerCase() ||
-                  (pathname === "" &&
-                    item?.title?.toLowerCase() === "dashboard")
+                  pathname === item.link ||
+                    (item.link === "/" && pathname === "/dashboard")
                     ? "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)"
                     : "",
               },
               ":hover": {
                 background:
-                  pathname === item.title?.toLowerCase() ||
-                  (pathname === "" &&
-                    item?.title?.toLowerCase() === "dashboard")
+                  pathname === item.link ||
+                    (item.link === "/" && pathname === "/dashboard")
                     ? "#0077FF"
                     : "#0077FF",
                 "& .MuiTypography-root": {
@@ -112,8 +107,8 @@ const Sidebar = ({ open, setOpen }) => {
             <img src={item.icon} alt={item.title} />
             <Typography
               color={
-                pathname === item.title?.toLowerCase() ||
-                (pathname === "" && item?.title?.toLowerCase() === "dashboard")
+                pathname === item.link ||
+                  (item.link === "/" && pathname === "/dashboard")
                   ? "text.secondary"
                   : "text.primary"
               }

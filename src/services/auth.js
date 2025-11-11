@@ -40,6 +40,25 @@ export const authApi = api.injectEndpoints({
         body,
       }),
     }),
+    verifyPassword: builder.mutation({
+      query: ({ body }) => ({
+        url: "/auth/verify-password",
+        method: "POST",
+        // credentials: "include",
+        body,
+      }),
+    }),
+    resetDevicePassword: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/auth/change-device-password/${id}`,
+        method: "POST",
+        body,
+        invalidatesTags: (result, error, id) => [
+          "Devices",
+          { type: "Devices", id },
+        ],
+      }),
+    }),
   }),
 });
 
@@ -49,4 +68,6 @@ export const {
   useChangePasswordMutation,
   useForgetPasswordMutation,
   useResetPasswordMutation,
+  useVerifyPasswordMutation,
+  useResetDevicePasswordMutation,
 } = authApi;

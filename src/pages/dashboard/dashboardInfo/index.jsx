@@ -21,12 +21,13 @@ import {
 } from "../../../services/devices";
 import { useGetNtpDevicesByIdQuery } from "../../../services/ntp";
 import { useGetSftpDevicesByIdQuery } from "../../../services/sftp";
-import { useGetMqttByDeviceIdQuery } from "../../../services/mqtt";
+import { useGetMqttByDeviceIdQuery, useGetMqttsByDeviceIdQuery } from "../../../services/mqtt";
 import {
   addDeviceStatus,
   handleSelectedDevice,
 } from "../../../store/slices/devices";
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
+import { useGetCurrentOtaQuery } from "../../../services/ota";
 // import { useSocket } from "../../../SocketTest";
 
 const DashboardInfo = () => {
@@ -40,6 +41,8 @@ const DashboardInfo = () => {
     ntp: socketNtp,
     mqtt: socketMqtt,
     sftp: socketSftp,
+    mqtts: socketMqtts,
+    ota: socketOta,
   } = useSelector((state) => state.info);
 
   // const {
@@ -94,6 +97,28 @@ const DashboardInfo = () => {
   });
 
   const {
+    data: mqttsData,
+    isLoading: mqttsLoading,
+    isError: isMqttsError,
+    error: mqttsError,
+  } = useGetMqttsByDeviceIdQuery(id, {
+    skip: !id,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    data: otaDeviceData,
+    isLoading: otaLoading,
+    isError: isOtaError,
+    error: otaError,
+    refetch: otaRefetch,
+    isFetching: otaFetching,
+  } = useGetCurrentOtaQuery(id, {
+    skip: !id,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
     data: sftpData,
     isLoading: sftpLoading,
     isError: isSftpError,
@@ -116,6 +141,10 @@ const DashboardInfo = () => {
       toast.error(ntpError?.data?.message, { toastId: "NTPERROR" });
     if (isMqttError)
       toast.error(mqttError?.data?.message, { toastId: "MQTTERROR" });
+    if (isMqttsError)
+      toast.error(mqttsError?.data?.message, { toastId: "MQTTSERROR" });
+    if (isOtaError)
+      toast.error(otaError?.data?.message, { toastId: "OTAERROR" });
     if (isSftpError)
       toast.error(sftpError?.data?.message, { toastId: "SFTPERROR" });
   }, [
@@ -125,6 +154,10 @@ const DashboardInfo = () => {
     ntpError,
     isMqttError,
     mqttError,
+    isMqttsError,
+    mqttsError,
+    isOtaError,
+    otaError,
     isSftpError,
     sftpError,
     isDeviceError2,
@@ -226,6 +259,7 @@ const DashboardInfo = () => {
           onButtonClick={handleReboot}
           role={user?.role?.name}
           type={"INFO"}
+          id={deviceData?.data?.name}
         />
       ),
     },
@@ -288,13 +322,16 @@ const DashboardInfo = () => {
       label: "MQTTS",
       component: (
         <InfoCard
-          info={mqttsProtocol([])}
+          info={mqttsProtocol([
+            {
+              ...(mqttsData),
+              ...socketMqtts,
+            },
+          ])}
           title="MQTTS Protocol"
-          // onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}
-          // buttonLoading={mqttFetching}
           type={"MQTTS"}
-          // id={mqttData?.data[0]?._id}
+          id={mqttsData?.data?.device_uuid}
         />
       ),
     },
@@ -303,18 +340,16 @@ const DashboardInfo = () => {
       component: (
         <InfoCard
           info={otaData({
-            ...(user?.role?.name === "user"
-              ? assignDeviceData
-              : deviceData?.data?.device_data),
-            ...socketInfo,
+            ...(otaDeviceData),
+            ...socketOta,
           })}
           title="OTA"
           buttonLabel="Check updates"
-          onButtonClick={() => console.log("check updates")}
+          onButtonClick={otaRefetch}
           role={user?.role?.name}
-          // buttonLoading={mqttFetching}
+          buttonLoading={otaFetching}
           type={"OTA"}
-        // id={mqttData?.data[0]?._id}
+          id={otaDeviceData?.data?.device_uuid}
         />
       ),
     },
@@ -326,6 +361,8 @@ const DashboardInfo = () => {
         deviceLoading ||
         ntpLoading ||
         mqttLoading ||
+        mqttsLoading ||
+        otaLoading ||
         sftpLoading ||
         deviceLoading2
       }

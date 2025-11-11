@@ -1,39 +1,44 @@
 import { useFormik } from "formik";
-import { Box, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import OutlinedInput from "../input";
 import Button from "../buttons";
-import { useUpdateMqttMutation } from "../../services/mqtt";
+import { useUpdateMqttsMutation } from "../../services/mqtt";
 import { toast } from "react-toastify";
 import { mqttsSettingsSchema } from "../../schemas";
 
 const EditMqtts = ({ data, handleCancel }) => {
-  const [mqtt, { isLoading }] = useUpdateMqttMutation();
+  const [mqtts, { isLoading }] = useUpdateMqttsMutation();
 
   const formik = useFormik({
     initialValues: {
-      mqtts_endpoint: data?.mqtts_endpoint ?? "",
-      mqtts_port: data?.mqtts_port ?? "",
-      mqtts_interval: data?.mqtts_interval ?? "",
+      broker_ip: data?.broker_ip ?? "",
+      broker_port: data?.broker_port ?? "",
+      data_interval: data?.data_interval ?? "",
+      root_ca: Boolean(data?.root_ca),
+      claim_cert: Boolean(data?.claim_cert),
+      claim_key: Boolean(data?.claim_key),
       id: data?.id ?? "",
     },
     validationSchema: mqttsSettingsSchema,
     onSubmit: async (values) => {
       try {
         const obj = {
-          mqtts_endpoint: values?.mqtts_endpoint,
-          mqtts_port: values?.mqtts_port,
-          mqtts_interval: values?.mqtts_interval,
+          broker_ip: values?.broker_ip,
+          broker_port: values?.broker_port,
+          data_interval: values?.data_interval,
+          root_ca: values?.root_ca ? "true" : "false",
+          claim_cert: values?.claim_cert ? "true" : "false",
+          claim_key: values?.claim_key ? "true" : "false",
         };
-        console.log("Submitted values:", obj);
-        // const res = await mqtt({ formData: obj, id: values?.id });
-        // if (res?.data) {
-        //   toast.success("MQTTS Protocol updated successfully");
-        //   handleCancel();
-        // }
-        // if (res?.error) {
-        //   toast?.error(res?.error?.data?.message, { toastId: "MQTTError" });
-        //   handleCancel();
-        // }
+        const res = await mqtts({ formData: obj, id: values?.id });
+        if (res?.data) {
+          toast.success("MQTTS Protocol updated successfully");
+          handleCancel();
+        }
+        if (res?.error) {
+          toast?.error(res?.error?.data?.message, { toastId: "MQTTSError" });
+          handleCancel();
+        }
       } catch (error) {
         console.log(error);
         handleCancel();
@@ -62,12 +67,12 @@ const EditMqtts = ({ data, handleCancel }) => {
             label="MQTTs Endpoint"
             placeholder="MQTTs Endpoint"
             type="text"
-            name="mqtts_endpoint"
-            value={formik.values.mqtts_endpoint}
+            name="broker_ip"
+            value={formik.values.broker_ip}
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.mqtts_endpoint && Boolean(formik.errors.mqtts_endpoint)}
-            helperText={formik.touched.mqtts_endpoint && formik.errors.mqtts_endpoint}
+            error={formik.touched.broker_ip && Boolean(formik.errors.broker_ip)}
+            helperText={formik.touched.broker_ip && formik.errors.broker_ip}
           />
         </Box>
         <Box sx={{ width: "100%" }}>
@@ -75,14 +80,14 @@ const EditMqtts = ({ data, handleCancel }) => {
             label="MQTTs Port"
             placeholder="MQTTs Port"
             type="number"
-            name="mqtts_port"
-            value={formik.values.mqtts_port}
+            name="broker_port"
+            value={formik.values.broker_port}
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.mqtts_port && Boolean(formik.errors.mqtts_port)
+              formik.touched.broker_port && Boolean(formik.errors.broker_port)
             }
-            helperText={formik.touched.mqtts_port && formik.errors.mqtts_port}
+            helperText={formik.touched.broker_port && formik.errors.broker_port}
           />
         </Box>
 
@@ -90,15 +95,59 @@ const EditMqtts = ({ data, handleCancel }) => {
           <OutlinedInput
             label="MQTTs Interval"
             placeholder="MQTTs Interval"
-            type="text"
-            name="mqtts_interval"
-            value={formik.values.mqtts_interval}
+            type="number"
+            name="data_interval"
+            value={formik.values.data_interval}
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.mqtts_interval && Boolean(formik.errors.mqtts_interval)
+              formik.touched.data_interval && Boolean(formik.errors.data_interval)
             }
-            helperText={formik.touched.mqtts_interval && formik.errors.mqtts_interval}
+            helperText={formik.touched.data_interval && formik.errors.data_interval}
+          />
+        </Box>
+
+        <Box
+          display="flex"
+          sx={{ width: "100%", justifyContent: { xs: "center", sm: "space-around" }, flexDirection: { xs: "column", sm: "row" }, ".MuiFormControl-root ": { flex: 1 } }}
+          alignItems="flex-end"
+          flexWrap="wrap"
+          gap={1}
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="root_ca"
+                checked={formik.values.root_ca}
+                onChange={formik.handleChange}
+                sx={{ color: "#151515" }}
+              />
+            }
+            label="CA1 cert"
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="claim_cert"
+                checked={formik.values.claim_cert}
+                onChange={formik.handleChange}
+                sx={{ color: "#151515" }}
+              />
+            }
+            label="Claim cert"
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="claim_key"
+                checked={formik.values.claim_key}
+                onChange={formik.handleChange}
+                sx={{ color: "#151515" }}
+              />
+            }
+            label="Claim key"
           />
         </Box>
 

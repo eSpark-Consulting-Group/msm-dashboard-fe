@@ -16,6 +16,7 @@ import {
     useGetAllDevicesQuery,
 } from "../../../services/devices";
 import { useSelector } from "react-redux";
+import { useGetVersionsListQuery, useUpdateVersionMutation } from "../../../services/ota";
 
 const Devices = () => {
     const [search, setSearch] = useState("");
@@ -30,6 +31,30 @@ const Devices = () => {
     const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
 
     const {
+        data: versionsList,
+        isLoading: versionLoading,
+        isFetching: versionFetching,
+        isError: isVersionError,
+        error: versionError,
+        refetch: refetchVersionsList,
+    } = useGetVersionsListQuery(
+        "",
+        {
+            skip: user?.role?.name === "user",
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
+    useEffect(() => {
+        if (isVersionError && versionError) {
+            toast.error(versionError?.data?.message, { toastId: "VERSIONERROR" });
+            return;
+        }
+
+    }, [isVersionError, versionError]);
+
+    const {
+        isFetching: deviceFetching,
         isLoading: deviceLoading,
         isError: isError,
         error: error,
@@ -42,6 +67,7 @@ const Devices = () => {
     );
 
     const {
+        isFetching: deviceFetching2,
         isLoading: deviceLoading2,
         isError: isError2,
         error: error2,
@@ -58,8 +84,16 @@ const Devices = () => {
     );
 
     useEffect(() => {
-        if (isError && error && isError2 && error2) {
+        if (isError && error) {
             toast.error(error?.data?.message, { toastId: "DEVICEERROR" });
+            return;
+        }
+        if (isError2 && error2) {
+            toast.error(error2?.data?.message, { toastId: "DEVICEERROR" });
+            return;
+        }
+        if (error?.data?.message === "Devices Not Found") {
+            setData([]);
             return;
         }
         const sourceData = user?.role?.name === "user" ? devicesData2 : devicesData;
@@ -88,8 +122,12 @@ const Devices = () => {
                         label: status ? "Active" : "Inactive",
                         variant: status ? "green" : "red",
                     },
-                    version: "1.1.2",
-                    lastUpdated: "15-10-2024 14:23",
+                    version: user?.role?.name === "user"
+                        ? item?.device_data?.device_data?.ota[0]?.current_version
+                        : item?.device_data?.ota[0]?.current_version || "-",
+                    lastUpdated: user?.role?.name === "user"
+                        ? item?.device_data?.device_data?.ota?.length > 0 ? `${item?.device_data?.device_data?.ota[0]?.last_update_date} ${item?.device_data?.device_data?.ota[0]?.last_update_time}` : "-"
+                        : item?.device_data?.ota?.length > 0 ? `${item?.device_data?.ota[0]?.last_update_date} ${item?.device_data?.ota[0]?.last_update_time}` : "-",
                 };
             }) || [];
         setData(deviceData);
@@ -149,13 +187,38 @@ const Devices = () => {
         }
     };
 
+    const [updateVersion, { isLoading }] = useUpdateVersionMutation();
+
+    const handleUpdateVersion = () => {
+        const payloadArr = data.filter(item => selectedRows.includes(item.id)).map(i => { return { device_uuid: i.deviceId, version: selectedVersion?.replace("MSM_", "") } });
+        const payload = { devices: payloadArr }
+        updateVersion(payload).then((res) => {
+            if (res?.data) {
+                toast.success(res?.data?.message);
+                setSelectedRows([]);
+                setSelectedVersion(null)
+                setModal(false)
+                return
+            }
+            if (res?.error) {
+                toast.error(res?.error?.data?.message, { toastId: "OTAERROR" });
+                setModal(false);
+                return;
+            }
+        }).catch((err) => {
+            toast.error("Something went wrong!");
+            setModal(false);
+            console.log(err, "err")
+        });
+    }
+
     return (
         <>
             <SubHeader
                 heading="OTA"
                 subHeading="Here’s what’s happening with your device and users"
                 buttonText={"Check updates"}
-                onClick={() => console.log("Check updates clicked")}
+                onClick={() => refetchVersionsList()}
                 variant="contained"
             />
             <Box
@@ -179,7 +242,11 @@ const Devices = () => {
                         variant="outlined"
                         placeholder="Select Version"
                         noLabel
-                        options={[{ label: "1.1.1", value: "1.1.1" }, { label: "1.2.0", value: "1.2.0" }, { label: "1.2.1", value: "1.2.1" }]}
+                        loading={versionLoading || versionFetching}
+                        options={versionsList?.data?.map((version) => ({
+                            label: version,
+                            value: version,
+                        })) || []}
                         value={selectedVersion}
                         handleChange={(e) => setSelectedVersion(e.target.value)}
                         renderValueSx={{
@@ -223,7 +290,7 @@ const Devices = () => {
             <DynamicTable
                 data={getSortedData()}
                 columns={columns()}
-                isLoading={deviceLoading || deviceLoading2}
+                isLoading={deviceLoading || deviceLoading2 || deviceFetching || deviceFetching2}
                 page={page}
                 pageSize={pageSize}
                 handlePageChange={handlePageChange}
@@ -242,10 +309,11 @@ const Devices = () => {
                 open={modal}
                 handleClose={() => setModal(false)}
                 cancelButtonText="Cancel"
-                acceptButtonText="Update"
+                acceptButtonText="Start OTA"
                 handleCancel={() => setModal(false)}
-                handleAccept={() => console.log("Update accepted")}
+                handleAccept={handleUpdateVersion}
                 heading={"Confirm OTA Start"}
+                isLoading={isLoading}
             >
                 <Typography fontSize="24px">Are you sure you want to start OTA?</Typography>
             </DynamicModal>

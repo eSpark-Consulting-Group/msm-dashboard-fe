@@ -27,8 +27,12 @@ import NtpEditModal from "../ntp-edit-modal";
 import SftpEditModal from "../sftp-edit-modal";
 import dayjs from "dayjs";
 import Dropdown from "../drop-down";
-import { copyToClipboard } from "../../utils";
+import { copyToClipboard, decrypt } from "../../utils";
 import EditMqtts from "../edit-mqtts-modal";
+import { useGetVersionsListQuery, useUpdateVersionMutation } from "../../services/ota";
+import { useResetDevicePasswordMutation, useVerifyPasswordMutation } from "../../services/auth";
+import { useFormik } from "formik";
+import { devicePasswordScehma } from "../../schemas";
 
 const InfoCard = ({
   title,
@@ -60,9 +64,6 @@ const InfoCard = ({
 
   const [openPermissionModal, setOpenPermissionModal] = useState(false);
   const [dashboardPw, setDashboardPw] = useState("");
-  const [oldDevicePw, setOldDevicePw] = useState("");
-  const [newDevicePw, setNewDevicePw] = useState("");
-  const [confirmNewDevicePw, setConfirmNewDevicePw] = useState("");
   const [timeLeft, setTimeLeft] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState("");
@@ -154,6 +155,79 @@ const InfoCard = ({
     setNewVal("");
   };
 
+  const {
+    data: versionsList,
+    isLoading: versionLoading,
+    isFetching: versionFetching,
+    isError: isVersionError,
+    error: versionError,
+    refetch: refetchVersionsList,
+  } = useGetVersionsListQuery(
+    "",
+    {
+      skip: user?.role?.name === "user" || type !== "OTA",
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  useEffect(() => {
+    if (isVersionError && versionError) {
+      toast.error(versionError?.data?.message, { toastId: "VERSIONERROR" });
+      return;
+    }
+
+  }, [isVersionError, versionError]);
+
+  const [updateVersion, { isLoading: versionUpdateLoading }] = useUpdateVersionMutation();
+
+  const handleUpdateVersion = () => {
+    const payload = { devices: [{ device_uuid: id, version: selectedVersion?.replace("MSM_", "") }] }
+    updateVersion(payload).then((res) => {
+      if (res?.data) {
+        toast.success(res?.data?.message);
+        setModal(false)
+        return
+      }
+      if (res?.error) {
+        toast.error(res?.error?.data?.message, { toastId: "OTAERROR" });
+        setModal(false);
+        return;
+      }
+    }).catch((err) => {
+      toast.error("Something went wrong!");
+      setModal(false);
+      console.log(err, "err")
+    });
+  }
+
+  const [verify, { isLoading: passwordVerificationLoading }] = useVerifyPasswordMutation();
+
+  const [resetPass, { isLoading: devicePwChangeLoading }] = useResetDevicePasswordMutation();
+
+  const formik = useFormik({
+    initialValues: {
+      old_password: "",
+      new_password: "",
+      confirm_new_password: "",
+    },
+    validationSchema: devicePasswordScehma,
+    onSubmit: async (values, { resetForm }) => {
+      const body = {
+        old_password: values.old_password,
+        new_password: values.new_password,
+      };
+      const res = await resetPass({ id, body });
+      if (res?.data) {
+        resetForm();
+        toast.success(res?.data?.message);
+        setEditPwModal(false);
+      }
+      if (res?.error) {
+        toast.error(res?.error?.data?.message);
+      }
+    },
+  });
+
   return (
     <>
       <Box
@@ -180,7 +254,7 @@ const InfoCard = ({
             }}
             variant="outlined"
             size="small"
-            onClick={onButtonClick}
+            onClick={type === "OTA" ? refetchVersionsList : onButtonClick}
             loading={buttonLoading}
             disabled={type === "OTA" ? false :
               selectedDevice !== null &&
@@ -202,7 +276,7 @@ const InfoCard = ({
             type !== "OTA" &&
             role !== "user" &&
             selectedDevice !== null &&
-            selectedDevice?.device_data?.device_status === true
+            selectedDevice?.device_data?.device_status === "true"
           )
         ) && (
             // <img
@@ -272,8 +346,11 @@ const InfoCard = ({
                     variant="outlined"
                     placeholder="Select Version"
                     noLabel
-                    options={[{ label: "1.1.1", value: "1.1.1" }, { label: "1.2.0", value: "1.2.0" }, { label: "1.2.1", value: "1.2.1" }]}
-                    value={selectedVersion}
+                    loading={versionLoading || versionFetching}
+                    options={versionsList?.data?.map((version) => ({
+                      label: version,
+                      value: version,
+                    })) || []} value={selectedVersion}
                     handleChange={(e) => setSelectedVersion(e.target.value)}
                     renderValueSx={{
                       color: "#000",
@@ -320,7 +397,7 @@ const InfoCard = ({
                 </Box>
               </Card>
             </Grid>}
-          {info.map((item, index) => (
+          {info.filter(i => !i?.checkBox)?.map((item, index) => (
             <Grid
               item
               xs={12}
@@ -383,7 +460,7 @@ const InfoCard = ({
                         fontWeight="medium"
                         fontSize="20px"
                       >
-                        {item?.password ? item.value.split("").map(i => "*").join("") : item.value}
+                        {item?.password ? item.value?.slice(0, 6)?.split("").map(i => "*").join("") : item.value}
                       </Typography>
                     )}
                     {
@@ -476,22 +553,17 @@ const InfoCard = ({
                   gap={1}
                   flexDirection={isSmallScreen ? "column" : "row"}
                   sx={{ ".MuiFormControl-root ": { flex: 1 } }}
-                >
-                  <FormControlLabel
-                    control={<Checkbox sx={{ color: "#151515" }} />}
-                    label="CA1 cert"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox sx={{ color: "#151515" }} />}
-                    label="CA1 cert"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox sx={{ color: "#151515" }} />}
-                    label="CA1 cert"
-                  />
+                >{info?.filter(i => i?.checkBox).map(item => {
+                  return (
+                    <FormControlLabel
+                      control={<Checkbox disabled checked={item?.value} sx={{ color: "#151515" }} />}
+                      label={item?.label}
+                    />)
+                })}
                 </Box>
               </Card>
-            </Grid>}
+            </Grid>
+          }
         </Grid>
       </Box>
 
@@ -571,7 +643,7 @@ const InfoCard = ({
         <EditMqtts
           data={editValues}
           handleCancel={() => {
-            setMqttModal(false);
+            setMqttsModal(false);
             setEditValues({});
           }}
         />
@@ -618,14 +690,22 @@ const InfoCard = ({
         disabled={isRunning}
         handleCancel={() => setOpenPermissionModal(false)}
         handleAccept={() => {
-          if (dashboardPw === "abcd123") {
-            startTimer()
-            setDashboardPw(openPermissionModal);
-          } else {
-            toast.error("Incorrect Password");
-          }
+          verify({ body: { password: dashboardPw } }).then((res) => {
+            if (res?.data?.success) {
+              toast.success("Password Verified");
+              startTimer()
+              setDashboardPw(decrypt(openPermissionModal));
+            } else {
+              toast.error("Incorrect Password");
+              return;
+            }
+          }).catch((err) => {
+            toast.error("Something went wrong!");
+            console.log(err, "err")
+          });
         }}
         heading={"Permission!"}
+        isLoading={passwordVerificationLoading}
       >
         <Typography textAlign={"center"} fontSize={"26px"}>{timeLeft > 0 ? "Your device password" : "Enter you dashboard password"}</Typography>
         <OutlinedInput
@@ -639,10 +719,11 @@ const InfoCard = ({
           sx={{ ".Mui-disabled": { "-webkit-text-fill-color": "#000000" } }}
           endAdornment={timeLeft > 0 ?
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
-              <img style={{ cursor: "pointer" }} onClick={() => copyToClipboard(openPermissionModal)} src={copy} alt="copy" />
+              <img style={{ cursor: "pointer" }} onClick={() => copyToClipboard(dashboardPw)} src={copy} alt="copy" />
               <img style={{ cursor: "pointer" }} onClick={() => {
                 setEditPwModal(openPermissionModal)
                 setOpenPermissionModal(null)
+                setTimeLeft(0)
               }} src={edit} alt="copy" />
             </Box>
             : null
@@ -654,10 +735,11 @@ const InfoCard = ({
         open={modal}
         handleClose={() => setModal(false)}
         cancelButtonText="Cancel"
-        acceptButtonText="Update"
+        acceptButtonText="Start OTA"
         handleCancel={() => setModal(false)}
-        handleAccept={() => console.log("Update accepted")}
+        handleAccept={handleUpdateVersion}
         heading={"Confirm OTA Start"}
+        isLoading={versionUpdateLoading}
       >
         <Typography fontSize="24px">Are you sure you want to start OTA?</Typography>
       </DynamicModal>
@@ -667,34 +749,46 @@ const InfoCard = ({
         cancelButtonText="Cancel"
         acceptButtonText="Update"
         handleCancel={() => setEditPwModal(false)}
-        handleAccept={() => console.log("Update pasword accepted")}
+        handleAccept={formik.handleSubmit}
         heading={"Update Device Password"}
+        isLoading={devicePwChangeLoading}
       >
-        <Typography my={2} fontSize="24px">Are you sure you want to update the device password?</Typography>
-        <OutlinedInput
-          label="Old Password"
-          name="oldDevicePw"
-          type="password"
-          placeholder="Enter your old password"
-          value={oldDevicePw}
-          onInputChange={(e) => setOldDevicePw(e.target.value)}
-        />
-        <OutlinedInput
-          label="New Password"
-          name="newDevicePw"
-          type="password"
-          placeholder="Enter your new password"
-          value={newDevicePw}
-          onInputChange={(e) => setNewDevicePw(e.target.value)}
-        />
-        <OutlinedInput
-          label="Confirm Password"
-          name="confirmNewDevicePw"
-          type="password"
-          placeholder="Confirm your new password"
-          value={confirmNewDevicePw}
-          onInputChange={(e) => setConfirmNewDevicePw(e.target.value)}
-        />
+        <Box component={"form"} onSubmit={formik.handleSubmit}>
+          <Typography my={2} fontSize="24px">Are you sure you want to update the device password?</Typography>
+          <OutlinedInput
+            label="Old Password"
+            name="old_password"
+            type="password"
+            placeholder="Enter your old password"
+            value={formik.values.old_password}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.old_password && Boolean(formik.errors.old_password)}
+            helperText={formik.touched.old_password && formik.errors.old_password}
+          />
+          <OutlinedInput
+            label="New Password"
+            name="new_password"
+            type="password"
+            placeholder="Enter your new password"
+            value={formik.values.new_password}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.new_password && Boolean(formik.errors.new_password)}
+            helperText={formik.touched.new_password && formik.errors.new_password}
+          />
+          <OutlinedInput
+            label="Confirm Password"
+            name="confirm_new_password"
+            type="password"
+            placeholder="Confirm your new password"
+            value={formik.values.confirm_new_password}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.confirm_new_password && Boolean(formik.errors.confirm_new_password)}
+            helperText={formik.touched.confirm_new_password && formik.errors.confirm_new_password}
+          />
+        </Box>
       </DynamicModal>
     </>
   );

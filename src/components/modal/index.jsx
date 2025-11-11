@@ -13,6 +13,7 @@ const DynamicModal = ({
   heading,
   hideClose,
   disabled,
+  isLoading,
 }) => {
   return (
     <Modal
@@ -106,6 +107,7 @@ const DynamicModal = ({
                   disableRipple
                   onClick={handleAccept}
                   disabled={disabled}
+                  isLoading={isLoading}
                 >
                   {acceptButtonText}
                 </Button>

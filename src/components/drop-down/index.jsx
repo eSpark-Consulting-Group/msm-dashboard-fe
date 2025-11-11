@@ -38,6 +38,7 @@ const Dropdown = ({
   value,
   renderValueSx = {},
   selectSx = {},
+  loading = false,
 }) => {
   const [options, setOptions] = useState(dropdownOptions);
 
@@ -73,7 +74,7 @@ const Dropdown = ({
           multiple={multiple}
           name={name}
           variant={variant}
-          disabled={disabled}
+          disabled={disabled || loading}
           labelId={`${name}-label`}
           id={`${name}-select`}
           onChange={handleChange}
@@ -94,6 +95,7 @@ const Dropdown = ({
           }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {
+            if (loading) return <span style={{ color: "#aaa" }}>Loading...</span>;
             if (
               !selected ||
               (Array.isArray(selected) && selected.length === 0)

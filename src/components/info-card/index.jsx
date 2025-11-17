@@ -276,7 +276,7 @@ const InfoCard = ({
             type !== "OTA" &&
             role !== "user" &&
             selectedDevice !== null &&
-            selectedDevice?.device_data?.device_status === "true"
+            selectedDevice?.device_data?.device_status
           )
         ) && (
             // <img

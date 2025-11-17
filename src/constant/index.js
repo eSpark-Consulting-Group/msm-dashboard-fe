@@ -669,7 +669,7 @@ export const infoData = (realData) => {
     },
     {
       label: "MQTTs STATUS",
-      value: realData?.device_status === "true" ? "Server Connected" : "No Connection",
+      value: realData?.device_status ? "Server Connected" : "No Connection",
       key: "mqtts_status",
     },
     {

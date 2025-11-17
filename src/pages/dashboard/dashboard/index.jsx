@@ -30,8 +30,8 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(11);
-  const [total] = useState(11);
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
   const token = localStorage.getItem("msm_token");
 
@@ -41,7 +41,7 @@ const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const { isLoading, isError, error } = useGetAllDevicesQuery(
+  const { data: assignDevicesData2, isLoading, isError, error, isFetching } = useGetAllDevicesQuery(
     {
       page,
       limit: pageSize,
@@ -56,7 +56,9 @@ const Dashboard = () => {
   );
 
   const {
+    data: assignDevicesData,
     isLoading: isLoading2,
+    isFetching: isFetching2,
     isError: isError2,
     error: error2,
   } = useGetAllAssignDevicesQuery(
@@ -115,6 +117,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (error?.data?.message === "Devices Not Found" || error2?.data?.message === "Devices Not Found") {
+      setData([]);
+      setTotal(0);
+      return;
+    }
+
     if (isError && error) {
       toast.error(error?.data?.message, { toastId: "Device" });
       return;
@@ -127,6 +135,8 @@ const Dashboard = () => {
 
     const sourceData =
       user?.role?.name === "user" ? dashboardData2 : dashboardData;
+    const totalCount =
+      user?.role?.name === "user" ? assignDevicesData?.count : assignDevicesData2?.count;
 
     let mappedData =
       sourceData?.map((item) => {
@@ -189,6 +199,7 @@ const Dashboard = () => {
     }
 
     setData(mappedData);
+    setTotal(totalCount)
   }, [
     isError,
     error,
@@ -247,12 +258,15 @@ const Dashboard = () => {
       <SubHeader
         heading="Dashboard"
         subHeading="Here’s what’s happening with your device and users"
-        // buttonText="Add New Dashoard"
-        // onClick={() => setOpen(true)}
-        // variant="contained"
+      // buttonText="Add New Dashoard"
+      // onClick={() => setOpen(true)}
+      // variant="contained"
       />
       <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-        <SearchBar value={search} onChange={(val) => setSearch(val)} />
+        <SearchBar value={search} onChange={(val) => {
+          setSearch(val);
+          setPage(1);
+        }} />
       </Box>
 
       <DynamicTable
@@ -261,7 +275,7 @@ const Dashboard = () => {
         hideView
         hideEdit
         handleDelete={handleDelete}
-        isLoading={isLoading || isLoading2}
+        isLoading={isLoading || isLoading2 || isFetching || isFetching2}
         page={page}
         pageSize={pageSize}
         handlePageChange={handlePageChange}

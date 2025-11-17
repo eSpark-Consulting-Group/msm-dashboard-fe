@@ -23,8 +23,8 @@ const Users = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(7);
-  const [total] = useState(7);
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [addUserModal, setAddUserModal] = useState(false);
   const [editUserValues, setEditUserValues] = useState();
   const [selectedUserToDelete, setSelectedUserToDelete] = useState(null);
@@ -36,6 +36,7 @@ const Users = () => {
   const {
     data: userData,
     isLoading,
+    isFetching,
     isError,
     error,
   } = useGetAllUsersQuery(
@@ -87,6 +88,7 @@ const Users = () => {
         };
       }) || []
     );
+    setTotal(userData?.count);
   }, [isError, error, userData]);
 
   const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
@@ -167,10 +169,13 @@ const Users = () => {
           variant="blue"
         />
         <Box sx={{ width: { xs: "100%", sm: "495px" } }}>
-          <SearchBar onChange={(e) => setSearch(e)} />
+          <SearchBar onChange={(e) => {
+            setPage(1);
+            setSearch(e);
+          }} />
         </Box>
         <DynamicTable
-          isLoading={isLoading}
+          isLoading={isLoading || isFetching}
           data={getSortedData()}
           columns={columns()}
           page={page}

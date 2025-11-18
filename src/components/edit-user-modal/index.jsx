@@ -44,8 +44,11 @@ const EditUserModal = ({ user, handleCancel }) => {
       email: user?.email || "",
       phone_number: user?.phone_number || "",
       customer_name: user?.customer_name || "",
-      status:
-        user?.status?.label === "Active" ? "active" : "inactive" || "inactive",
+      status: !user?.isPasswordChanged
+        ? "Pending"
+        : user?.status?.label === "Active"
+        ? "active"
+        : "inactive" || "inactive",
       userDevices: user?.userDevicesData?.map((d) => d.device_id) || [],
     },
     enableReinitialize: true,
@@ -161,6 +164,7 @@ const EditUserModal = ({ user, handleCancel }) => {
           border: "1.38px solid #DBD6D6",
           borderRadius: "6.92px",
         }}
+        disabled={!user?.isPasswordChanged ? true : false}
       />
       <Stack>
         {/* ✅ Devices Multi Select */}

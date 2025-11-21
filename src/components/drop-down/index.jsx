@@ -65,7 +65,7 @@ const Dropdown = ({
             </Typography>
           </Stack>
         )}
-        
+
         {!noLabel && (
           <InputLabel id={`${name}-label`}>{placeholder}</InputLabel>
         )}
@@ -91,6 +91,9 @@ const Dropdown = ({
             },
             "&:hover::before": {
               borderBottom: "none !important",
+            },
+            "&.Mui-disabled::before": {
+              borderBottom: "none !important", // removes dotted underline
             },
           }}
           IconComponent={CustomIcon}

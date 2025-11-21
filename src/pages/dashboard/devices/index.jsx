@@ -32,8 +32,8 @@ import { useSelector } from "react-redux";
 const Devices = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(9);
-  const [total] = useState(9);
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState();
   const tab = searchParams.get("tab");
@@ -72,9 +72,11 @@ const Devices = () => {
   }, [activeTab]);
 
   const {
+    data: assignDevicesData,
     isLoading: deviceLoading,
-    isError: isGroupError,
-    error: groupError,
+    isError: isError,
+    error: error,
+    isFetching,
   } = useGetAllDevicesQuery(
     { page, limit: pageSize, search },
     {
@@ -84,9 +86,11 @@ const Devices = () => {
   );
 
   const {
+    data: assignDevicesData2,
     isLoading: deviceLoading2,
-    isError: isGroupError2,
-    error: groupError2,
+    isFetching: isFetching2,
+    isError: isError2,
+    error: error2,
   } = useGetAllAssignDevicesQuery(
     { page, limit: pageSize, search },
     {
@@ -101,18 +105,34 @@ const Devices = () => {
   const {
     data: groupData,
     isLoading: groupLoading,
-    isError,
-    error,
+    isError: isGroupError,
+    isFetching: isGroupFetching,
+    error: groupError,
   } = useGetAllGroupsQuery(
     { page, limit: pageSize, search },
     { skip: activeTab !== 1 || user?.role?.name === "user" }
   );
 
   useEffect(() => {
-    if (isError && error) {
-      toast.error(error?.data?.message, { toastId: "DEVICEERROR" });
+    if (error?.data?.message === "Devices Not Found" || error2?.data?.message === "Devices Not Found") {
+      setData([]);
+      setTotal(0);
       return;
     }
+
+    if (isError && error) {
+      toast.error(error?.data?.message, { toastId: "DeviceEror" });
+      return;
+    }
+
+    if (isError2 && error2) {
+      toast.error(error2?.data?.message, { toastId: "DeviceEror" });
+      return;
+    }
+
+    const totalCount =
+      user?.role?.name === "user" ? assignDevicesData2?.count : assignDevicesData?.count;
+
     const sourceData = user?.role?.name === "user" ? devicesData2 : devicesData;
     const deviceData =
       sourceData?.map((item) => {
@@ -149,8 +169,9 @@ const Devices = () => {
     setDeviceData(deviceData);
     if (activeTab === 0) {
       setData(deviceData);
+      setTotal(totalCount)
     }
-  }, [isError, error, devicesData, devicesData2]);
+  }, [isError, error, isError2, error2, user, devicesData, devicesData2]);
 
   useEffect(() => {
     if (isGroupError && groupError) {
@@ -166,6 +187,7 @@ const Devices = () => {
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
         };
       }) || [];
+    setTotal(groupData?.count)
     setDeviceGroupData(deviceGroupData);
     if (activeTab === 1 && user?.role?.name !== "user") {
       setData(deviceGroupData);
@@ -176,13 +198,12 @@ const Devices = () => {
         description: item?.device_data?.groups_data?.description,
       }));
       setData(data);
+      setTotal(assignDevicesData2?.count);
     }
   }, [
     isGroupError,
     groupError,
     groupData,
-    isGroupError2,
-    groupError2,
     user,
     devicesData2,
     activeTab,
@@ -299,7 +320,10 @@ const Devices = () => {
         <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
           <SearchBar
             value={search}
-            onChange={(val) => setSearch(val)}
+            onChange={(val) => {
+              setSearch(val);
+              setPage(1);
+            }}
             label={activeTab === 0 ? "Type Device Name to Search" : null}
             placeholder="Enter Device Name"
           />
@@ -312,7 +336,7 @@ const Devices = () => {
             ? columns(user?.role?.name)
             : deviceGroupColumns(user?.role?.name)
         }
-        isLoading={deviceLoading || groupLoading || deviceLoading2}
+        isLoading={deviceLoading || groupLoading || deviceLoading2 || isFetching || isGroupFetching || isFetching2}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
         page={page}

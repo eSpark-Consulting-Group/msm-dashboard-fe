@@ -53,8 +53,15 @@ const DynamicTable = ({
   const allSelected =
     enabledRows.length > 0 &&
     enabledRows
-      .filter((item) => item?.status?.label !== "Inactive")
-      .every((item) => selectedRows.includes(item.id));
+      .filter((item) => {
+        const isInactive = item?.status?.label === "Inactive";
+        const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
+        const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
+        const otaStatus = otaStatus1 || otaStatus2;
+        const isOtaStarted = otaStatus === "started";
+        return !isInactive && !isOtaStarted;
+      })
+      .every((item) => selectedRows.includes(item._id));
 
   const generateCell = (column, item) => {
     const cell = column.component
@@ -62,12 +69,17 @@ const DynamicTable = ({
       : getValue(item, column.keyPath);
 
     if (column.key === "action") {
+      const disabled = item?.device_data?.ota?.[0]?.ota_status === "started" || item?.device_data?.device_data?.ota?.[0]?.ota_status === "started";
       return (
         <Stack
           direction="row"
           justifyContent="center"
           alignItems="center"
           spacing={1}
+          sx={{
+            opacity: disabled ? 0.4 : 1,
+            pointerEvents: disabled ? "none" : "auto",
+          }}
         >
           {!hideView && (
             <img
@@ -304,35 +316,42 @@ const DynamicTable = ({
                   }),
                 }}
               >
-                {data?.map((item, index) => (
-                  <TableRow key={index}>
-                    {/* Row Checkbox */}
-                    {onSelectRow &&
-                      <TableCell sx={{ textAlign: "center" }}>
-                        <Checkbox
-                          sx={{ color: "#000" }}
-                          checked={selectedRows.includes(item.id)}
-                          onChange={(e) => onSelectRow?.(item.id, e.target.checked)}
-                          disabled={item?.status?.label === "Inactive"}
-                        />
-                      </TableCell>
-                    }
-                    {extendedColumns?.map((column) => (
-                      <TableCell
-                        sx={{
-                          textAlign: "center",
-                          pl: "0px",
-                          cursor: onRowClick ? "pointer" : "auto",
-                          whiteSpace: "pre-line",
-                        }}
-                        key={column.key}
-                        onClick={onRowClick ? () => onRowClick(item) : () => { }}
-                      >
-                        {generateCell(column, item)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                {data?.map((item, index) => {
+                  const otaStarted = item?.device_data?.ota?.[0]?.ota_status === "started" || item?.device_data?.device_data?.ota?.[0]?.ota_status === "started";
+                  return (
+                    <TableRow key={index}>
+                      {/* Row Checkbox */}
+                      {onSelectRow &&
+                        <TableCell sx={{
+                          textAlign: "center", backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
+                        }}>
+                          <Checkbox
+                            sx={{ color: "#000" }}
+                            checked={selectedRows.includes(item._id)}
+                            onChange={(e) => onSelectRow?.(item._id, e.target.checked)}
+                            disabled={item?.status?.label === "Inactive" || otaStarted}
+                          />
+                        </TableCell>
+                      }
+                      {extendedColumns?.map((column) => (
+                        <TableCell
+                          sx={{
+                            textAlign: "center",
+                            pl: "0px",
+                            cursor: onRowClick ? "pointer" : "auto",
+                            whiteSpace: "pre-line",
+                            backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
+                            cursor: otaStarted ? "not-allowed" : onRowClick ? "pointer" : "auto",
+                          }}
+                          key={column.key}
+                          onClick={onRowClick && !otaStarted ? () => onRowClick(item) : () => { }}
+                        >
+                          {generateCell(column, item)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             )}
           </Table>

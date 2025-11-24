@@ -47,12 +47,13 @@ const Router = () => {
               <Route path="/users" element={<Users />} />
               <Route path="/users/add" element={<AddUser />} />
               <Route path="/users/:id" element={<UserDetails />} />
-              <Route path="/measurement" element={<Measurement />} />
+              {/* <Route path="/measurement" element={<Measurement />} /> */}
               <Route path="/ota" element={<OTA />} />
             </>
           )}
 
           <Route path="/dashboard/:id/home" element={<DashboardHome />} />
+          <Route path="/dashboard/:id/measurement" element={<Measurement />} />
           <Route
             path="/dashboard/:id/home/:channelId"
             element={<ChannelInfo />}

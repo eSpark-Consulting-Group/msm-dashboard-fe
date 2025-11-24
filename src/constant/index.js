@@ -43,11 +43,11 @@ export const sidebarTabs = (role) => {
         title: "Users",
         link: "/users",
       },
-      {
-        icon: measurementIcon,
-        title: "Measurement",
-        link: "/measurement",
-      },
+      // {
+      //   icon: measurementIcon,
+      //   title: "Measurement",
+      //   link: "/measurement",
+      // },
       {
         icon: otaIcon,
         title: "OTA updates",
@@ -887,9 +887,10 @@ export const mqttsProtocol = (realData) => {
 
 export const otaData = (realData) => {
   const data = realData?.data || {};
+  console.log("OTA DATA", realData);
   return [
-    { label: "Current Version", value: data?.current_version, key: "current_version" },
-    { label: "Last Update", value: `${data?.last_update_date}T${data?.last_update_time}`, key: "current_version" },
+    { label: "Current Version", value: data?.current_version || "-", key: "current_version" },
+    { label: "Last Update", value: realData?.data ? `${data?.last_update_date}T${data?.last_update_time}` : "-", key: "current_version" },
   ];
 };
 

@@ -58,6 +58,7 @@ const Devices = () => {
         isLoading: deviceLoading,
         isError: isError,
         error: error,
+        refetch,
     } = useGetAllDevicesQuery(
         { page, limit: pageSize, search },
         {
@@ -71,6 +72,7 @@ const Devices = () => {
         isLoading: deviceLoading2,
         isError: isError2,
         error: error2,
+        refetch: refetch2
     } = useGetAllAssignDevicesQuery(
         { page, limit: pageSize, search },
         {
@@ -175,22 +177,35 @@ const Devices = () => {
             }
         });
     };
-
     const handleSelectAll = (checked) => {
-        if (checked) {
-            const enabledIds = data
-                .filter((item) => item.status?.label !== "Inactive")
-                .map((item) => item.id);
-            setSelectedRows(enabledIds);
-        } else {
+        if (!checked) {
             setSelectedRows([]);
+            return;
         }
+
+        const enabledIds = data
+            .filter((item) => {
+                const isInactive = item?.status?.label === "Inactive";
+
+                const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
+                const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
+
+                const otaStatus = otaStatus1 || otaStatus2;
+
+                const isOtaStarted = otaStatus === "started";
+
+                return !isInactive && !isOtaStarted;
+            })
+            .map((item) => item._id);
+
+        setSelectedRows(enabledIds);
     };
+
 
     const [updateVersion, { isLoading }] = useUpdateVersionMutation();
 
     const handleUpdateVersion = () => {
-        const payloadArr = data.filter(item => selectedRows.includes(item.id)).map(i => { return { device_uuid: i.deviceId, version: selectedVersion?.replace("MSM_", "") } });
+        const payloadArr = data.filter(item => selectedRows.includes(item._id)).map(i => { return { device_uuid: i.deviceId, version: selectedVersion?.replace("MSM_", "") } });
         const payload = { devices: payloadArr }
         updateVersion(payload).then((res) => {
             if (res?.data) {
@@ -198,6 +213,11 @@ const Devices = () => {
                 setSelectedRows([]);
                 setSelectedVersion(null)
                 setModal(false)
+                if (user?.role?.name !== "user") {
+                    refetch();
+                } else {
+                    refetch2();
+                }
                 return
             }
             if (res?.error) {

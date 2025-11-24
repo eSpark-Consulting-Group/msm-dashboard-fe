@@ -15,7 +15,7 @@ import OutlinedInput from "../input";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { useUpdateNtpMutation } from "../../services/ntp";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { useUpdateSftpMutation } from "../../services/sftp";
@@ -46,6 +46,7 @@ const InfoCard = ({
   buttonLoading,
   type,
 }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -186,6 +187,7 @@ const InfoCard = ({
       if (res?.data) {
         toast.success(res?.data?.message);
         setModal(false)
+        navigate(`/dashboard`);
         return
       }
       if (res?.error) {

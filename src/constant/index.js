@@ -16,64 +16,64 @@ import {
 export const sidebarTabs = (role) => {
   return role === "user"
     ? [
-      {
-        icon: dashboardIcon,
-        title: "Dashboard",
-        link: "/",
-      },
-      {
-        icon: devicesIcon,
-        title: "Devices",
-        link: "/devices",
-      },
-    ]
+        {
+          icon: dashboardIcon,
+          title: "Dashboard",
+          link: "/",
+        },
+        {
+          icon: devicesIcon,
+          title: "Devices",
+          link: "/devices",
+        },
+      ]
     : [
-      {
-        icon: dashboardIcon,
-        title: "Dashboard",
-        link: "/",
-      },
-      {
-        icon: devicesIcon,
-        title: "Devices",
-        link: "/devices",
-      },
-      {
-        icon: userIcon,
-        title: "Users",
-        link: "/users",
-      },
-      // {
-      //   icon: measurementIcon,
-      //   title: "Measurement",
-      //   link: "/measurement",
-      // },
-      {
-        icon: otaIcon,
-        title: "OTA updates",
-        link: "/ota",
-      },
-      // {
-      //   icon: supportIcon,
-      //   title: "Support",
-      //   link: "/support",
-      // },
-      // {
-      //   icon: reportIcon,
-      //   title: "Report",
-      //   link: "/reports",
-      // },
-      // {
-      //   icon: settingsIcon,
-      //   title: "Settings",
-      //   link: "/settings",
-      // },
-      // {
-      //   icon: logoutIcon,
-      //   title: "Logout",
-      //   link: "/logout",
-      // },
-    ];
+        {
+          icon: dashboardIcon,
+          title: "Dashboard",
+          link: "/",
+        },
+        {
+          icon: devicesIcon,
+          title: "Devices",
+          link: "/devices",
+        },
+        {
+          icon: userIcon,
+          title: "Users",
+          link: "/users",
+        },
+        // {
+        //   icon: measurementIcon,
+        //   title: "Measurement",
+        //   link: "/measurement",
+        // },
+        {
+          icon: otaIcon,
+          title: "OTA updates",
+          link: "/ota",
+        },
+        // {
+        //   icon: supportIcon,
+        //   title: "Support",
+        //   link: "/support",
+        // },
+        // {
+        //   icon: reportIcon,
+        //   title: "Report",
+        //   link: "/reports",
+        // },
+        // {
+        //   icon: settingsIcon,
+        //   title: "Settings",
+        //   link: "/settings",
+        // },
+        // {
+        //   icon: logoutIcon,
+        //   title: "Logout",
+        //   link: "/logout",
+        // },
+      ];
 };
 
 export const userTableData = [
@@ -654,7 +654,12 @@ export const energyCards = [
 export const infoData = (realData) => {
   return [
     { label: "DEVICE ID", value: realData?.device_uuid, key: "device_uuid" },
-    { label: "DEVICE PASSWORD", value: realData?.device_pass, key: "device_pass", password: true },
+    {
+      label: "DEVICE PASSWORD",
+      value: realData?.device_pass,
+      key: "device_pass",
+      password: true,
+    },
     { label: "DEVICE IMEI", value: realData?.device_imei, key: "device_imei" },
     { label: "DEVICE IP", value: realData?.device_ip, key: "device_ip" },
     {
@@ -674,12 +679,14 @@ export const infoData = (realData) => {
     },
     {
       label: "GSM STATUS",
-      value: realData?.gsm_status === "true" ? "Server Connected" : "No Connection",
+      value:
+        realData?.gsm_status === "true" ? "Server Connected" : "No Connection",
       key: "gsm_status",
     },
     {
       label: "NTP STATUS",
-      value: realData?.ntp_status === "true" ? "Server Connected" : "No Connection",
+      value:
+        realData?.ntp_status === "true" ? "Server Connected" : "No Connection",
       key: "ntp_status",
     },
   ];
@@ -844,7 +851,7 @@ export const ccData = () => {
 };
 
 export const mqttsProtocol = (realData) => {
-  const data = realData[0]?.data || {};
+  const data = realData || {};
   return [
     {
       label: "MQTTs_ENDPOINT",
@@ -866,19 +873,19 @@ export const mqttsProtocol = (realData) => {
     },
     {
       label: "CA1 cert",
-      value: data?.root_ca === "true",
+      value: data?.root_ca === true,
       key: "root_ca",
       checkBox: true,
     },
     {
       label: "Claim cert",
-      value: data?.claim_cert === "true",
+      value: data?.claim_cert === true,
       key: "claim_cert",
       checkBox: true,
     },
     {
       label: "Claim key",
-      value: data?.claim_key === "true",
+      value: data?.claim_key === true,
       key: "claim_key",
       checkBox: true,
     },
@@ -886,11 +893,20 @@ export const mqttsProtocol = (realData) => {
 };
 
 export const otaData = (realData) => {
-  const data = realData?.data || {};
-  console.log("OTA DATA", realData);
+  const data = realData || {};
   return [
-    { label: "Current Version", value: data?.current_version || "-", key: "current_version" },
-    { label: "Last Update", value: realData?.data ? `${data?.last_update_date}T${data?.last_update_time}` : "-", key: "current_version" },
+    {
+      label: "Current Version",
+      value: data?.current_version || "-",
+      key: "current_version",
+    },
+    {
+      label: "Last Update",
+      value: realData
+        ? `${data?.last_update_date}T${data?.last_update_time}`
+        : "-",
+      key: "current_version",
+    },
   ];
 };
 

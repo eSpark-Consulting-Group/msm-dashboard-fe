@@ -10,7 +10,13 @@ const measurementsSlice = createSlice({
   initialState,
   reducers: {
     updateDeviceMeasurements: (state, action) => {
-      state.measurements = action.payload;
+      const data = action?.payload;
+      const main = {};
+      data.forEach((item) => {
+        const key = Object.keys(item).find((k) => k !== "command");
+        main[key] = item[key];
+      });
+      state.measurements = main;
     },
   },
 
@@ -18,7 +24,14 @@ const measurementsSlice = createSlice({
     builder.addMatcher(
       measurementsApi.endpoints.getMeasurements.matchFulfilled,
       (state, { payload }) => {
-        state.measurements = payload;
+        const items = payload?.data?.data;
+        const main = {};
+        items.forEach((item) => {
+          const key = Object.keys(item).find((k) => k !== "command");
+          main[key] = item[key];
+        });
+        console.log(main);
+        state.measurements = main;
       }
     );
   },

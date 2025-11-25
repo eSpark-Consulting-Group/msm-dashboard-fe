@@ -110,7 +110,8 @@ export function useSocket() {
     const handleSftpInfo = (data) => dispatch(updateSftpInfo(data));
     const handleMqttsInfo = (data) => dispatch(updateMqttsInfo(data));
     const handleOtaInfo = (data) => dispatch(updateOtaInfo(data));
-    const handleMeasurementsInfo = (data) => dispatch(updateDeviceMeasurements(data));
+    const handleMeasurementsInfo = (data) =>
+      dispatch(updateDeviceMeasurements(data));
 
     socketInstance.on(`device_info:${deviceid}`, handleDeviceInfo);
     socketInstance.on(`ntp_info:${deviceid}`, handleNtpInfo);

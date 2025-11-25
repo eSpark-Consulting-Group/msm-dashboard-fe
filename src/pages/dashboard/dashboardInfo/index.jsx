@@ -21,7 +21,10 @@ import {
 } from "../../../services/devices";
 import { useGetNtpDevicesByIdQuery } from "../../../services/ntp";
 import { useGetSftpDevicesByIdQuery } from "../../../services/sftp";
-import { useGetMqttByDeviceIdQuery, useGetMqttsByDeviceIdQuery } from "../../../services/mqtt";
+import {
+  useGetMqttByDeviceIdQuery,
+  useGetMqttsByDeviceIdQuery,
+} from "../../../services/mqtt";
 import {
   addDeviceStatus,
   handleSelectedDevice,
@@ -322,12 +325,10 @@ const DashboardInfo = () => {
       label: "MQTTS",
       component: (
         <InfoCard
-          info={mqttsProtocol([
-            {
-              ...(mqttsData),
-              ...socketMqtts,
-            },
-          ])}
+          info={mqttsProtocol({
+            ...mqttsData?.data,
+            ...socketMqtts,
+          })}
           title="MQTTS Protocol"
           role={user?.role?.name}
           type={"MQTTS"}
@@ -340,7 +341,7 @@ const DashboardInfo = () => {
       component: (
         <InfoCard
           info={otaData({
-            ...(otaDeviceData),
+            ...otaDeviceData?.data,
             ...socketOta,
           })}
           title="OTA"

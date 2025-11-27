@@ -18,6 +18,27 @@ const measurementsSlice = createSlice({
       });
       state.measurements = main;
     },
+    updateCtRatio: (state, action) => {
+      const ct_ratio = action.payload?.ct_ratio;
+      state.measurements = {
+        ...state.measurements,
+        ct_ratio,
+      };
+    },
+    updateVoffSet: (state, action) => {
+      const v_offset = action.payload?.v_offset;
+      state.measurements = {
+        ...state.measurements,
+        v_offset,
+      };
+    },
+    updateIoffSet: (state, action) => {
+      const i_offset = action.payload?.i_offset;
+      state.measurements = {
+        ...state.measurements,
+        i_offset,
+      };
+    },
   },
 
   extraReducers: (builder) => {
@@ -56,5 +77,10 @@ const measurementsSlice = createSlice({
   },
 });
 
-export const { updateDeviceMeasurements } = measurementsSlice.actions;
+export const {
+  updateDeviceMeasurements,
+  updateCtRatio,
+  updateVoffSet,
+  updateIoffSet,
+} = measurementsSlice.actions;
 export default measurementsSlice.reducer;

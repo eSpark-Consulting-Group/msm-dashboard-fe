@@ -22,16 +22,35 @@ const measurementsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder.addMatcher(
-      measurementsApi.endpoints.getMeasurements.matchFulfilled,
+      measurementsApi.endpoints.getMeasurementsCtRatio.matchFulfilled,
       (state, { payload }) => {
-        const items = payload?.data?.data;
-        const main = {};
-        items.forEach((item) => {
-          const key = Object.keys(item).find((k) => k !== "command");
-          main[key] = item[key];
-        });
-        console.log(main);
-        state.measurements = main;
+        const ct_ratio = payload?.data?.measurements;
+        state.measurements = {
+          ...state.measurements,
+          ct_ratio,
+        };
+      }
+    );
+    builder.addMatcher(
+      measurementsApi.endpoints.getMeasurementsVoffSet.matchFulfilled,
+      (state, { payload }) => {
+        const v_offset = payload?.data?.measurements;
+
+        state.measurements = {
+          ...state.measurements,
+          v_offset,
+        };
+      }
+    );
+    builder.addMatcher(
+      measurementsApi.endpoints.getMeasurementsIoffSet.matchFulfilled,
+      (state, { payload }) => {
+        const i_offset = payload?.data?.measurements;
+
+        state.measurements = {
+          ...state.measurements,
+          i_offset,
+        };
       }
     );
   },

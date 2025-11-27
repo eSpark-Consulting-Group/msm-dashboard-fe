@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
@@ -16,7 +16,11 @@ import {
   DynamicTabs2,
   NavigateHeader,
 } from "../../../../components";
-import { useGetMeasurementsQuery } from "../../../../services/measurements";
+import {
+  useGetMeasurementsCtRatioQuery,
+  useGetMeasurementsIoffSetQuery,
+  useGetMeasurementsVoffSetQuery,
+} from "../../../../services/measurements";
 import { flashBlack, home, info } from "../../../../assets";
 import {
   useGetAssignDeviceByIdQuery,
@@ -122,12 +126,32 @@ const Measurement = () => {
   }, [deviceData]);
 
   const { measurements } = useSelector((state) => state.measurements);
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab");
   const [ctRatios, setCtRatios] = useState({});
   const [iOffset, setIOfset] = useState({});
   const [vOffset, setVOfset] = useState({});
 
-  const { isLoading, isError, error } = useGetMeasurementsQuery(id, {
-    skip: !id,
+  const { isLoading, isError, error } = useGetMeasurementsCtRatioQuery(id, {
+    skip: !id || !(tab === null || tab === "0"),
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    isLoading: voffSetLoading,
+    isError: isvOffsetError,
+    error: vOffsetError,
+  } = useGetMeasurementsVoffSetQuery(id, {
+    skip: !id || tab !== "1",
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    isLoading: ioffSetLoading,
+    isError: isiOffsetError,
+    error: iOffsetError,
+  } = useGetMeasurementsIoffSetQuery(id, {
+    skip: !id || tab !== "2",
     refetchOnMountOrArgChange: true,
   });
 
@@ -135,14 +159,32 @@ const Measurement = () => {
     if (isError) {
       toast.error(error?.data?.message || "Failed to fetch measurements");
       setCtRatios({});
-      setIOfset({});
-      setVOfset({});
       return;
     }
     setCtRatios(measurements?.ct_ratio || {});
     setIOfset(measurements?.i_offset || {});
     setVOfset(measurements?.v_offset || {});
   }, [id, isError, error, measurements]);
+
+  useEffect(() => {
+    if (isiOffsetError) {
+      toast.error(
+        iOffsetError?.data?.message || "Failed to fetch measurements"
+      );
+      setIOfset({});
+      return;
+    }
+  }, [iOffsetError, isiOffsetError]);
+
+  useEffect(() => {
+    if (isvOffsetError) {
+      toast.error(
+        vOffsetError?.data?.message || "Failed to fetch measurements"
+      );
+      setVOfset({});
+      return;
+    }
+  }, [vOffsetError, isvOffsetError]);
 
   const ChannelsParentComp = ({ obj, unit }) => {
     return (
@@ -275,11 +317,12 @@ const Measurement = () => {
               columnGap: "40px",
             }}
           >
-            {isLoading ? (
+            {isLoading || ioffSetLoading || voffSetLoading ? (
               <LinearProgress sx={{ width: "100%" }} />
             ) : (
               <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} />
             )}
+            {/* <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} /> */}
           </Box>
         </Paper>
       </Box>

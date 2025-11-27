@@ -30,13 +30,27 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
   const token = localStorage.getItem("msm_token");
 
-  const [sortKey, setSortKey] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
+  const [statusSort, setStatusSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState(-1);
+  const [updatedSort, setUpdatedSort] = useState(-1);
+
+  const handleSort = (key, dir) => {
+    if (key === "status") {
+      setStatusSort(dir);
+    } else if (key === "createdAt") {
+      setCreatedSort(dir);
+    } else if (key === "lastUpdated") {
+      setUpdatedSort(dir);
+    }
+  }
+
+  // const [sortKey, setSortKey] = useState(null);
+  // const [sortOrder, setSortOrder] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -46,8 +60,9 @@ const Dashboard = () => {
       page,
       limit: pageSize,
       search,
-      sortKey,
-      sortOrder,
+      statusSort,
+      createdSort,
+      updatedSort,
     },
     {
       skip: !token || user?.role?.name === "user",
@@ -66,8 +81,9 @@ const Dashboard = () => {
       page,
       limit: pageSize,
       search,
-      sortKey,
-      sortOrder,
+      statusSort,
+      createdSort,
+      updatedSort,
     },
     {
       skip: !token || user?.role?.name !== "user",
@@ -174,29 +190,29 @@ const Dashboard = () => {
         };
       }) || [];
 
-    // ✅ apply client-side sorting
-    if (sortKey && sortOrder) {
-      mappedData = mappedData.sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
+    // // ✅ apply client-side sorting
+    // if (sortKey && sortOrder) {
+    //   mappedData = mappedData.sort((a, b) => {
+    //     const aVal = a[sortKey];
+    //     const bVal = b[sortKey];
 
-        if (sortKey === "status") {
-          return sortOrder === "asc"
-            ? aVal.label.localeCompare(bVal.label)
-            : bVal.label.localeCompare(aVal.label);
-        }
+    //     if (sortKey === "status") {
+    //       return sortOrder === "asc"
+    //         ? aVal.label.localeCompare(bVal.label)
+    //         : bVal.label.localeCompare(aVal.label);
+    //     }
 
-        if (sortKey === "createdAt") {
-          return sortOrder === "asc"
-            ? new Date(aVal) - new Date(bVal)
-            : new Date(bVal) - new Date(aVal);
-        }
+    //     if (sortKey === "createdAt") {
+    //       return sortOrder === "asc"
+    //         ? new Date(aVal) - new Date(bVal)
+    //         : new Date(bVal) - new Date(aVal);
+    //     }
 
-        return sortOrder === "asc"
-          ? String(aVal).localeCompare(String(bVal))
-          : String(bVal).localeCompare(String(aVal));
-      });
-    }
+    //     return sortOrder === "asc"
+    //       ? String(aVal).localeCompare(String(bVal))
+    //       : String(bVal).localeCompare(String(aVal));
+    //   });
+    // }
 
     setData(mappedData);
     setTotal(totalCount)
@@ -204,8 +220,9 @@ const Dashboard = () => {
     isError,
     error,
     dashboardData,
-    sortKey,
-    sortOrder,
+    statusSort,
+    createdSort,
+    updatedSort,
     dashboardData2,
     user,
     isError2,
@@ -271,22 +288,20 @@ const Dashboard = () => {
 
       <DynamicTable
         data={data}
-        columns={columns(user?.role?.name)}
+        columns={columns(user?.role?.name, statusSort, createdSort, updatedSort)}
         hideView
         hideEdit
         handleDelete={handleDelete}
         isLoading={isLoading || isLoading2 || isFetching || isFetching2}
         page={page}
         pageSize={pageSize}
+        setPageSize={setPageSize}
         handlePageChange={handlePageChange}
         total={total}
         onRowClick={handleRowClick}
-        sortKey={sortKey}
-        sortOrder={sortOrder}
-        onSortChange={(key, order) => {
-          setSortKey(key);
-          setSortOrder(order);
-        }}
+        // sortKey={sortKey}
+        // sortOrder={sortOrder}
+        onSortChange={handleSort}
       />
 
       {/* <AddDashboardModal

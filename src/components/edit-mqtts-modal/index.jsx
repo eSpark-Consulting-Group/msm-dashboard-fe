@@ -12,7 +12,7 @@ const EditMqtts = ({ data, handleCancel }) => {
   const formik = useFormik({
     initialValues: {
       broker_ip: data?.broker_ip ?? "",
-      broker_port: data?.broker_port ?? "",
+      // broker_port: data?.broker_port ?? "",
       data_interval: data?.data_interval ?? "",
       root_ca: Boolean(data?.root_ca),
       claim_cert: Boolean(data?.claim_cert),
@@ -24,7 +24,7 @@ const EditMqtts = ({ data, handleCancel }) => {
       try {
         const obj = {
           broker_ip: values?.broker_ip,
-          broker_port: values?.broker_port,
+          // broker_port: values?.broker_port,
           data_interval: values?.data_interval,
           root_ca: values?.root_ca ? "true" : "false",
           claim_cert: values?.claim_cert ? "true" : "false",
@@ -75,7 +75,7 @@ const EditMqtts = ({ data, handleCancel }) => {
             helperText={formik.touched.broker_ip && formik.errors.broker_ip}
           />
         </Box>
-        <Box sx={{ width: "100%" }}>
+        {/* <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="MQTTs Port"
             placeholder="MQTTs Port"
@@ -89,7 +89,7 @@ const EditMqtts = ({ data, handleCancel }) => {
             }
             helperText={formik.touched.broker_port && formik.errors.broker_port}
           />
-        </Box>
+        </Box> */}
 
         <Box sx={{ width: "100%" }}>
           <OutlinedInput

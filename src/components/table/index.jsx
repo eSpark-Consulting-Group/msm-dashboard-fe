@@ -13,6 +13,8 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { copyToClipboard, getValue } from "../../utils";
@@ -30,12 +32,11 @@ const DynamicTable = ({
   hideDelete,
   page,
   pageSize,
+  setPageSize,
   handlePageChange,
   total,
   onRowClick,
   mqttTable,
-  sortKey,
-  sortOrder,
   onSortChange,
   selectedRows = [],
   onSelectRow,
@@ -259,14 +260,9 @@ const DynamicTable = ({
                     key={`${index}`}
                     onClick={() => {
                       if (column.sortable && onSortChange) {
-                        if (sortKey !== column.key) {
-                          // clicked a NEW column → start with ascending
-                          onSortChange(column.key, "asc");
-                        } else {
-                          // clicked SAME column → toggle asc ↔ desc only
-                          const newOrder = sortOrder === "asc" ? "desc" : "asc";
-                          onSortChange(column.key, newOrder);
-                        }
+                        // clicked SAME column → toggle asc ↔ desc only
+                        const newOrder = column?.sortDir === 1 ? -1 : 1;
+                        onSortChange(column.key, newOrder);
                       }
                     }}
                     sx={{
@@ -283,18 +279,9 @@ const DynamicTable = ({
                       {column.name}
                       {column.sortable && (
                         <>
-                          {/* Neutral indicator before any sorting */}
-                          {sortKey !== column.key && (
-                            <ArrowUpward sx={{ fontSize: 14, opacity: 0.3 }} />
-                          )}
-
-                          {/* Active sorting indicators */}
-                          {sortKey === column.key && sortOrder === "asc" && (
-                            <ArrowUpward sx={{ fontSize: 16 }} />
-                          )}
-                          {sortKey === column.key && sortOrder === "desc" && (
-                            <ArrowDownward sx={{ fontSize: 16 }} />
-                          )}
+                          {column.sortDir === -1 ?
+                            <ArrowUpward sx={{ fontSize: 16 }} /> : <ArrowDownward sx={{ fontSize: 16 }} />
+                          }
                         </>
                       )}
                     </Stack>
@@ -338,7 +325,6 @@ const DynamicTable = ({
                           sx={{
                             textAlign: "center",
                             pl: "0px",
-                            cursor: onRowClick ? "pointer" : "auto",
                             whiteSpace: "pre-line",
                             backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
                             cursor: otaStarted ? "not-allowed" : onRowClick ? "pointer" : "auto",
@@ -362,11 +348,14 @@ const DynamicTable = ({
           )}
         </TableContainer>
       )}
-      {total > pageSize && !isLoading ? (
+      {!isLoading ? (
         <Stack
           sx={{ marginTop: { xs: "20px", sm: "10px" } }}
           p={{ xs: 0, sm: 2 }}
           alignItems="center"
+          justifyContent={"center"}
+          spacing={2}
+          direction={"row"}
         >
           <Pagination
             page={page}
@@ -377,6 +366,18 @@ const DynamicTable = ({
             }
             count={Math.ceil((total || 1) / pageSize)}
           />
+          <Select
+            size="small"
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+            sx={{ width: 80, background: "transparent" }}
+          >
+            {[10, 20, 50, 100].map((size) => (
+              <MenuItem key={size} value={size}>
+                {size}
+              </MenuItem>
+            ))}
+          </Select>
         </Stack>
       ) : null}
     </>

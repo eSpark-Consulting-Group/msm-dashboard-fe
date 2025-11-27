@@ -1,4 +1,4 @@
-import { Box, LinearProgress, Paper, Typography } from "@mui/material";
+import { Box, LinearProgress, Paper, Typography, Switch } from "@mui/material";
 import {
   ChannelPagination,
   DynamicTabs,
@@ -343,7 +343,7 @@ const ChannelInfo = () => {
               position: "relative",
             }}
           >
-            <DynamicTabs tabs={tabs} temperature={true} />
+            <DynamicTabs width="fit-content" maxWidth={650} tabs={tabs} temperature={true} />
             <ChannelPagination
               channelName={channelName}
               handlePageBack={handlePageBack}
@@ -351,19 +351,24 @@ const ChannelInfo = () => {
             />
 
             {
-              <Box
-                sx={{
-                  position: "absolute",
-                  right: 10,
-                  top: 15,
-                  transform: "translateY(-50%)",
-                  display: { xs: "none", lg: "block" },
-                }}
-              >
-                <Typography sx={{ fontSize: "24px", fontWeight: "700" }}>
-                  Temperature: {Number(temperature).toFixed(2)} °C
-                </Typography>
-              </Box>
+
+              <TemperatureSwitch
+                temperature={temperature}
+              />
+
+              // <Box
+              //   sx={{
+              //     position: "absolute",
+              //     right: 10,
+              //     top: 15,
+              //     transform: "translateY(-50%)",
+              //     display: { xs: "none", lg: "block" },
+              //   }}
+              // >
+              //   <Typography sx={{ fontSize: "24px", fontWeight: "700" }}>
+              //     Temperature: {Number(temperature).toFixed(2)} °C
+              //   </Typography>
+              // </Box>
             }
           </Box>
         )}
@@ -373,3 +378,40 @@ const ChannelInfo = () => {
 };
 
 export default ChannelInfo;
+
+
+const TemperatureSwitch = ({ temperature }) => {
+  const [unit, setUnit] = useState("c");
+
+  const displayedTemp =
+    unit === "c"
+      ? Number(temperature).toFixed(2)
+      : ((Number(temperature) * 9) / 5 + 32).toFixed(2);
+
+  return (
+    <Box
+      sx={{
+        position: "absolute",
+        right: 10,
+        top: 15,
+        transform: "translateY(-50%)",
+        // display: { xs: "none", lg: "block" },
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        gap: 0,
+      }}
+    >
+      <Typography sx={{ fontSize: "24px", fontWeight: "700" }}>
+        Temperature: {displayedTemp} °{unit === "c" ? "C" : "F"}
+      </Typography>
+
+      <Switch
+        checked={unit === "f"}
+        onChange={(e) => setUnit(e.target.checked ? "f" : "c")}
+      />
+    </Box>
+  );
+
+};
+

@@ -19,7 +19,14 @@ import {
 const UserDetails = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
 
   const params = useParams();
   const { search: searchQuery } = useLocation();
@@ -95,6 +102,7 @@ const UserDetails = () => {
           },
         })) || [];
       setData(deviceData);
+      setTotal(userDetailsData?.count || 0);
     }
   }, [userDetailsData]);
 
@@ -119,6 +127,7 @@ const UserDetails = () => {
           },
         })) || [];
       setData(deviceData);
+      setTotal(userDetailsData2?.count || 0);
     }
   }, [userDetailsData2]);
 
@@ -136,6 +145,11 @@ const UserDetails = () => {
 
       <DynamicTable
         data={data}
+        page={page}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        total={total}
+        handlePageChange={handlePageChange}
         columns={columns()}
         handleDelete={handleDelete}
         hideView

@@ -5,6 +5,7 @@ import { Logo } from "../../components";
 import { sidebarTabs } from "../../constant";
 import { useClickOutside } from "../../utils";
 import { useSelector } from "react-redux";
+import { mainLogo } from "../../assets";
 
 const Sidebar = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.auth);
@@ -39,11 +40,12 @@ const Sidebar = ({ open, setOpen }) => {
         justifyContent: "flex-start",
         flexDirection: "column",
         alignItems: "center",
-        gap: "60px",
+        gap: "30px",
       }}
     >
       <Box sx={{ marginTop: "33px" }}>
-        <Logo />
+        {/* <Logo /> */}
+        <img src={mainLogo} alt="Logo" style={{ width: "80px" }} /> 
       </Box>
       <Box
         sx={{

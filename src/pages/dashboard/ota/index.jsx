@@ -21,14 +21,28 @@ import { useGetVersionsListQuery, useUpdateVersionMutation } from "../../../serv
 const Devices = () => {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
-    const [pageSize] = useState(9);
+    const [pageSize, setPageSize] = useState(10);
     const [total] = useState(9);
     const [data, setData] = useState([]);
     const { user } = useSelector((state) => state.auth);
 
+    const [statusSort, setStatusSort] = useState(-1);
+    // const [createdSort, setCreatedSort] = useState(-1);
+    const [updatedSort, setUpdatedSort] = useState(-1);
+
+    const handleSort = (key, dir) => {
+        if (key === "status") {
+            setStatusSort(dir);
+        // } else if (key === "createdAt") {
+        //     setCreatedSort(dir);
+        } else if (key === "lastUpdated") {
+            setUpdatedSort(dir);
+        }
+    }
+
     // Sorting state
-    const [sortKey, setSortKey] = useState(null);
-    const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
+    // const [sortKey, setSortKey] = useState(null);
+    // const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
 
     const {
         data: versionsList,
@@ -60,7 +74,7 @@ const Devices = () => {
         error: error,
         refetch,
     } = useGetAllDevicesQuery(
-        { page, limit: pageSize, search },
+        { page, limit: pageSize, search, statusSort, updatedSort },
         {
             skip: user?.role?.name === "user",
             refetchOnMountOrArgChange: true,
@@ -74,7 +88,7 @@ const Devices = () => {
         error: error2,
         refetch: refetch2
     } = useGetAllAssignDevicesQuery(
-        { page, limit: pageSize, search },
+        { page, limit: pageSize, search, statusSort, updatedSort },
         {
             skip: user?.role?.name !== "user",
             refetchOnMountOrArgChange: true,
@@ -133,36 +147,36 @@ const Devices = () => {
                 };
             }) || [];
         setData(deviceData);
-    }, [isError, error, isError2, error2, devicesData]);
+    }, [isError, error, isError2, error2, devicesData, statusSort, updatedSort]);
 
     const handlePageChange = (page) => {
         setPage(page);
     };
 
     // Sorting function
-    const handleSortChange = (key, order) => {
-        setSortKey(key);
-        setSortOrder(order);
-    };
+    // const handleSortChange = (key, order) => {
+    //     setSortKey(key);
+    //     setSortOrder(order);
+    // };
 
-    const getSortedData = () => {
-        if (!sortKey || !sortOrder) return data;
+    // const getSortedData = () => {
+    //     if (!sortKey || !sortOrder) return data;
 
-        return [...data].sort((a, b) => {
-            let aVal = a[sortKey];
-            let bVal = b[sortKey];
+    //     return [...data].sort((a, b) => {
+    //         let aVal = a[sortKey];
+    //         let bVal = b[sortKey];
 
-            // Special handling for status (Active/Inactive)
-            if (sortKey === "status") {
-                aVal = aVal?.label || "";
-                bVal = bVal?.label || "";
-            }
+    //         // Special handling for status (Active/Inactive)
+    //         if (sortKey === "status") {
+    //             aVal = aVal?.label || "";
+    //             bVal = bVal?.label || "";
+    //         }
 
-            if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
-            if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
-            return 0;
-        });
-    };
+    //         if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+    //         if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+    //         return 0;
+    //     });
+    // };
 
     const [selectedVersion, setSelectedVersion] = useState(null);
     const [modal, setModal] = useState(false);
@@ -308,19 +322,21 @@ const Devices = () => {
                 </Box>
             </Box>
             <DynamicTable
-                data={getSortedData()}
-                columns={columns()}
+                data={data}
+                columns={columns(statusSort, updatedSort)}
                 isLoading={deviceLoading || deviceLoading2 || deviceFetching || deviceFetching2}
                 page={page}
                 pageSize={pageSize}
+                setPageSize={setPageSize}
                 handlePageChange={handlePageChange}
                 total={total}
                 hideView={true}
                 hideEdit={true}
                 hideDelete={true}
-                sortKey={sortKey}
-                sortOrder={sortOrder}
-                onSortChange={handleSortChange}
+                // sortKey={sortKey}
+                // sortOrder={sortOrder}
+                // onSortChange={handleSortChange}
+                onSortChange={handleSort}
                 selectedRows={selectedRows}
                 onSelectRow={handleSelectRow}
                 onSelectAll={handleSelectAll}

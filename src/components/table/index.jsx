@@ -124,8 +124,8 @@ const DynamicTable = ({
           {showUnAssign && (
             <img
               src={unassign}
-              alt="Delete"
-              style={{ cursor: "pointer", width: "23px", height: "23px" }}
+              alt="Unassign"
+              style={{ cursor: "pointer", width: "19px", height: "19px" }}
               onClick={(e) => {
                 e.stopPropagation();
                 handleUnAssign(item);

@@ -29,7 +29,7 @@ const Devices = () => {
   const [data, setData] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
-  const [statusSort, setStatusSort] = useState(-1);
+  const [statusSort, setStatusSort] = useState("");
   // const [createdSort, setCreatedSort] = useState(-1);
   const [updatedSort, setUpdatedSort] = useState(-1);
 
@@ -352,19 +352,21 @@ const Devices = () => {
           <Dropdown
             name="status"
             variant="outlined"
-            placeholder="Select Version"
+            placeholder="Select Status"
             noLabel
             options={
               user?.role?.name === "user"
                 ? [
+                    { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
                     // { label: "Unassigned", value: 2 },
                   ]
                 : [
+                    { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Unassigned", value: 2 },
+                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

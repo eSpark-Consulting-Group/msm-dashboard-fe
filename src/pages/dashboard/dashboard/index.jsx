@@ -17,6 +17,7 @@ import {
   useDeleteUserDeviceMutation,
   useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
+  useUnAssignDeviceMutation,
 } from "../../../services/devices";
 import { useDispatch, useSelector } from "react-redux";
 import MeterReadingConfigPopover from "../../../components/meter-reading-modal";
@@ -34,9 +35,10 @@ const Dashboard = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
+  const [deviceUnAssign, setDeviceUnAssign] = useState(false);
   const token = localStorage.getItem("msm_token");
 
-  const [statusSort, setStatusSort] = useState(-1);
+  const [statusSort, setStatusSort] = useState("");
   const [createdSort, setCreatedSort] = useState(-1);
   const [updatedSort, setUpdatedSort] = useState(-1);
 
@@ -285,9 +287,25 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(statusSort);
-  }, [statusSort]);
+  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+
+  const handleUnAssign = (item) => {
+    setDeviceUnAssign(item);
+  }
+
+  const handleUnassignDevice = () => {
+    unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to unassign device");
+        setDeviceUnAssign(false);
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device unassigned successfully");
+        setDeviceUnAssign(false);
+      }
+    });
+  };
 
   return (
     <>
@@ -306,7 +324,7 @@ const Dashboard = () => {
           alignItems: "center",
         }}
       >
-        <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
+        <Box sx={{ my: "27px", width: { xs: "100%", md: "495px" } }}>
           <SearchBar
             value={search}
             onChange={(val) => {
@@ -315,23 +333,25 @@ const Dashboard = () => {
             }}
           />
         </Box>
-        <Box sx={{ width: { xs: "100%", md: "40%", lg: "30%" } }}>
+        <Box sx={{ width: { xs: "100%", md: "200px" } }}>
           <Dropdown
             name="status"
             variant="outlined"
-            placeholder="Select Version"
+            placeholder="Select Status"
             noLabel
             options={
               user?.role?.name === "user"
                 ? [
+                    { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
                     // { label: "Unassigned", value: 2 },
                   ]
                 : [
+                    { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Unassigned", value: 2 },
+                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}
@@ -361,6 +381,8 @@ const Dashboard = () => {
         hideView
         hideEdit
         handleDelete={handleDelete}
+        showUnAssign={user?.role?.name === "super_admin"}
+        handleUnAssign={handleUnAssign}
         isLoading={isLoading || isLoading2 || isFetching || isFetching2}
         page={page}
         pageSize={pageSize}
@@ -390,6 +412,19 @@ const Dashboard = () => {
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?
+        </Typography>
+      </DeleteModal>
+      <DeleteModal
+        open={deviceUnAssign}
+        handleClose={() => setDeviceUnAssign(false)}
+        heading={"Unassign Device"}
+        handleAccept={handleUnassignDevice}
+        handleCancel={() => setDeviceUnAssign(false)}
+        loading={unassignLoading}
+        btnText="Unassign"
+      >
+        <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
+          Are you sure you want to unassign this device?
         </Typography>
       </DeleteModal>
     </>

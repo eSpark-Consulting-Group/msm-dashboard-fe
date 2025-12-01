@@ -14,6 +14,7 @@ import bellIcon from "./icons/bell.svg";
 import view from "./icons/view.svg";
 import edit from "./icons/edit.svg";
 import trash from "./icons/delete.svg";
+import unassign from "./icons/unassign.svg";
 import copy from "./icons/copy.svg";
 import user from "./icons/user.svg";
 import dummyUser from "./icons/avatar.svg";
@@ -70,6 +71,7 @@ export {
   view,
   edit,
   trash,
+  unassign,
   copy,
   avatar,
   user,

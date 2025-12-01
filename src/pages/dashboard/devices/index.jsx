@@ -23,6 +23,7 @@ import {
   useDeleteDeviceMutation,
   useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
+  useUnAssignDeviceMutation,
 } from "../../../services/devices";
 import {
   useDeleteGroupMutation,
@@ -43,12 +44,13 @@ const Devices = () => {
   const [deviceData, setDeviceData] = useState([]);
   const [deviceGroupData, setDeviceGroupData] = useState([]);
   const [deviceDelete, setDeviceDelete] = useState(false);
+  const [deviceUnAssign, setDeviceUnAssign] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(null);
   const [importDeviceModal, setImportDeviceModal] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
-  const [statusSort, setStatusSort] = useState(-1);
+  const [statusSort, setStatusSort] = useState("");
   const [createdSort, setCreatedSort] = useState(-1);
   const [updatedSort, setUpdatedSort] = useState(-1);
 
@@ -316,6 +318,26 @@ const Devices = () => {
     setImportDeviceModal(true);
   };
 
+  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+
+  const handleUnAssign = (item) => {
+    setDeviceUnAssign(item);
+  }
+
+  const handleUnassignDevice = () => {
+    unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to unassign device");
+        setDeviceUnAssign(false);
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device unassigned successfully");
+        setDeviceUnAssign(false);
+      }
+    });
+  };
+
   // Sorting function
   // const handleSortChange = (key, order) => {
   //   setSortKey(key);
@@ -381,20 +403,22 @@ const Devices = () => {
           <Dropdown
             name="status"
             variant="outlined"
-            placeholder="Select Version"
+            placeholder="Select Status"
             noLabel
             options={
               user?.role?.name === "user"
                 ? [
-                    { label: "Active", value: -1 },
-                    { label: "In Active", value: 1 },
-                    // { label: "Unassigned", value: 2 },
-                  ]
+                  { label: "All", value: "" },
+                  { label: "Active", value: -1 },
+                  { label: "In Active", value: 1 },
+                  // { label: "Unassigned", value: 2 },
+                ]
                 : [
-                    { label: "Active", value: -1 },
-                    { label: "In Active", value: 1 },
-                    { label: "Unassigned", value: 2 },
-                  ]
+                  { label: "All", value: "" },
+                  { label: "Active", value: -1 },
+                  { label: "In Active", value: 1 },
+                  { label: "Un Assigned", value: 2 },
+                ]
             }
             value={statusSort}
             handleChange={(e) => setStatusSort(e.target.value)}
@@ -428,6 +452,8 @@ const Devices = () => {
         }
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        showUnAssign={user?.role?.name === "super_admin"}
+        handleUnAssign={handleUnAssign}
         page={page}
         pageSize={pageSize}
         setPageSize={setPageSize}
@@ -467,9 +493,8 @@ const Devices = () => {
         loading={deleteGroupLoading || deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          {`Are you sure you want to delete this ${
-            activeTab === 0 ? "device" : "group"
-          }`}
+          {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"
+            }`}
         </Typography>
       </DeleteModal>
       <DynamicModal
@@ -514,6 +539,19 @@ const Devices = () => {
       >
         <ImportDeviceModal />
       </DynamicModal>
+      <DeleteModal
+        open={deviceUnAssign}
+        handleClose={() => setDeviceUnAssign(false)}
+        heading={"Unassign Device"}
+        handleAccept={handleUnassignDevice}
+        handleCancel={() => setDeviceUnAssign(false)}
+        loading={unassignLoading}
+        btnText="Unassign"
+      >
+        <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
+          Are you sure you want to unassign this device?
+        </Typography>
+      </DeleteModal>
     </>
   );
 };

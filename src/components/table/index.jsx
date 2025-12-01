@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { copyToClipboard, getValue } from "../../utils";
-import { view, edit, trash, copy } from "../../assets";
+import { view, edit, trash, copy, unassign } from "../../assets";
 
 const DynamicTable = ({
   data,
@@ -30,6 +30,8 @@ const DynamicTable = ({
   hideView,
   hideEdit,
   hideDelete,
+  showUnAssign,
+  handleUnAssign,
   page,
   pageSize,
   setPageSize,
@@ -116,6 +118,17 @@ const DynamicTable = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(item);
+              }}
+            />
+          )}
+          {showUnAssign && (
+            <img
+              src={unassign}
+              alt="Delete"
+              style={{ cursor: "pointer", width: "23px", height: "23px" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUnAssign(item);
               }}
             />
           )}

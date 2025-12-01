@@ -689,6 +689,18 @@ export const infoData = (realData) => {
         realData?.ntp_status === "true" ? "Server Connected" : "No Connection",
       key: "ntp_status",
     },
+    {
+      label: "Hardware Version",
+      value:
+        realData?.hardware_version || "-",
+      key: "hardware_version",
+    },
+    {
+      label: "Firmware Version",
+      value:
+        realData?.firmware_version || "-",
+      key: "firmware_version",
+    },
   ];
 };
 

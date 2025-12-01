@@ -10,6 +10,7 @@ const DeleteModal = ({
   handleCancel,
   handleAccept,
   heading,
+  btnText,
 }) => {
   return (
     <Modal
@@ -98,7 +99,7 @@ const DeleteModal = ({
           </Box>
           <Box sx={{ width: { xs: "100%", md: "47%" }, height: "44px" }}>
             <Button loading={loading} disabled={loading} variant="delete" disableRipple onClick={handleAccept}>
-              Delete
+              {btnText || "Delete"}
             </Button>
           </Box>
         </Box>

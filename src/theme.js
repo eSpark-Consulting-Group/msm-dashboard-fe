@@ -265,7 +265,7 @@ export const theme = createTheme({
           style: {
             backgroundColor: "#e0e0e0",
             color: "#333",
-            width: "100px",
+            minWidth: "100px",
             height: "30px",
             fontSize: "16px",
             fontWeight: 400,

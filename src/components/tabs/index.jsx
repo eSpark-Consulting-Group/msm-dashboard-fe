@@ -2,7 +2,7 @@ import { Box, Tab, Tabs, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const DynamicTabs = ({ tabs, onTabChange, width, maxWidth }) => {
+const DynamicTabs = ({ tabs, onTabChange }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromQuery = searchParams.get("tab");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -40,10 +40,10 @@ const DynamicTabs = ({ tabs, onTabChange, width, maxWidth }) => {
           p: 0.5,
           display: "flex",
           justifyContent: "center",
-          width: { xs: "100%", sm: width },
+          width: { xs: "100%", sm: "fit-content" },
         }}
       >
-        <Box sx={{ width: "100%", maxWidth }}>
+        <Box sx={{ width: "100%", maxWidth: 652 }}>
           <Tabs
             key={isMobile ? "mobile" : "desktop"}
             value={selectedIndex}

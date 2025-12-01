@@ -12,7 +12,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
   const formik = useFormik({
     initialValues: {
       server_ip: data?.server_ip ?? "",
-      // server_port: data?.server_port ?? "",
+      server_port: data?.server_port ?? "",
       username: data?.username ?? "",
       password: data?.password ?? "",
       data_interval: data?.data_interval ?? "",
@@ -23,7 +23,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
       try {
         const obj = {
           server_ip: values?.server_ip,
-          // server_port: values?.server_port,
+          server_port: values?.server_port,
           username: values?.username,
           password: values?.password,
           data_interval: values?.data_interval,
@@ -74,7 +74,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
           />
         </Box>
 
-        {/* <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="Server Port"
             placeholder="Server Port"
@@ -88,7 +88,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
             }
             helperText={formik.touched.server_port && formik.errors.server_port}
           />
-        </Box> */}
+        </Box>
 
         <Box sx={{ width: "100%" }}>
           <OutlinedInput

@@ -17,8 +17,6 @@ import {
   UserDetails,
   VerifyEmail,
   ResetPassword,
-  Measurement,
-  OTA,
 } from "./pages";
 import DashboardInfo from "./pages/dashboard/dashboardInfo";
 import { useSelector } from "react-redux";
@@ -47,13 +45,10 @@ const Router = () => {
               <Route path="/users" element={<Users />} />
               <Route path="/users/add" element={<AddUser />} />
               <Route path="/users/:id" element={<UserDetails />} />
-              {/* <Route path="/measurement" element={<Measurement />} /> */}
-              <Route path="/ota" element={<OTA />} />
             </>
           )}
 
           <Route path="/dashboard/:id/home" element={<DashboardHome />} />
-          <Route path="/dashboard/:id/measurement" element={<Measurement />} />
           <Route
             path="/dashboard/:id/home/:channelId"
             element={<ChannelInfo />}

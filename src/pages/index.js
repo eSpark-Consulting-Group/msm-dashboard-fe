@@ -17,8 +17,6 @@ const DashboardHome = lazy(() => import("./dashboard/dashboard/home"));
 const ChannelInfo = lazy(() => import("./dashboard/dashboard/channel-info"));
 const MqttProtocol = lazy(() => import("./dashboard/mqtt-protocol"));
 const UserDetails = lazy(() => import("./dashboard/users/user-details"));
-const Measurement = lazy(() => import("./dashboard/dashboard/measurements"));
-const OTA = lazy(() => import("./dashboard/ota"));
 
 export {
   Login,
@@ -35,6 +33,4 @@ export {
   UserDetails,
   VerifyEmail,
   ResetPassword,
-  Measurement,
-  OTA,
 };

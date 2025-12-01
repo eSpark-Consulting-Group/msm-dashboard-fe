@@ -1,8 +1,6 @@
 import dashboardIcon from "./icons/dashboard.svg";
 import devicesIcon from "./icons/devices.svg";
 import userIcon from "./icons/users.svg";
-import measurementIcon from "./icons/measurement-icon.svg";
-import otaIcon from "./icons/ota-icon.svg";
 import supportIcon from "./icons/support.svg";
 import reportIcon from "./icons/report.svg";
 import settingsIcon from "./icons/settings.svg";
@@ -57,8 +55,6 @@ export {
   dashboardIcon,
   devicesIcon,
   userIcon,
-  measurementIcon,
-  otaIcon,
   supportIcon,
   reportIcon,
   settingsIcon,

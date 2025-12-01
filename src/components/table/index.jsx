@@ -2,7 +2,6 @@ import {
   Avatar,
   Box,
   Chip,
-  Checkbox,
   LinearProgress,
   Pagination,
   Stack,
@@ -13,8 +12,6 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { copyToClipboard, getValue } from "../../utils";
@@ -32,15 +29,13 @@ const DynamicTable = ({
   hideDelete,
   page,
   pageSize,
-  setPageSize,
   handlePageChange,
   total,
   onRowClick,
   mqttTable,
+  sortKey,
+  sortOrder,
   onSortChange,
-  selectedRows = [],
-  onSelectRow,
-  onSelectAll,
 }) => {
   // keep key as string for sorting, arrows
   // add keyPath for nested object access
@@ -49,42 +44,18 @@ const DynamicTable = ({
     keyPath: column.key.split("."),
   }));
 
-  const allStatusFalse = data.every(
-    (item) => item?.status?.label === "Inactive"
-  );
-  const enabledRows = data.filter((item) => item?.status?.label !== "Inactive");
-  const allSelected =
-    enabledRows.length > 0 &&
-    enabledRows
-      .filter((item) => {
-        const isInactive = item?.status?.label === "Inactive";
-        const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
-        const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
-        const otaStatus = otaStatus1 || otaStatus2;
-        const isOtaStarted = otaStatus === "started";
-        return !isInactive && !isOtaStarted;
-      })
-      .every((item) => selectedRows.includes(item._id));
-
   const generateCell = (column, item) => {
     const cell = column.component
       ? column.component(item)
       : getValue(item, column.keyPath);
 
     if (column.key === "action") {
-      const disabled =
-        item?.device_data?.ota?.[0]?.ota_status === "started" ||
-        item?.device_data?.device_data?.ota?.[0]?.ota_status === "started";
       return (
         <Stack
           direction="row"
           justifyContent="center"
           alignItems="center"
           spacing={1}
-          sx={{
-            opacity: disabled ? 0.4 : 1,
-            pointerEvents: disabled ? "none" : "auto",
-          }}
         >
           {!hideView && (
             <img
@@ -248,26 +219,19 @@ const DynamicTable = ({
               }}
             >
               <TableRow>
-                {onSelectRow && (
-                  <TableCell sx={{ width: "40px", textAlign: "center" }}>
-                    <Checkbox
-                      sx={{ color: "#000" }}
-                      checked={allSelected}
-                      disabled={allStatusFalse}
-                      indeterminate={allSelected}
-                      onChange={(e) => onSelectAll?.(e.target.checked)}
-                    />
-                  </TableCell>
-                )}
-
                 {extendedColumns?.map((column, index) => (
                   <TableCell
                     key={`${index}`}
                     onClick={() => {
                       if (column.sortable && onSortChange) {
-                        // clicked SAME column → toggle asc ↔ desc only
-                        const newOrder = column?.sortDir === 1 ? -1 : 1;
-                        onSortChange(column.key, newOrder);
+                        if (sortKey !== column.key) {
+                          // clicked a NEW column → start with ascending
+                          onSortChange(column.key, "asc");
+                        } else {
+                          // clicked SAME column → toggle asc ↔ desc only
+                          const newOrder = sortOrder === "asc" ? "desc" : "asc";
+                          onSortChange(column.key, newOrder);
+                        }
                       }
                     }}
                     sx={{
@@ -284,9 +248,16 @@ const DynamicTable = ({
                       {column.name}
                       {column.sortable && (
                         <>
-                          {column.sortDir === -1 ? (
+                          {/* Neutral indicator before any sorting */}
+                          {sortKey !== column.key && (
+                            <ArrowUpward sx={{ fontSize: 14, opacity: 0.3 }} />
+                          )}
+
+                          {/* Active sorting indicators */}
+                          {sortKey === column.key && sortOrder === "asc" && (
                             <ArrowUpward sx={{ fontSize: 16 }} />
-                          ) : (
+                          )}
+                          {sortKey === column.key && sortOrder === "desc" && (
                             <ArrowDownward sx={{ fontSize: 16 }} />
                           )}
                         </>
@@ -310,59 +281,24 @@ const DynamicTable = ({
                   }),
                 }}
               >
-                {data?.map((item, index) => {
-                  const otaStarted =
-                    item?.device_data?.ota?.[0]?.ota_status === "started" ||
-                    item?.device_data?.device_data?.ota?.[0]?.ota_status ===
-                      "started";
-                  return (
-                    <TableRow key={index}>
-                      {/* Row Checkbox */}
-                      {onSelectRow && (
-                        <TableCell
-                          sx={{
-                            textAlign: "center",
-                            backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
-                          }}
-                        >
-                          <Checkbox
-                            sx={{ color: "#000" }}
-                            checked={selectedRows.includes(item._id)}
-                            onChange={(e) =>
-                              onSelectRow?.(item._id, e.target.checked)
-                            }
-                            disabled={
-                              item?.status?.label === "Inactive" || otaStarted
-                            }
-                          />
-                        </TableCell>
-                      )}
-                      {extendedColumns?.map((column) => (
-                        <TableCell
-                          sx={{
-                            textAlign: "center",
-                            pl: "0px",
-                            whiteSpace: "pre-line",
-                            backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
-                            cursor: otaStarted
-                              ? "not-allowed"
-                              : onRowClick
-                              ? "pointer"
-                              : "auto",
-                          }}
-                          key={column.key}
-                          onClick={
-                            onRowClick && !otaStarted
-                              ? () => onRowClick(item)
-                              : () => {}
-                          }
-                        >
-                          {generateCell(column, item)}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
+                {data?.map((item, index) => (
+                  <TableRow key={index}>
+                    {extendedColumns?.map((column) => (
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          pl: "0px",
+                          cursor: onRowClick ? "pointer" : "auto",
+                          whiteSpace: "pre-line",
+                        }}
+                        key={column.key}
+                        onClick={onRowClick ? () => onRowClick(item) : () => {}}
+                      >
+                        {generateCell(column, item)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
               </TableBody>
             )}
           </Table>
@@ -373,14 +309,11 @@ const DynamicTable = ({
           )}
         </TableContainer>
       )}
-      {!isLoading ? (
+      {total > pageSize && !isLoading ? (
         <Stack
           sx={{ marginTop: { xs: "20px", sm: "10px" } }}
           p={{ xs: 0, sm: 2 }}
           alignItems="center"
-          justifyContent={"center"}
-          spacing={2}
-          direction={"row"}
         >
           <Pagination
             page={page}
@@ -391,18 +324,6 @@ const DynamicTable = ({
             }
             count={Math.ceil((total || 1) / pageSize)}
           />
-          <Select
-            size="small"
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-            sx={{ width: 80, background: "transparent" }}
-          >
-            {[10, 20, 50, 100].map((size) => (
-              <MenuItem key={size} value={size}>
-                {size}
-              </MenuItem>
-            ))}
-          </Select>
         </Stack>
       ) : null}
     </>

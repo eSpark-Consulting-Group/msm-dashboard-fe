@@ -13,7 +13,7 @@ const EditMqtt = ({ data, handleCancel }) => {
     initialValues: {
       broker_ip: data?.broker_ip ?? "",
       broker_pass: data?.broker_pass ?? "",
-      // broker_port: data?.broker_port ?? "",
+      broker_port: data?.broker_port ?? "",
       broker_user: data?.broker_user ?? "",
       data_interval: data?.data_interval ?? "",
       mqtt_topic: data?.mqtt_topic ?? "",
@@ -25,7 +25,7 @@ const EditMqtt = ({ data, handleCancel }) => {
         const obj = {
           broker_ip: values?.broker_ip,
           broker_pass: values?.broker_pass,
-          // broker_port: values?.broker_port,
+          broker_port: values?.broker_port,
           broker_user: values?.broker_user,
           data_interval: values?.data_interval,
           mqtt_topic: values?.mqtt_topic,
@@ -75,7 +75,7 @@ const EditMqtt = ({ data, handleCancel }) => {
             helperText={formik.touched.broker_ip && formik.errors.broker_ip}
           />
         </Box>
-        {/* <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="Broker Port"
             placeholder="Broker Port"
@@ -89,7 +89,7 @@ const EditMqtt = ({ data, handleCancel }) => {
             }
             helperText={formik.touched.broker_port && formik.errors.broker_port}
           />
-        </Box> */}
+        </Box>
         <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="Broker User"

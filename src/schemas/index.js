@@ -39,16 +39,6 @@ export const passwordScehma = Yup.object({
     .required("Please confirm your password"),
 });
 
-export const devicePasswordScehma = Yup.object({
-  old_password: Yup.string()
-    .required("Old Password is required"),
-  new_password: Yup.string()
-    .required("New Password is required"),
-  confirm_new_password: Yup.string()
-    .oneOf([Yup.ref("new_password"), null], "New Passwords must match")
-    .required("Please confirm your password"),
-});
-
 export const profileSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   dob: Yup.date()
@@ -204,12 +194,6 @@ export const mqttSettingsSchema = Yup.object().shape({
     .min(1, "Data Interval must be at least 1"),
 
   mqtt_topic: Yup.string().required("MQTT Topic is required"),
-});
-
-export const mqttsSettingsSchema = Yup.object().shape({
-  broker_ip: Yup.string().required("MQTTs Endpoint is required"),
-  broker_port: Yup.string().required("MQTTs Port is required"),
-  data_interval: Yup.string().required("MQTTs Interval is required")
 });
 
 export const sftpSettingsSchema = Yup.object().shape({

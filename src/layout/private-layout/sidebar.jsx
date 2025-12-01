@@ -5,12 +5,14 @@ import { Logo } from "../../components";
 import { sidebarTabs } from "../../constant";
 import { useClickOutside } from "../../utils";
 import { useSelector } from "react-redux";
-import { mainLogo } from "../../assets";
 
 const Sidebar = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.auth);
   const { pathname: path } = useLocation();
   let pathname = `/${path?.split("/")[1]}`;
+  if (pathname[0] === "/") {
+    pathname = pathname.slice(1);
+  }
   const navigate = useNavigate();
 
   const handleNavigate = (link) => {
@@ -40,12 +42,11 @@ const Sidebar = ({ open, setOpen }) => {
         justifyContent: "flex-start",
         flexDirection: "column",
         alignItems: "center",
-        gap: "30px",
+        gap: "60px",
       }}
     >
       <Box sx={{ marginTop: "33px" }}>
-        {/* <Logo /> */}
-        <img src={mainLogo} alt="Logo" style={{ width: "80px" }} /> 
+        <Logo />
       </Box>
       <Box
         sx={{
@@ -75,24 +76,24 @@ const Sidebar = ({ open, setOpen }) => {
               alignItems: "center",
               gap: "10px",
               background:
-                pathname === item.link ||
-                  (item.link === "/" && pathname === "/dashboard")
+                pathname === item.title?.toLowerCase() ||
+                (pathname === "" && item?.title?.toLowerCase() === "dashboard")
                   ? "#0077FF"
                   : "#FFF",
               cursor: "pointer",
               img: {
-                width: "33px",
-                height: "28px",
                 filter:
-                  pathname === item.link ||
-                    (item.link === "/" && pathname === "/dashboard")
+                  pathname === item.title?.toLowerCase() ||
+                  (pathname === "" &&
+                    item?.title?.toLowerCase() === "dashboard")
                     ? "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)"
                     : "",
               },
               ":hover": {
                 background:
-                  pathname === item.link ||
-                    (item.link === "/" && pathname === "/dashboard")
+                  pathname === item.title?.toLowerCase() ||
+                  (pathname === "" &&
+                    item?.title?.toLowerCase() === "dashboard")
                     ? "#0077FF"
                     : "#0077FF",
                 "& .MuiTypography-root": {
@@ -109,8 +110,8 @@ const Sidebar = ({ open, setOpen }) => {
             <img src={item.icon} alt={item.title} />
             <Typography
               color={
-                pathname === item.link ||
-                  (item.link === "/" && pathname === "/dashboard")
+                pathname === item.title?.toLowerCase() ||
+                (pathname === "" && item?.title?.toLowerCase() === "dashboard")
                   ? "text.secondary"
                   : "text.primary"
               }

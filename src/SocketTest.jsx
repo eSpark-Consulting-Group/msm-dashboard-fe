@@ -20,19 +20,11 @@ import {
   updateMqttInfo,
   updateNtpInfo,
   updateSftpInfo,
-  updateMqttsInfo,
-  updateOtaInfo,
 } from "./store/slices/info";
 import {
   handleUpdateAssignDevice,
   handleUpdateDevice,
 } from "./store/slices/devices";
-import {
-  updateCtRatio,
-  updateDeviceMeasurements,
-  updateIoffSet,
-  updateVoffSet,
-} from "./store/slices/measurements";
 
 dayjs.extend(utc);
 let socketInstance = null;
@@ -113,37 +105,17 @@ export function useSocket() {
     const handleNtpInfo = (data) => dispatch(updateNtpInfo(data));
     const handleMqttInfo = (data) => dispatch(updateMqttInfo(data));
     const handleSftpInfo = (data) => dispatch(updateSftpInfo(data));
-    const handleMqttsInfo = (data) => dispatch(updateMqttsInfo(data));
-    const handleOtaInfo = (data) => dispatch(updateOtaInfo(data));
-    // const handleMeasurementsInfo = (data) =>
-    //   dispatch(updateDeviceMeasurements(data));
-
-    const handleCtRatio = (data) => dispatch(updateCtRatio(data));
-    const handleVoffSet = (data) => dispatch(updateVoffSet(data));
-    const handleIoffSet = (data) => dispatch(updateIoffSet(data));
 
     socketInstance.on(`device_info:${deviceid}`, handleDeviceInfo);
     socketInstance.on(`ntp_info:${deviceid}`, handleNtpInfo);
     socketInstance.on(`mqtt_info:${deviceid}`, handleMqttInfo);
     socketInstance.on(`sftp_info:${deviceid}`, handleSftpInfo);
-    socketInstance.on(`mqtts_info:${deviceid}`, handleMqttsInfo);
-    socketInstance.on(`ota_info:${deviceid}`, handleOtaInfo);
-    // socketInstance.on(`measurements:${deviceid}`, handleMeasurementsInfo);
-    socketInstance.on(`ct_ratio:${deviceid}`, handleCtRatio);
-    socketInstance.on(`v_offset:${deviceid}`, handleVoffSet);
-    socketInstance.on(`i_offset:${deviceid}`, handleIoffSet);
 
     return () => {
       socketInstance.off(`device_info:${deviceid}`, handleDeviceInfo);
       socketInstance.off(`ntp_info:${deviceid}`, handleNtpInfo);
       socketInstance.off(`mqtt_info:${deviceid}`, handleMqttInfo);
       socketInstance.off(`sftp_info:${deviceid}`, handleSftpInfo);
-      socketInstance.off(`mqtts_info:${deviceid}`, handleMqttsInfo);
-      socketInstance.off(`ota_info:${deviceid}`, handleOtaInfo);
-      // socketInstance.off(`measurements:${deviceid}`, handleMeasurementsInfo);
-      socketInstance.off(`ct_ratio:${deviceid}`, handleCtRatio);
-      socketInstance.off(`v_offset:${deviceid}`, handleVoffSet);
-      socketInstance.off(`i_offset:${deviceid}`, handleIoffSet);
     };
   }, [deviceid, dispatch]);
 

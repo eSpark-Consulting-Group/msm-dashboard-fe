@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import NavigateHeader from "../navigate-header";
 import DynamicTabs2 from "../dynamic-tabs2";
 import { useState } from "react";
-import { home, measurementIcon } from "../../assets";
+import { home } from "../../assets";
 import { useSelector } from "react-redux";
 
 const DashboardWrapper = ({ loading, children }) => {
@@ -19,10 +19,6 @@ const DashboardWrapper = ({ loading, children }) => {
 
   const handleHome = () => {
     navigate(`/dashboard/${id}/home`);
-  };
-
-  const handleMeasurement = () => {
-    navigate(`/dashboard/${id}/measurement`);
   };
 
   const handleTabChange = (newIndex) => {
@@ -75,81 +71,43 @@ const DashboardWrapper = ({ loading, children }) => {
           }}
         >
           {selectedDevice === null ||
-            (user?.role?.name === "user"
-              ? selectedDevice?.device_data?.device_data?.device_status === false
-              : selectedDevice?.device_data?.device_status === false) ? (
+          (user?.role?.name === "user"
+            ? selectedDevice?.device_data?.device_data?.device_status === false
+            : selectedDevice?.device_data?.device_status === false) ? (
             <></>
           ) : (
-            <>
-              <Box
+            <Box
+              sx={{
+                position: "absolute",
+                top: -45,
+                right: 20,
+                width: 136,
+                height: 45,
+              }}
+            >
+              <Button
+                variant="contained"
                 sx={{
-                  position: "absolute",
-                  top: -45,
-                  right: 100,
-                  width: 136,
-                  height: 45,
+                  background: "linear-gradient(to right, #0095FF, #0886E0)",
+                  gap: "8px",
+                  border: "1px solid #0077FF",
+                  borderTopLeftRadius: "12px",
+                  borderTopRightRadius: "12px",
+                  borderBottomLeftRadius: "0",
+                  borderBottomRightRadius: "0",
                 }}
+                onClick={handleHome}
               >
-                <Button
-                  variant="contained"
-                  sx={{
-                    background: "linear-gradient(to right, #0095FF, #0886E0)",
-                    gap: "8px",
-                    border: "1px solid #0077FF",
-                    borderTopLeftRadius: "12px",
-                    borderTopRightRadius: "12px",
-                    borderBottomLeftRadius: "0",
-                    borderBottomRightRadius: "0",
-                  }}
-                  onClick={handleHome}
-                >
-                  <img
-                    src={home}
-                    alt="Home"
-                    width={18}
-                    height={18}
-                    style={{ display: "inline-block" }}
-                  />
-                  &nbsp;Home
-                </Button>
-              </Box>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: -45,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: 200,
-                  height: 45,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  sx={{
-                    background: "linear-gradient(to right, #0095FF, #0886E0)",
-                    gap: "8px",
-                    border: "1px solid #0077FF",
-                    borderTopLeftRadius: "12px",
-                    borderTopRightRadius: "12px",
-                    borderBottomLeftRadius: "0",
-                    borderBottomRightRadius: "0",
-                    img: {
-                      filter:
-                        "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)",
-                    },
-                  }}
-                  onClick={handleMeasurement}
-                >
-                  <img
-                    src={measurementIcon}
-                    alt="Home"
-                    width={18}
-                    height={18}
-                    style={{ display: "inline-block" }}
-                  />
-                  Measurement
-                </Button>
-              </Box></>
+                <img
+                  src={home}
+                  alt="Home"
+                  width={18}
+                  height={18}
+                  style={{ display: "inline-block" }}
+                />
+                &nbsp;Home
+              </Button>
+            </Box>
           )}
 
           {loading ? <LinearProgress sx={{ width: "100%" }} /> : children}

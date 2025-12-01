@@ -3,17 +3,8 @@ import { api } from "./rtk";
 export const deviceApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllDevices: builder.query({
-      query: ({
-        page = 1,
-        limit = 10,
-        search = "",
-        statusSort,
-        createdSort,
-        updatedSort,
-      }) => ({
-        url: `/devices/user?page=${page}&limit=${limit}&search=${search}&status_sort=${
-          statusSort === 2 ? 0 : statusSort
-        }&created_sort=${createdSort}&updated_sort=${updatedSort}`,
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/devices/user?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
       credentials: "include",
@@ -86,17 +77,8 @@ export const deviceApi = api.injectEndpoints({
       }),
     }),
     getAllAssignDevices: builder.query({
-      query: ({
-        page = 1,
-        limit = 10,
-        search = "",
-        statusSort,
-        createdSort,
-        updatedSort,
-      }) => ({
-        url: `/devices/assign_devices?page=${page}&limit=${limit}&search=${search}&status_sort=${
-          statusSort === 2 ? 0 : statusSort
-        }&created_sort=${createdSort}&updated_sort=${updatedSort}`,
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/devices/assign_devices?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
       providesTags: ["Devices"],

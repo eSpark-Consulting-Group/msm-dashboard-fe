@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Box, Button, Typography } from "@mui/material";
 import {
   DeleteModal,
+  Dropdown,
   DynamicModal,
   DynamicTable,
   SearchBar,
@@ -30,24 +31,45 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
   const token = localStorage.getItem("msm_token");
 
-  const [sortKey, setSortKey] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
+  const [statusSort, setStatusSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState(-1);
+  const [updatedSort, setUpdatedSort] = useState(-1);
+
+  const handleSort = (key, dir) => {
+    if (key === "status") {
+      // setStatusSort(dir);
+    } else if (key === "createdAt") {
+      setCreatedSort(dir);
+    } else if (key === "lastUpdated") {
+      setUpdatedSort(dir);
+    }
+  };
+
+  // const [sortKey, setSortKey] = useState(null);
+  // const [sortOrder, setSortOrder] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const { data: assignDevicesData2, isLoading, isError, error, isFetching } = useGetAllDevicesQuery(
+  const {
+    data: assignDevicesData2,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useGetAllDevicesQuery(
     {
       page,
       limit: pageSize,
       search,
-      sortKey,
-      sortOrder,
+      statusSort,
+      createdSort,
+      updatedSort,
     },
     {
       skip: !token || user?.role?.name === "user",
@@ -66,8 +88,9 @@ const Dashboard = () => {
       page,
       limit: pageSize,
       search,
-      sortKey,
-      sortOrder,
+      statusSort,
+      createdSort,
+      updatedSort,
     },
     {
       skip: !token || user?.role?.name !== "user",
@@ -117,7 +140,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (error?.data?.message === "Devices Not Found" || error2?.data?.message === "Devices Not Found") {
+    if (
+      error?.data?.message === "Devices Not Found" ||
+      error2?.data?.message === "Devices Not Found"
+    ) {
       setData([]);
       setTotal(0);
       return;
@@ -136,7 +162,9 @@ const Dashboard = () => {
     const sourceData =
       user?.role?.name === "user" ? dashboardData2 : dashboardData;
     const totalCount =
-      user?.role?.name === "user" ? assignDevicesData?.count : assignDevicesData2?.count;
+      user?.role?.name === "user"
+        ? assignDevicesData?.count
+        : assignDevicesData2?.count;
 
     let mappedData =
       sourceData?.map((item) => {
@@ -144,6 +172,9 @@ const Dashboard = () => {
           user?.role?.name === "user"
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
+
+        const unAssign =
+          user?.role?.name === "user" ? true : item?.device_data?.device_imei;
 
         return {
           ...item,
@@ -154,8 +185,8 @@ const Dashboard = () => {
               : item?.device_data?.device_uuid || "-",
           group:
             user?.role?.name === "user"
-              ? item?.device_data?.groups_data?.name
-              : item?.groups_data?.name || "-",
+              ? item?.device_data?.groups_data[0]?.name
+              : item?.groups_data[0]?.name || "-",
           name:
             user?.role?.name === "user" ? item?.device_data?.name : item?.name,
           createdBy:
@@ -163,8 +194,8 @@ const Dashboard = () => {
               ? item?.device_data?.user_id
               : item?.user_id,
           status: {
-            label: status ? "Active" : "Inactive",
-            variant: status ? "green" : "red",
+            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
+            variant: !unAssign ? "simple2" : status ? "green" : "red",
           },
           lastUpdated: dayjs(
             user?.role?.name === "user"
@@ -174,38 +205,39 @@ const Dashboard = () => {
         };
       }) || [];
 
-    // ✅ apply client-side sorting
-    if (sortKey && sortOrder) {
-      mappedData = mappedData.sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
+    // // ✅ apply client-side sorting
+    // if (sortKey && sortOrder) {
+    //   mappedData = mappedData.sort((a, b) => {
+    //     const aVal = a[sortKey];
+    //     const bVal = b[sortKey];
 
-        if (sortKey === "status") {
-          return sortOrder === "asc"
-            ? aVal.label.localeCompare(bVal.label)
-            : bVal.label.localeCompare(aVal.label);
-        }
+    //     if (sortKey === "status") {
+    //       return sortOrder === "asc"
+    //         ? aVal.label.localeCompare(bVal.label)
+    //         : bVal.label.localeCompare(aVal.label);
+    //     }
 
-        if (sortKey === "createdAt") {
-          return sortOrder === "asc"
-            ? new Date(aVal) - new Date(bVal)
-            : new Date(bVal) - new Date(aVal);
-        }
+    //     if (sortKey === "createdAt") {
+    //       return sortOrder === "asc"
+    //         ? new Date(aVal) - new Date(bVal)
+    //         : new Date(bVal) - new Date(aVal);
+    //     }
 
-        return sortOrder === "asc"
-          ? String(aVal).localeCompare(String(bVal))
-          : String(bVal).localeCompare(String(aVal));
-      });
-    }
+    //     return sortOrder === "asc"
+    //       ? String(aVal).localeCompare(String(bVal))
+    //       : String(bVal).localeCompare(String(aVal));
+    //   });
+    // }
 
     setData(mappedData);
-    setTotal(totalCount)
+    setTotal(totalCount);
   }, [
     isError,
     error,
     dashboardData,
-    sortKey,
-    sortOrder,
+    statusSort,
+    createdSort,
+    updatedSort,
     dashboardData2,
     user,
     isError2,
@@ -253,40 +285,92 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(statusSort);
+  }, [statusSort]);
+
   return (
     <>
       <SubHeader
         heading="Dashboard"
         subHeading="Here’s what’s happening with your device and users"
-      // buttonText="Add New Dashoard"
-      // onClick={() => setOpen(true)}
-      // variant="contained"
+        // buttonText="Add New Dashoard"
+        // onClick={() => setOpen(true)}
+        // variant="contained"
       />
-      <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-        <SearchBar value={search} onChange={(val) => {
-          setSearch(val);
-          setPage(1);
-        }} />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
+          <SearchBar
+            value={search}
+            onChange={(val) => {
+              setSearch(val);
+              setPage(1);
+            }}
+          />
+        </Box>
+        <Box sx={{ width: { xs: "100%", md: "40%", lg: "30%" } }}>
+          <Dropdown
+            name="status"
+            variant="outlined"
+            placeholder="Select Version"
+            noLabel
+            options={
+              user?.role?.name === "user"
+                ? [
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    // { label: "Unassigned", value: 2 },
+                  ]
+                : [
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    { label: "Unassigned", value: 2 },
+                  ]
+            }
+            value={statusSort}
+            handleChange={(e) => setStatusSort(e.target.value)}
+            renderValueSx={{
+              color: "#000",
+              fontWeight: 400,
+            }}
+            selectSx={{
+              backgroundColor: "#FFF",
+              border: "1.38px solid #DBD6D6",
+              borderRadius: "6.92px",
+              height: "56px",
+            }}
+          />
+        </Box>
       </Box>
 
       <DynamicTable
         data={data}
-        columns={columns(user?.role?.name)}
+        columns={columns(
+          user?.role?.name,
+          statusSort,
+          createdSort,
+          updatedSort
+        )}
         hideView
         hideEdit
         handleDelete={handleDelete}
         isLoading={isLoading || isLoading2 || isFetching || isFetching2}
         page={page}
         pageSize={pageSize}
+        setPageSize={setPageSize}
         handlePageChange={handlePageChange}
         total={total}
         onRowClick={handleRowClick}
-        sortKey={sortKey}
-        sortOrder={sortOrder}
-        onSortChange={(key, order) => {
-          setSortKey(key);
-          setSortOrder(order);
-        }}
+        // sortKey={sortKey}
+        // sortOrder={sortOrder}
+        onSortChange={handleSort}
       />
 
       {/* <AddDashboardModal

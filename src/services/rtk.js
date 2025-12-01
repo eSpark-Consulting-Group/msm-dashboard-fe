@@ -12,7 +12,7 @@ const customBaseQuery = async (args, api, extraOptions) => {
   const result = await rawBaseQuery(args, api, extraOptions);
 
   const status = result?.error?.status;
-  if (status === 401) {
+  if (status === 401 && result?.error?.data?.message !== "Invalid password") {
     api.dispatch(logout());
     toast.error(result?.error?.data?.message || "Unauthorize");
   }

@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
   Grid,
   Typography,
   useMediaQuery,
@@ -13,17 +15,24 @@ import OutlinedInput from "../input";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { useUpdateNtpMutation } from "../../services/ntp";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { useUpdateSftpMutation } from "../../services/sftp";
-import { pen } from "../../assets";
+import { copy, edit, eye, pen } from "../../assets";
 import { useSelector } from "react-redux";
 import DynamicModal from "../modal";
 import EditMqtt from "../edit-mqtt-modal";
 import NtpEditModal from "../ntp-edit-modal";
 import SftpEditModal from "../sftp-edit-modal";
 import dayjs from "dayjs";
+import Dropdown from "../drop-down";
+import { copyToClipboard, decrypt } from "../../utils";
+import EditMqtts from "../edit-mqtts-modal";
+import { useGetVersionsListQuery, useUpdateVersionMutation } from "../../services/ota";
+import { useResetDevicePasswordMutation, useVerifyPasswordMutation } from "../../services/auth";
+import { useFormik } from "formik";
+import { devicePasswordScehma } from "../../schemas";
 
 const InfoCard = ({
   title,
@@ -37,6 +46,7 @@ const InfoCard = ({
   buttonLoading,
   type,
 }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -53,6 +63,33 @@ const InfoCard = ({
     return () => clearInterval(interval);
   }, []);
 
+  const [openPermissionModal, setOpenPermissionModal] = useState(false);
+  const [dashboardPw, setDashboardPw] = useState("");
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const [modal, setModal] = useState(false);
+  const [editPwModal, setEditPwModal] = useState(false);
+
+  const startTimer = () => {
+    setTimeLeft(15);
+    setIsRunning(true);
+  };
+
+  useEffect(() => {
+    let timer;
+    if (isRunning && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsRunning(false);
+      setDashboardPw("")
+    }
+
+    return () => clearInterval(timer);
+  }, [isRunning, timeLeft]);
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState("");
   const [newVal, setNewVal] = useState("");
@@ -63,6 +100,7 @@ const InfoCard = ({
   const [mqttModal, setMqttModal] = useState(false);
   const [ntpModal, setNtpModal] = useState(false);
   const [sftpModal, setSftpModal] = useState(false);
+  const [mqttsModal, setMqttsModal] = useState(false);
 
   const handleEdit = (info) => {
     const result = info.reduce((acc, item) => {
@@ -72,12 +110,14 @@ const InfoCard = ({
 
     setEditValues({ ...result, id });
 
-    if (type === "MQTTS") {
+    if (type === "MQTT") {
       setMqttModal(true);
     } else if (type === "NTP") {
       setNtpModal(true);
     } else if (type === "SFTP") {
       setSftpModal(true);
+    } else if (type === "MQTTS") {
+      setMqttsModal(true)
     }
   };
 
@@ -86,7 +126,7 @@ const InfoCard = ({
 
     const apiMap = {
       NTP: ntpData,
-      MQTTS: mqtt,
+      MQTT: mqtt,
       SFTP: sftp,
     };
 
@@ -116,6 +156,80 @@ const InfoCard = ({
     setNewVal("");
   };
 
+  const {
+    data: versionsList,
+    isLoading: versionLoading,
+    isFetching: versionFetching,
+    isError: isVersionError,
+    error: versionError,
+    refetch: refetchVersionsList,
+  } = useGetVersionsListQuery(
+    "",
+    {
+      skip: user?.role?.name === "user" || type !== "OTA",
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  useEffect(() => {
+    if (isVersionError && versionError) {
+      toast.error(versionError?.data?.message, { toastId: "VERSIONERROR" });
+      return;
+    }
+
+  }, [isVersionError, versionError]);
+
+  const [updateVersion, { isLoading: versionUpdateLoading }] = useUpdateVersionMutation();
+
+  const handleUpdateVersion = () => {
+    const payload = { devices: [{ device_uuid: id, version: selectedVersion?.replace("MSM_", "") }] }
+    updateVersion(payload).then((res) => {
+      if (res?.data) {
+        toast.success(res?.data?.message);
+        setModal(false)
+        navigate(`/dashboard`);
+        return
+      }
+      if (res?.error) {
+        toast.error(res?.error?.data?.message, { toastId: "OTAERROR" });
+        setModal(false);
+        return;
+      }
+    }).catch((err) => {
+      toast.error("Something went wrong!");
+      setModal(false);
+      console.log(err, "err")
+    });
+  }
+
+  const [verify, { isLoading: passwordVerificationLoading }] = useVerifyPasswordMutation();
+
+  const [resetPass, { isLoading: devicePwChangeLoading }] = useResetDevicePasswordMutation();
+
+  const formik = useFormik({
+    initialValues: {
+      old_password: "",
+      new_password: "",
+      confirm_new_password: "",
+    },
+    validationSchema: devicePasswordScehma,
+    onSubmit: async (values, { resetForm }) => {
+      const body = {
+        old_password: values.old_password,
+        new_password: values.new_password,
+      };
+      const res = await resetPass({ id, body });
+      if (res?.data) {
+        resetForm();
+        toast.success(res?.data?.message);
+        setEditPwModal(false);
+      }
+      if (res?.error) {
+        toast.error(res?.error?.data?.message);
+      }
+    },
+  });
+
   return (
     <>
       <Box
@@ -133,7 +247,8 @@ const InfoCard = ({
         {onButtonClick && buttonLabel && (
           <Button
             sx={{
-              width: "103px",
+              width: "max-content",
+              minWidth: "103px",
               border: "1px solid #0C89E2",
               color: "#0C89E2",
               borderRadius: "10px",
@@ -141,23 +256,31 @@ const InfoCard = ({
             }}
             variant="outlined"
             size="small"
-            onClick={onButtonClick}
+            onClick={type === "OTA" ? refetchVersionsList : onButtonClick}
             loading={buttonLoading}
-            disabled={
+            disabled={type === "OTA" ? false :
               selectedDevice !== null &&
               (user?.role?.name === "user"
                 ? selectedDevice?.device_data?.device_data?.device_status ===
-                  false
+                false
                 : selectedDevice?.device_data?.device_status === false)
             }
           >
             {buttonLabel}
           </Button>
         )}
-        {type !== "INFO" &&
-          role !== "user" &&
-          selectedDevice !== null &&
-          selectedDevice?.device_data?.device_status === true && (
+        {(
+          type === "CC" ||
+          type === "Voltage" ||
+          type === "CTR" ||
+          (
+            type !== "INFO" &&
+            type !== "OTA" &&
+            role !== "user" &&
+            selectedDevice !== null &&
+            selectedDevice?.device_data?.device_status
+          )
+        ) && (
             // <img
             //   src={pen}
             //   alt="icon"
@@ -188,7 +311,95 @@ const InfoCard = ({
           spacing={2}
           justifyContent={isSmallScreen ? "center" : "flex-start"}
         >
-          {info.map((item, index) => (
+          {type === "OTA" &&
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              sx={{
+                width: "100%",
+                boxShadow: "none",
+                textAlign: isSmallScreen ? "center" : "left",
+              }}
+            >
+              <Card
+                elevation={1}
+                sx={{
+                  p: 2,
+                  borderRadius: 1,
+                  boxShadow: "none",
+                  border: "1px solid #E4E4E4",
+                  height: "100%",
+                }}
+              >
+                <Box
+                  display="flex"
+                  justifyContent={isSmallScreen ? "center" : "space-between"}
+                  alignItems="flex-end"
+                  flexWrap="wrap"
+                  gap={1}
+                  flexDirection={isSmallScreen ? "column" : "row"}
+                  sx={{ ".MuiFormControl-root ": { flex: 1 } }}
+                >
+                  <Dropdown
+                    name="version"
+                    customLabel="Available Versions"
+                    variant="outlined"
+                    placeholder="Select Version"
+                    noLabel
+                    loading={versionLoading || versionFetching}
+                    options={versionsList?.data?.map((version) => ({
+                      label: version,
+                      value: version,
+                    })) || []} value={selectedVersion}
+                    handleChange={(e) => setSelectedVersion(e.target.value)}
+                    renderValueSx={{
+                      color: "#000",
+                      fontWeight: 400,
+                    }}
+                    selectSx={{
+                      backgroundColor: "#FFF",
+                      border: "1.38px solid #DBD6D6",
+                      borderRadius: "6.92px",
+                      height: "56px",
+                    }}
+                    disabled={
+                      selectedDevice !== null &&
+                      (user?.role?.name === "user"
+                        ? selectedDevice?.device_data?.device_data?.device_status ===
+                        false
+                        : selectedDevice?.device_data?.device_status === false)
+                    }
+                  />
+                  <Button
+                    sx={{
+                      width: "max-content",
+                      minWidth: "103px",
+                      border: "1px solid #0C89E2",
+                      color: "#0C89E2",
+                      borderRadius: "10px",
+                      fontSize: "16px",
+                      height: "56px"
+                    }}
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setModal(true)}
+                    loading={buttonLoading}
+                    disabled={selectedVersion === "" ||
+                      selectedDevice !== null &&
+                      (user?.role?.name === "user"
+                        ? selectedDevice?.device_data?.device_data?.device_status ===
+                        false
+                        : selectedDevice?.device_data?.device_status === false)
+                    }
+                  >
+                    Start OTA
+                  </Button>
+                </Box>
+              </Card>
+            </Grid>}
+          {info.filter(i => !i?.checkBox)?.map((item, index) => (
             <Grid
               item
               xs={12}
@@ -233,7 +444,7 @@ const InfoCard = ({
                     alignItems="center"
                     gap={{
                       xs: "8px",
-                      sm: "70px",
+                      sm: "20px",
                     }}
                     justifyContent={isSmallScreen ? "center" : "flex-start"}
                     sx={{ wordBreak: "break-word" }}
@@ -251,9 +462,23 @@ const InfoCard = ({
                         fontWeight="medium"
                         fontSize="20px"
                       >
-                        {item.value}
+                        {item?.password ? item.value?.slice(0, 6)?.split("").map(i => "*").join("") : item.value}
                       </Typography>
                     )}
+                    {
+                      item?.password && <img
+                        onClick={() => setOpenPermissionModal(item.value)}
+                        src={eye}
+                        alt="Icon"
+                        style={{
+                          cursor: "pointer",
+                          width: "24px",
+                          height: "24px",
+                          marginRight: "10px",
+                          marginTop: "5px",
+                        }}
+                      />
+                    }
                     {item.showIcon &&
                       role !== "user" &&
                       editId !== item?.key &&
@@ -300,6 +525,47 @@ const InfoCard = ({
               </Card>
             </Grid>
           ))}
+          {type === "MQTTS" &&
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              sx={{
+                width: "100%",
+                boxShadow: "none",
+                textAlign: isSmallScreen ? "center" : "left",
+              }}
+            >
+              <Card
+                elevation={1}
+                sx={{
+                  p: 2,
+                  borderRadius: 1,
+                  boxShadow: "none",
+                  border: "1px solid #E4E4E4",
+                  height: "100%",
+                }}
+              >
+                <Box
+                  display="flex"
+                  justifyContent={isSmallScreen ? "center" : "space-around"}
+                  alignItems="flex-end"
+                  flexWrap="wrap"
+                  gap={1}
+                  flexDirection={isSmallScreen ? "column" : "row"}
+                  sx={{ ".MuiFormControl-root ": { flex: 1 } }}
+                >{info?.filter(i => i?.checkBox).map(item => {
+                  return (
+                    <FormControlLabel
+                      control={<Checkbox disabled checked={item?.value} sx={{ color: "#151515" }} />}
+                      label={item?.label}
+                    />)
+                })}
+                </Box>
+              </Card>
+            </Grid>
+          }
         </Grid>
       </Box>
 
@@ -369,6 +635,21 @@ const InfoCard = ({
           }}
         />
       </DynamicModal>
+      <DynamicModal
+        open={mqttsModal}
+        handleClose={() => {
+          setMqttsModal(false);
+          setEditValues({});
+        }}
+      >
+        <EditMqtts
+          data={editValues}
+          handleCancel={() => {
+            setMqttsModal(false);
+            setEditValues({});
+          }}
+        />
+      </DynamicModal>
 
       <DynamicModal
         open={ntpModal}
@@ -400,6 +681,116 @@ const InfoCard = ({
             setEditValues({});
           }}
         />
+      </DynamicModal>
+      <DynamicModal
+        open={openPermissionModal}
+        handleClose={() => {
+          setOpenPermissionModal(false);
+        }}
+        cancelButtonText={"Close"}
+        acceptButtonText={"OK"}
+        disabled={isRunning}
+        handleCancel={() => setOpenPermissionModal(false)}
+        handleAccept={() => {
+          verify({ body: { password: dashboardPw } }).then((res) => {
+            if (res?.data?.success) {
+              toast.success("Password Verified");
+              startTimer()
+              setDashboardPw(decrypt(openPermissionModal));
+            } else {
+              toast.error("Incorrect Password");
+              return;
+            }
+          }).catch((err) => {
+            toast.error("Something went wrong!");
+            console.log(err, "err")
+          });
+        }}
+        heading={"Permission!"}
+        isLoading={passwordVerificationLoading}
+      >
+        <Typography textAlign={"center"} fontSize={"26px"}>{timeLeft > 0 ? "Your device password" : "Enter you dashboard password"}</Typography>
+        <OutlinedInput
+          label="Password"
+          name="password"
+          type="text"
+          placeholder="Enter your password"
+          value={dashboardPw}
+          disabled={isRunning}
+          onInputChange={(e) => setDashboardPw(e.target.value)}
+          sx={{ ".Mui-disabled": { "-webkit-text-fill-color": "#000000" } }}
+          endAdornment={timeLeft > 0 ?
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
+              <img style={{ cursor: "pointer" }} onClick={() => copyToClipboard(dashboardPw)} src={copy} alt="copy" />
+              <img style={{ cursor: "pointer" }} onClick={() => {
+                setEditPwModal(openPermissionModal)
+                setOpenPermissionModal(null)
+                setTimeLeft(0)
+              }} src={edit} alt="copy" />
+            </Box>
+            : null
+          }
+        />
+        {timeLeft > 0 && <Typography>Note the password within {timeLeft} seconds</Typography>}
+      </DynamicModal >
+      <DynamicModal
+        open={modal}
+        handleClose={() => setModal(false)}
+        cancelButtonText="Cancel"
+        acceptButtonText="Start OTA"
+        handleCancel={() => setModal(false)}
+        handleAccept={handleUpdateVersion}
+        heading={"Confirm OTA Start"}
+        isLoading={versionUpdateLoading}
+      >
+        <Typography fontSize="24px">Are you sure you want to start OTA?</Typography>
+      </DynamicModal>
+      <DynamicModal
+        open={editPwModal}
+        handleClose={() => setEditPwModal(false)}
+        cancelButtonText="Cancel"
+        acceptButtonText="Update"
+        handleCancel={() => setEditPwModal(false)}
+        handleAccept={formik.handleSubmit}
+        heading={"Update Device Password"}
+        isLoading={devicePwChangeLoading}
+      >
+        <Box component={"form"} onSubmit={formik.handleSubmit}>
+          <Typography my={2} fontSize="24px">Are you sure you want to update the device password?</Typography>
+          <OutlinedInput
+            label="Old Password"
+            name="old_password"
+            type="password"
+            placeholder="Enter your old password"
+            value={formik.values.old_password}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.old_password && Boolean(formik.errors.old_password)}
+            helperText={formik.touched.old_password && formik.errors.old_password}
+          />
+          <OutlinedInput
+            label="New Password"
+            name="new_password"
+            type="password"
+            placeholder="Enter your new password"
+            value={formik.values.new_password}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.new_password && Boolean(formik.errors.new_password)}
+            helperText={formik.touched.new_password && formik.errors.new_password}
+          />
+          <OutlinedInput
+            label="Confirm Password"
+            name="confirm_new_password"
+            type="password"
+            placeholder="Confirm your new password"
+            value={formik.values.confirm_new_password}
+            onInputChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.confirm_new_password && Boolean(formik.errors.confirm_new_password)}
+            helperText={formik.touched.confirm_new_password && formik.errors.confirm_new_password}
+          />
+        </Box>
       </DynamicModal>
     </>
   );

@@ -23,15 +23,29 @@ const Users = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [addUserModal, setAddUserModal] = useState(false);
   const [editUserValues, setEditUserValues] = useState();
   const [selectedUserToDelete, setSelectedUserToDelete] = useState(null);
 
+  const [statusSort, setStatusSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState(-1);
+  const [countSort, setCountSort] = useState(-1);
+
+  const handleSort = (key, dir) => {
+    if (key === "status") {
+      setStatusSort(dir);
+    } else if (key === "createdAt") {
+      setCreatedSort(dir);
+    } else if (key === "total_devices_count") {
+      setCountSort(dir);
+    }
+  }
+
   // Sorting state
-  const [sortKey, setSortKey] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
+  // const [sortKey, setSortKey] = useState(null);
+  // const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
 
   const {
     data: userData,
@@ -40,7 +54,7 @@ const Users = () => {
     isError,
     error,
   } = useGetAllUsersQuery(
-    { page: 1, limit: 20, search },
+    { page: 1, limit: 20, search, statusSort, createdSort, countSort },
     { refetchOnMountOrArgChange: true }
   );
 
@@ -66,22 +80,21 @@ const Users = () => {
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           customer_name: item?.customer_name || "-",
           userName: {
-            image: `${import.meta.env.VITE_IMAGE_BASE_URL}${
-              item?.profile_image
-            }`,
+            image: `${import.meta.env.VITE_IMAGE_BASE_URL}${item?.profile_image
+              }`,
             name: item?.name,
           },
           status: {
             label: !item?.isPasswordChanged
               ? "Pending"
               : item?.status === "active"
-              ? "Active"
-              : "Inactive",
+                ? "Active"
+                : "Inactive",
             variant: !item?.isPasswordChanged
               ? "simple2"
               : item?.status === "active"
-              ? "green"
-              : "red",
+                ? "green"
+                : "red",
           },
           deviceId: "-",
           tags: groups,
@@ -89,7 +102,7 @@ const Users = () => {
       }) || []
     );
     setTotal(userData?.count);
-  }, [isError, error, userData]);
+  }, [isError, error, userData, statusSort, createdSort, countSort]);
 
   const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
 
@@ -128,35 +141,35 @@ const Users = () => {
   };
 
   // ✅ Sorting logic
-  const handleSortChange = (key, order) => {
-    setSortKey(key);
-    setSortOrder(order);
-  };
+  // const handleSortChange = (key, order) => {
+  //   setSortKey(key);
+  //   setSortOrder(order);
+  // };
 
-  const getSortedData = () => {
-    if (!sortKey || !sortOrder) return data;
+  // const getSortedData = () => {
+  //   if (!sortKey || !sortOrder) return data;
 
-    return [...data].sort((a, b) => {
-      let aVal = a[sortKey];
-      let bVal = b[sortKey];
+  //   return [...data].sort((a, b) => {
+  //     let aVal = a[sortKey];
+  //     let bVal = b[sortKey];
 
-      // Special case: status is an object
-      if (sortKey === "status") {
-        aVal = aVal?.label || "";
-        bVal = bVal?.label || "";
-      }
+  //     // Special case: status is an object
+  //     if (sortKey === "status") {
+  //       aVal = aVal?.label || "";
+  //       bVal = bVal?.label || "";
+  //     }
 
-      // Special case: number of devices (ensure numeric)
-      if (sortKey === "total_devices_count") {
-        aVal = Number(aVal) || 0;
-        bVal = Number(bVal) || 0;
-      }
+  //     // Special case: number of devices (ensure numeric)
+  //     if (sortKey === "total_devices_count") {
+  //       aVal = Number(aVal) || 0;
+  //       bVal = Number(bVal) || 0;
+  //     }
 
-      if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
-      if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
-      return 0;
-    });
-  };
+  //     if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+  //     if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+  //     return 0;
+  //   });
+  // };
 
   return (
     <>
@@ -176,19 +189,21 @@ const Users = () => {
         </Box>
         <DynamicTable
           isLoading={isLoading || isFetching}
-          data={getSortedData()}
-          columns={columns()}
+          data={data}
+          columns={columns(statusSort, createdSort, countSort)}
           page={page}
           pageSize={pageSize}
+          setPageSize={setPageSize}
           total={total}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
           handlePageChange={handlePageChange}
           hideView={true}
           onRowClick={handleUserClick}
-          sortKey={sortKey}
-          sortOrder={sortOrder}
-          onSortChange={handleSortChange}
+          // sortKey={sortKey}
+          // sortOrder={sortOrder}
+          // onSortChange={handleSortChange}
+          onSortChange={handleSort}
         />
       </Box>
       <DynamicModal

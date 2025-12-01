@@ -118,10 +118,14 @@ const UserDetails = () => {
           mqtt_username: item?.mqtt_user || "-",
           groups: item?.device_data?.groups_data?.name || "-",
           status: {
-            label: item?.device_data?.device_data?.device_status
+            label: !item?.device_data?.device_data?.device_imei
+              ? "Unassigned"
+              : item?.device_data?.device_data?.device_status
               ? "Active"
               : "Inactive",
-            variant: item?.device_data?.device_data?.device_status
+            variant: !item?.device_data?.device_data?.device_imei
+              ? "simple2"
+              : item?.device_data?.device_data?.device_status
               ? "green"
               : "red",
           },
@@ -139,8 +143,17 @@ const UserDetails = () => {
         userName={userName}
       />
 
-      <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-        <SearchBar value={search} onChange={(val) => setSearch(val)} />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
+          <SearchBar value={search} onChange={(val) => setSearch(val)} />
+        </Box>
       </Box>
 
       <DynamicTable

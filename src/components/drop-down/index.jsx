@@ -98,7 +98,8 @@ const Dropdown = ({
           }}
           IconComponent={CustomIcon}
           renderValue={(selected) => {
-            if (loading) return <span style={{ color: "#aaa" }}>Loading...</span>;
+            if (loading)
+              return <span style={{ color: "#aaa" }}>Loading...</span>;
             if (
               !selected ||
               (Array.isArray(selected) && selected.length === 0)

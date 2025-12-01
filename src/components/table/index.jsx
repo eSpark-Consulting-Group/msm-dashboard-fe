@@ -49,7 +49,9 @@ const DynamicTable = ({
     keyPath: column.key.split("."),
   }));
 
-  const allStatusFalse = data.every((item) => item?.status?.label === "Inactive");
+  const allStatusFalse = data.every(
+    (item) => item?.status?.label === "Inactive"
+  );
   const enabledRows = data.filter((item) => item?.status?.label !== "Inactive");
   const allSelected =
     enabledRows.length > 0 &&
@@ -70,7 +72,9 @@ const DynamicTable = ({
       : getValue(item, column.keyPath);
 
     if (column.key === "action") {
-      const disabled = item?.device_data?.ota?.[0]?.ota_status === "started" || item?.device_data?.device_data?.ota?.[0]?.ota_status === "started";
+      const disabled =
+        item?.device_data?.ota?.[0]?.ota_status === "started" ||
+        item?.device_data?.device_data?.ota?.[0]?.ota_status === "started";
       return (
         <Stack
           direction="row"
@@ -121,7 +125,7 @@ const DynamicTable = ({
 
     if (column.chip) {
       return (
-        <Chip onClick={() => { }} label={cell?.label} variant={cell?.variant} />
+        <Chip onClick={() => {}} label={cell?.label} variant={cell?.variant} />
       );
     }
 
@@ -244,7 +248,7 @@ const DynamicTable = ({
               }}
             >
               <TableRow>
-                {onSelectRow &&
+                {onSelectRow && (
                   <TableCell sx={{ width: "40px", textAlign: "center" }}>
                     <Checkbox
                       sx={{ color: "#000" }}
@@ -253,7 +257,8 @@ const DynamicTable = ({
                       indeterminate={allSelected}
                       onChange={(e) => onSelectAll?.(e.target.checked)}
                     />
-                  </TableCell>}
+                  </TableCell>
+                )}
 
                 {extendedColumns?.map((column, index) => (
                   <TableCell
@@ -279,9 +284,11 @@ const DynamicTable = ({
                       {column.name}
                       {column.sortable && (
                         <>
-                          {column.sortDir === -1 ?
-                            <ArrowUpward sx={{ fontSize: 16 }} /> : <ArrowDownward sx={{ fontSize: 16 }} />
-                          }
+                          {column.sortDir === -1 ? (
+                            <ArrowUpward sx={{ fontSize: 16 }} />
+                          ) : (
+                            <ArrowDownward sx={{ fontSize: 16 }} />
+                          )}
                         </>
                       )}
                     </Stack>
@@ -304,22 +311,32 @@ const DynamicTable = ({
                 }}
               >
                 {data?.map((item, index) => {
-                  const otaStarted = item?.device_data?.ota?.[0]?.ota_status === "started" || item?.device_data?.device_data?.ota?.[0]?.ota_status === "started";
+                  const otaStarted =
+                    item?.device_data?.ota?.[0]?.ota_status === "started" ||
+                    item?.device_data?.device_data?.ota?.[0]?.ota_status ===
+                      "started";
                   return (
                     <TableRow key={index}>
                       {/* Row Checkbox */}
-                      {onSelectRow &&
-                        <TableCell sx={{
-                          textAlign: "center", backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
-                        }}>
+                      {onSelectRow && (
+                        <TableCell
+                          sx={{
+                            textAlign: "center",
+                            backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
+                          }}
+                        >
                           <Checkbox
                             sx={{ color: "#000" }}
                             checked={selectedRows.includes(item._id)}
-                            onChange={(e) => onSelectRow?.(item._id, e.target.checked)}
-                            disabled={item?.status?.label === "Inactive" || otaStarted}
+                            onChange={(e) =>
+                              onSelectRow?.(item._id, e.target.checked)
+                            }
+                            disabled={
+                              item?.status?.label === "Inactive" || otaStarted
+                            }
                           />
                         </TableCell>
-                      }
+                      )}
                       {extendedColumns?.map((column) => (
                         <TableCell
                           sx={{
@@ -327,16 +344,24 @@ const DynamicTable = ({
                             pl: "0px",
                             whiteSpace: "pre-line",
                             backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
-                            cursor: otaStarted ? "not-allowed" : onRowClick ? "pointer" : "auto",
+                            cursor: otaStarted
+                              ? "not-allowed"
+                              : onRowClick
+                              ? "pointer"
+                              : "auto",
                           }}
                           key={column.key}
-                          onClick={onRowClick && !otaStarted ? () => onRowClick(item) : () => { }}
+                          onClick={
+                            onRowClick && !otaStarted
+                              ? () => onRowClick(item)
+                              : () => {}
+                          }
                         >
                           {generateCell(column, item)}
                         </TableCell>
                       ))}
                     </TableRow>
-                  )
+                  );
                 })}
               </TableBody>
             )}
@@ -362,7 +387,7 @@ const DynamicTable = ({
             variant="outlined"
             shape="rounded"
             onChange={
-              handlePageChange ? (_, page) => handlePageChange(page) : () => { }
+              handlePageChange ? (_, page) => handlePageChange(page) : () => {}
             }
             count={Math.ceil((total || 1) / pageSize)}
           />

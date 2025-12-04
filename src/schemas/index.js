@@ -208,7 +208,7 @@ export const mqttSettingsSchema = Yup.object().shape({
 
 export const mqttsSettingsSchema = Yup.object().shape({
   broker_ip: Yup.string().required("MQTTs Endpoint is required"),
-  broker_port: Yup.string().required("MQTTs Port is required"),
+  // broker_port: Yup.string().required("MQTTs Port is required"),
   data_interval: Yup.string().required("MQTTs Interval is required")
 });
 

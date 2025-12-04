@@ -386,7 +386,7 @@ const DynamicTable = ({
           )}
         </TableContainer>
       )}
-      {!isLoading ? (
+      {data?.length > 0 && !isLoading ? (
         <Stack
           sx={{ marginTop: { xs: "20px", sm: "10px" } }}
           p={{ xs: 0, sm: 2 }}

@@ -208,6 +208,21 @@ const MqttProtocol = () => {
                 onClick={() => {
                   if (!data?.length) return;
 
+                  // ⭐ Safe timestamp parser
+                  const parseTimestamp = (ts) => {
+                    if (!ts) return null;
+
+                    const cleaned = ts.replace("\n", " ").trim(); // "20-11-2025 00:39:24"
+                    const [datePart, timePart] = cleaned.split(" ");
+                    if (!datePart || !timePart) return null;
+
+                    const [dd, mm, yyyy] = datePart.split("-").map(Number);
+                    const [hh, min, ss] = timePart.split(":").map(Number);
+
+                    const d = new Date(yyyy, mm - 1, dd, hh, min, ss);
+                    return isNaN(d.getTime()) ? null : d;
+                  };
+
                   // 1️⃣ Prepare CSV headers
                   const headers = Object.keys(data[0]);
                   const formatHeader = (header) => {
@@ -232,13 +247,13 @@ const MqttProtocol = () => {
 
                   const csvContent = csvRows.join("\n");
 
+                  // 2️⃣ Extract timestamps using safe parser
                   const timestamps = data
-                    .map((row) => new Date(row.timestamp))
+                    .map((row) => parseTimestamp(row.timestamp))
+                    .filter((d) => d !== null)
                     .sort((a, b) => a - b);
-                  console.log(data, "DATA");
-                  console.log(timestamps, "TIMESTAMP");
-                  console.log(timestamps[0], "TIMESTAMP[0]");
-                  console.log(timestamps[1], "TIMESTAMP[1]");
+
+                  console.log(timestamps, "TIMESTAMPS");
 
                   const startDate = timestamps[0]
                     ? `${timestamps[0].getFullYear()}${String(
@@ -247,7 +262,6 @@ const MqttProtocol = () => {
                         timestamps[0].getDate()
                       ).padStart(2, "0")}`
                     : "start";
-                  console.log(startDate, "START");
 
                   const endDate = timestamps[timestamps.length - 1]
                     ? `${timestamps[
@@ -258,11 +272,10 @@ const MqttProtocol = () => {
                         timestamps[timestamps.length - 1].getDate()
                       ).padStart(2, "0")}`
                     : "end";
-                  console.log(endDate, "End Date");
 
                   const filename = `${id}_${startDate}_to_${endDate}.csv`;
 
-                  // 4️⃣ Create blob & trigger download
+                  // 3️⃣ Generate CSV & download
                   const blob = new Blob([csvContent], {
                     type: "text/csv;charset=utf-8;",
                   });

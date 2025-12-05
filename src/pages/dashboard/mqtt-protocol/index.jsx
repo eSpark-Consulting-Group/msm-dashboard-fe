@@ -219,7 +219,6 @@ const MqttProtocol = () => {
                     return header;
                   };
 
-                  // 2️⃣ Prepare CSV rows
                   const csvRows = [];
                   csvRows.push(headers.map(formatHeader).join(","));
 
@@ -233,11 +232,12 @@ const MqttProtocol = () => {
 
                   const csvContent = csvRows.join("\n");
 
-                  // 3️⃣ Determine date range for filename
-                  // Replace 'timestamp' with the actual timestamp field in your data
                   const timestamps = data
-                    .map((row) => new Date(row.timestamp)) // convert to Date objects
+                    .map((row) => new Date(row.timestamp))
                     .sort((a, b) => a - b);
+                  console.log(timestamps, "TIMESTAMP");
+                  console.log(timestamps[0], "TIMESTAMP[0]");
+                  console.log(timestamps[1], "TIMESTAMP[1]");
 
                   const startDate = timestamps[0]
                     ? `${timestamps[0].getFullYear()}${String(
@@ -246,6 +246,7 @@ const MqttProtocol = () => {
                         timestamps[0].getDate()
                       ).padStart(2, "0")}`
                     : "start";
+                  console.log(startDate, "START");
 
                   const endDate = timestamps[timestamps.length - 1]
                     ? `${timestamps[
@@ -256,6 +257,7 @@ const MqttProtocol = () => {
                         timestamps[timestamps.length - 1].getDate()
                       ).padStart(2, "0")}`
                     : "end";
+                  console.log(endDate, "End Date");
 
                   const filename = `${id}_${startDate}_to_${endDate}.csv`;
 

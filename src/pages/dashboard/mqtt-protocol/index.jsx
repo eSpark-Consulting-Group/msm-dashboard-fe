@@ -235,6 +235,7 @@ const MqttProtocol = () => {
                   const timestamps = data
                     .map((row) => new Date(row.timestamp))
                     .sort((a, b) => a - b);
+                  console.log(data, "DATA");
                   console.log(timestamps, "TIMESTAMP");
                   console.log(timestamps[0], "TIMESTAMP[0]");
                   console.log(timestamps[1], "TIMESTAMP[1]");

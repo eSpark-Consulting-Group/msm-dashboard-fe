@@ -210,7 +210,6 @@ const MqttProtocol = () => {
 
                   // 1️⃣ Prepare CSV headers
                   const headers = Object.keys(data[0]);
-
                   const formatHeader = (header) => {
                     const parts = header.split("_");
                     if (parts.length > 1) {
@@ -220,20 +219,45 @@ const MqttProtocol = () => {
                     return header;
                   };
 
+                  // 2️⃣ Prepare CSV rows
                   const csvRows = [];
                   csvRows.push(headers.map(formatHeader).join(","));
 
                   data.forEach((row) => {
                     const values = headers.map((header) => {
                       const cell = row[header] ?? "";
-                      // Escape double quotes
                       return `"${String(cell).replace(/"/g, '""')}"`;
                     });
                     csvRows.push(values.join(","));
                   });
 
-                  // 3️⃣ Join all rows
                   const csvContent = csvRows.join("\n");
+
+                  // 3️⃣ Determine date range for filename
+                  // Replace 'timestamp' with the actual timestamp field in your data
+                  const timestamps = data
+                    .map((row) => new Date(row.timestamp)) // convert to Date objects
+                    .sort((a, b) => a - b);
+
+                  const startDate = timestamps[0]
+                    ? `${timestamps[0].getFullYear()}${String(
+                        timestamps[0].getMonth() + 1
+                      ).padStart(2, "0")}${String(
+                        timestamps[0].getDate()
+                      ).padStart(2, "0")}`
+                    : "start";
+
+                  const endDate = timestamps[timestamps.length - 1]
+                    ? `${timestamps[
+                        timestamps.length - 1
+                      ].getFullYear()}${String(
+                        timestamps[timestamps.length - 1].getMonth() + 1
+                      ).padStart(2, "0")}${String(
+                        timestamps[timestamps.length - 1].getDate()
+                      ).padStart(2, "0")}`
+                    : "end";
+
+                  const filename = `${id}_${startDate}_to_${endDate}.csv`;
 
                   // 4️⃣ Create blob & trigger download
                   const blob = new Blob([csvContent], {
@@ -243,11 +267,7 @@ const MqttProtocol = () => {
 
                   const link = document.createElement("a");
                   link.href = url;
-
-                  // Optional: add timestamped filename
-                  const now = new Date();
-                  const formattedTime = now.toISOString().replace(/[:.]/g, "-");
-                  link.download = `device_data_${formattedTime}.csv`;
+                  link.download = filename;
 
                   document.body.appendChild(link);
                   link.click();
@@ -329,7 +349,7 @@ const MqttProtocol = () => {
           borderRadius: "8px",
           border: "1px solid #D8D8D8",
           p: "10px",
-          maxHeight: "700px",
+          maxHeight: "95vh",
           overflow: "auto",
         }}
       >

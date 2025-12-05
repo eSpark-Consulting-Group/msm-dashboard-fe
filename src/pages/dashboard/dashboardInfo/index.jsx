@@ -231,6 +231,11 @@ const DashboardInfo = () => {
     }
   }, [sftpData]);
 
+  useEffect(() => {
+    if (mqttsData) {
+    }
+  }, [mqttsData]);
+
   const handleReboot = async () => {
     try {
       const res = await reboot(id);

@@ -15,6 +15,8 @@ import {
   PhaseCards,
   DynamicTabs2,
   NavigateHeader,
+  DynamicModal,
+  EditMeasurementModal,
 } from "../../../../components";
 import {
   useGetMeasurementsCtRatioQuery,
@@ -132,6 +134,10 @@ const Measurement = () => {
   const [iOffset, setIOfset] = useState({});
   const [vOffset, setVOfset] = useState({});
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [type, setType] = useState("");
+  const [editData, setEditData] = useState({});
+
   const { isLoading, isError, error } = useGetMeasurementsCtRatioQuery(id, {
     skip: !id || !(tab === null || tab === "0"),
     refetchOnMountOrArgChange: true,
@@ -192,13 +198,13 @@ const Measurement = () => {
         {Object.entries(obj)?.length > 0 ? (
           Object.entries(obj)?.map(([key, value], ind) => {
             const formattedKey =
-              "Channel " + key.split("-")[1].padStart(2, "0");
+              "Channel " + key.split("-")[1]?.padStart(2, "0");
             return (
               <PhaseCards
                 color={"red"}
                 heading={formattedKey}
                 icon={flashBlack}
-                value={`${value}.00 ${unit}`}
+                value={`${Number(value).toFixed(2)} ${unit}`}
                 valueColor={"green"}
                 headingSize={"18.05px"}
                 key={ind}
@@ -218,15 +224,90 @@ const Measurement = () => {
   const tabs = [
     {
       label: "CT Ratios",
-      component: <ChannelsParentComp obj={ctRatios} unit="%" />,
+      component: (
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+              mb: "20px",
+            }}
+          >
+            <Box sx={{ width: "250px" }}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setModalOpen(true);
+                  setType("set-ct-ratio");
+                  setEditData(measurements?.ct_ratio);
+                }}
+              >
+                Edit
+              </Button>
+            </Box>
+          </Box>
+          <ChannelsParentComp obj={ctRatios} unit="%" />
+        </>
+      ),
     },
     {
       label: "V-OFFSET",
-      component: <ChannelsParentComp obj={vOffset} unit="V" />,
+      component: (
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+              mb: "20px",
+            }}
+          >
+            <Box sx={{ width: "250px" }}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setModalOpen(true);
+                  setType("set-v-offset");
+                  setEditData(measurements?.v_offset);
+                }}
+              >
+                Edit
+              </Button>
+            </Box>
+          </Box>
+          <ChannelsParentComp obj={vOffset} unit="V" />
+        </>
+      ),
     },
     {
       label: "I-OFFSET",
-      component: <ChannelsParentComp obj={iOffset} unit="mA" />,
+      component: (
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+              mb: "20px",
+            }}
+          >
+            <Box sx={{ width: "250px" }}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setModalOpen(true);
+                  setType("set-i-offset");
+                  setEditData(measurements?.i_offset);
+                }}
+              >
+                Edit
+              </Button>
+            </Box>
+          </Box>
+          <ChannelsParentComp obj={iOffset} unit="mA" />,
+        </>
+      ),
     },
   ];
 
@@ -320,12 +401,32 @@ const Measurement = () => {
             {isLoading || ioffSetLoading || voffSetLoading ? (
               <LinearProgress sx={{ width: "100%" }} />
             ) : (
-              <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} />
+              <>
+                <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} />
+              </>
             )}
             {/* <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} /> */}
           </Box>
         </Paper>
       </Box>
+      <DynamicModal
+        open={modalOpen}
+        handleClose={() => {
+          setModalOpen(false);
+          setType("");
+          setEditData({});
+        }}
+      >
+        <EditMeasurementModal
+          editData={editData}
+          type={type}
+          handleClose={() => {
+            setModalOpen(false);
+            setType("");
+            setEditData({});
+          }}
+        />
+      </DynamicModal>
     </Box>
   );
 };

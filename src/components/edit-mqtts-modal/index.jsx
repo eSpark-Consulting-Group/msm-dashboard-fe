@@ -91,7 +91,7 @@ const EditMqtts = ({ data, handleCancel }) => {
           />
         </Box> */}
 
-        <Box sx={{ width: "100%" }}>
+        {/* <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="MQTTs Interval"
             placeholder="MQTTs Interval"
@@ -105,9 +105,9 @@ const EditMqtts = ({ data, handleCancel }) => {
             }
             helperText={formik.touched.data_interval && formik.errors.data_interval}
           />
-        </Box>
+        </Box> */}
 
-        <Box
+        {/* <Box
           display="flex"
           sx={{ width: "100%", justifyContent: { xs: "center", sm: "space-around" }, flexDirection: { xs: "column", sm: "row" }, ".MuiFormControl-root ": { flex: 1 } }}
           alignItems="flex-end"
@@ -149,7 +149,7 @@ const EditMqtts = ({ data, handleCancel }) => {
             }
             label="Claim key"
           />
-        </Box>
+        </Box> */}
 
         <Box
           sx={{

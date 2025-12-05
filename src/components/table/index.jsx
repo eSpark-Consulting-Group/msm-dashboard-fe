@@ -244,18 +244,28 @@ const DynamicTable = ({
           No Data Found
         </Typography>
       ) : (
-        <TableContainer>
+        <TableContainer
+          sx={
+            mqttTable
+              ? {
+                  maxHeight: "60vh",
+                  overflowY: "auto",
+                }
+              : {}
+          }
+        >
           <Table>
             <TableHead
               sx={{
                 ...(mqttTable && {
-                  "& .MuiTableRow-root": {
-                    background: "#F7F9FB",
-                    border: "1px solid #E9E9EA",
-                  },
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 2,
+                  backgroundColor: "#F7F9FB",
                   "& .MuiTableCell-root": {
                     padding: "8px 8px",
                     color: "#454545",
+                    backgroundColor: "#F7F9FB",
                   },
                 }),
               }}

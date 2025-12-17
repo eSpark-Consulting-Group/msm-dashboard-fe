@@ -26,7 +26,6 @@ import EnergyCards from "./channel-energy-cards";
 import NtpEditModal from "./ntp-edit-modal";
 import EditMqtt from "./edit-mqtt-modal";
 import SftpEditModal from "./sftp-edit-modal";
-import EditMeasurementModal from "./edit-measurement-modal";
 
 export {
   Button,
@@ -57,5 +56,4 @@ export {
   NtpEditModal,
   EditMqtt,
   SftpEditModal,
-  EditMeasurementModal,
 };

@@ -53,6 +53,8 @@ const Dashboard = () => {
 
   // const [sortKey, setSortKey] = useState(null);
   // const [sortOrder, setSortOrder] = useState(null);
+  const [sortKey, setSortKey] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();

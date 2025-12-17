@@ -49,7 +49,7 @@ const NavigateHeader = () => {
               fontSize: "12.28px",
               fontWeight: "400",
               color: "#505050",
-              textTransform: "capitalize",
+              // textTransform: "capitalize",
             }}
           >
             {item.replace(/-/g, " ").replace(/%/g, " ")}

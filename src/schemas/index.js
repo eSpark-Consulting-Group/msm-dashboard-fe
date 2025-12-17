@@ -39,6 +39,14 @@ export const passwordScehma = Yup.object({
     .required("Please confirm your password"),
 });
 
+export const devicePasswordScehma = Yup.object({
+  old_password: Yup.string().required("Old Password is required"),
+  new_password: Yup.string().required("New Password is required"),
+  confirm_new_password: Yup.string()
+    .oneOf([Yup.ref("new_password"), null], "New Passwords must match")
+    .required("Please confirm your password"),
+});
+
 export const profileSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   dob: Yup.date()
@@ -184,7 +192,7 @@ export const mqttSettingsSchema = Yup.object().shape({
 
   broker_pass: Yup.string().required("Broker Password is required"),
 
-  broker_port: Yup.string().required("Broker Port is required"),
+  // broker_port: Yup.string().required("Broker Port is required"),
 
   broker_user: Yup.string().required("Broker Username is required"),
 
@@ -196,12 +204,18 @@ export const mqttSettingsSchema = Yup.object().shape({
   mqtt_topic: Yup.string().required("MQTT Topic is required"),
 });
 
+export const mqttsSettingsSchema = Yup.object().shape({
+  broker_ip: Yup.string().required("MQTTs Endpoint is required"),
+  // broker_port: Yup.string().required("MQTTs Port is required"),
+  data_interval: Yup.string().required("MQTTs Interval is required"),
+});
+
 export const sftpSettingsSchema = Yup.object().shape({
   server_ip: Yup.string().required("Server IP is required"),
 
-  server_port: Yup.number()
-    .typeError("Server Port must be a number")
-    .required("Server Port is required"),
+  // server_port: Yup.number()
+  //   .typeError("Server Port must be a number")
+  //   .required("Server Port is required"),
 
   username: Yup.string().required("Username is required"),
 

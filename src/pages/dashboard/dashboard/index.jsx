@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Box, Button, Typography } from "@mui/material";
 import {
   DeleteModal,
+  Dropdown,
   DynamicModal,
   DynamicTable,
   SearchBar,
@@ -16,6 +17,7 @@ import {
   useDeleteUserDeviceMutation,
   useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
+  useUnAssignDeviceMutation,
 } from "../../../services/devices";
 import { useDispatch, useSelector } from "react-redux";
 import MeterReadingConfigPopover from "../../../components/meter-reading-modal";
@@ -33,10 +35,25 @@ const Dashboard = () => {
   const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
+  const [deviceUnAssign, setDeviceUnAssign] = useState(false);
   const token = localStorage.getItem("msm_token");
 
-  const [sortKey, setSortKey] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
+  const [statusSort, setStatusSort] = useState("");
+  const [createdSort, setCreatedSort] = useState(-1);
+  const [updatedSort, setUpdatedSort] = useState(-1);
+
+  const handleSort = (key, dir) => {
+    if (key === "status") {
+      // setStatusSort(dir);
+    } else if (key === "createdAt") {
+      setCreatedSort(dir);
+    } else if (key === "lastUpdated") {
+      setUpdatedSort(dir);
+    }
+  };
+
+  // const [sortKey, setSortKey] = useState(null);
+  // const [sortOrder, setSortOrder] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -253,6 +270,26 @@ const Dashboard = () => {
     }
   };
 
+  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+
+  const handleUnAssign = (item) => {
+    setDeviceUnAssign(item);
+  }
+
+  const handleUnassignDevice = () => {
+    unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to unassign device");
+        setDeviceUnAssign(false);
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device unassigned successfully");
+        setDeviceUnAssign(false);
+      }
+    });
+  };
+
   return (
     <>
       <SubHeader
@@ -262,11 +299,58 @@ const Dashboard = () => {
       // onClick={() => setOpen(true)}
       // variant="contained"
       />
-      <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-        <SearchBar value={search} onChange={(val) => {
-          setSearch(val);
-          setPage(1);
-        }} />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ my: "27px", width: { xs: "100%", md: "495px" } }}>
+          <SearchBar
+            value={search}
+            onChange={(val) => {
+              setSearch(val);
+              setPage(1);
+            }}
+          />
+        </Box>
+        <Box sx={{ width: { xs: "100%", md: "200px" } }}>
+          <Dropdown
+            name="status"
+            variant="outlined"
+            placeholder="Select Status"
+            noLabel
+            options={
+              user?.role?.name === "user"
+                ? [
+                    { label: "All", value: "" },
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    // { label: "Unassigned", value: 2 },
+                  ]
+                : [
+                    { label: "All", value: "" },
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    { label: "Un Assigned", value: 2 },
+                  ]
+            }
+            value={statusSort}
+            handleChange={(e) => setStatusSort(e.target.value)}
+            renderValueSx={{
+              color: "#000",
+              fontWeight: 400,
+            }}
+            selectSx={{
+              backgroundColor: "#FFF",
+              border: "1.38px solid #DBD6D6",
+              borderRadius: "6.92px",
+              height: "56px",
+            }}
+          />
+        </Box>
       </Box>
 
       <DynamicTable
@@ -275,6 +359,8 @@ const Dashboard = () => {
         hideView
         hideEdit
         handleDelete={handleDelete}
+        showUnAssign={user?.role?.name === "super_admin"}
+        handleUnAssign={handleUnAssign}
         isLoading={isLoading || isLoading2 || isFetching || isFetching2}
         page={page}
         pageSize={pageSize}
@@ -306,6 +392,19 @@ const Dashboard = () => {
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
           Are you sure you want to delete this dashboard?
+        </Typography>
+      </DeleteModal>
+      <DeleteModal
+        open={deviceUnAssign}
+        handleClose={() => setDeviceUnAssign(false)}
+        heading={"Unassign Device"}
+        handleAccept={handleUnassignDevice}
+        handleCancel={() => setDeviceUnAssign(false)}
+        loading={unassignLoading}
+        btnText="Unassign"
+      >
+        <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
+          Are you sure you want to unassign this device?
         </Typography>
       </DeleteModal>
     </>

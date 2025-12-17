@@ -90,6 +90,18 @@ export const deviceApi = api.injectEndpoints({
       }),
       providesTags: (result, error, id) => [{ type: "Devices", id }],
     }),
+    unAssignDevice: builder.mutation({
+      query: (id) => ({
+        url: `/devices/unassign_imei/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [
+        "Devices",
+        { type: "Devices", id },
+        "Users",
+        { type: "Users" },
+      ],
+    }),
   }),
 });
 
@@ -104,4 +116,5 @@ export const {
   useGetUserDevicesQuery,
   useGetAllAssignDevicesQuery,
   useGetAssignDeviceByIdQuery,
+  useUnAssignDeviceMutation,
 } = deviceApi;

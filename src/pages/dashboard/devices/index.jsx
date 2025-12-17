@@ -22,6 +22,7 @@ import {
   useDeleteDeviceMutation,
   useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
+  useUnAssignDeviceMutation,
 } from "../../../services/devices";
 import {
   useDeleteGroupMutation,
@@ -42,10 +43,25 @@ const Devices = () => {
   const [deviceData, setDeviceData] = useState([]);
   const [deviceGroupData, setDeviceGroupData] = useState([]);
   const [deviceDelete, setDeviceDelete] = useState(false);
+  const [deviceUnAssign, setDeviceUnAssign] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(null);
   const [importDeviceModal, setImportDeviceModal] = useState(false);
   const { user } = useSelector((state) => state.auth);
+
+  const [statusSort, setStatusSort] = useState("");
+  const [createdSort, setCreatedSort] = useState(-1);
+  const [updatedSort, setUpdatedSort] = useState(-1);
+
+  const handleSort = (key, dir) => {
+    if (key === "status") {
+      setStatusSort(dir);
+    } else if (key === "createdAt") {
+      setCreatedSort(dir);
+    } else if (key === "lastUpdated") {
+      setUpdatedSort(dir);
+    }
+  };
 
   // Sorting state
   const [sortKey, setSortKey] = useState(null);
@@ -275,6 +291,26 @@ const Devices = () => {
     setImportDeviceModal(true);
   };
 
+  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+
+  const handleUnAssign = (item) => {
+    setDeviceUnAssign(item);
+  }
+
+  const handleUnassignDevice = () => {
+    unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message || "Failed to unassign device");
+        setDeviceUnAssign(false);
+        return;
+      }
+      if (res?.data) {
+        toast.success(res?.data?.message || "Device unassigned successfully");
+        setDeviceUnAssign(false);
+      }
+    });
+  };
+
   // Sorting function
   const handleSortChange = (key, order) => {
     setSortKey(key);
@@ -329,6 +365,49 @@ const Devices = () => {
           />
         </Box>
       </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ width: { xs: "100%", md: "40%", lg: "30%" } }}>
+          <Dropdown
+            name="status"
+            variant="outlined"
+            placeholder="Select Status"
+            noLabel
+            options={
+              user?.role?.name === "user"
+                ? [
+                  { label: "All", value: "" },
+                  { label: "Active", value: -1 },
+                  { label: "In Active", value: 1 },
+                  // { label: "Unassigned", value: 2 },
+                ]
+                : [
+                  { label: "All", value: "" },
+                  { label: "Active", value: -1 },
+                  { label: "In Active", value: 1 },
+                  { label: "Un Assigned", value: 2 },
+                ]
+            }
+            value={statusSort}
+            handleChange={(e) => setStatusSort(e.target.value)}
+            renderValueSx={{
+              color: "#000",
+              fontWeight: 400,
+            }}
+            selectSx={{
+              backgroundColor: "#FFF",
+              border: "1.38px solid #DBD6D6",
+              borderRadius: "6.92px",
+              height: "56px",
+            }}
+          />
+        </Box>
+      </Box>
       <DynamicTable
         data={getSortedData()}
         columns={
@@ -339,6 +418,8 @@ const Devices = () => {
         isLoading={deviceLoading || groupLoading || deviceLoading2 || isFetching || isGroupFetching || isFetching2}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        showUnAssign={user?.role?.name === "super_admin"}
+        handleUnAssign={handleUnAssign}
         page={page}
         pageSize={pageSize}
         handlePageChange={handlePageChange}
@@ -422,6 +503,19 @@ const Devices = () => {
       >
         <ImportDeviceModal />
       </DynamicModal>
+      <DeleteModal
+        open={deviceUnAssign}
+        handleClose={() => setDeviceUnAssign(false)}
+        heading={"Unassign Device"}
+        handleAccept={handleUnassignDevice}
+        handleCancel={() => setDeviceUnAssign(false)}
+        loading={unassignLoading}
+        btnText="Unassign"
+      >
+        <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
+          Are you sure you want to unassign this device?
+        </Typography>
+      </DeleteModal>
     </>
   );
 };

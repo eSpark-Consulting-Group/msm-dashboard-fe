@@ -654,6 +654,35 @@ export const infoData = (realData) => {
       value: realData?.sftp_status ? "Server Connected" : "No Connection",
       key: "sftp_status",
     },
+    {
+      label: "MQTTs STATUS",
+      value: realData?.device_status ? "Server Connected" : "No Connection",
+      key: "mqtts_status",
+    },
+    {
+      label: "GSM STATUS",
+      value:
+        realData?.gsm_status === "true" ? "Server Connected" : "No Connection",
+      key: "gsm_status",
+    },
+    {
+      label: "NTP STATUS",
+      value:
+        realData?.ntp_status === "true" ? "Server Connected" : "No Connection",
+      key: "ntp_status",
+    },
+    {
+      label: "Hardware Version",
+      value:
+        realData?.hardware_version || "-",
+      key: "hardware_version",
+    },
+    {
+      label: "Firmware Version",
+      value:
+        realData?.firmware_version || "-",
+      key: "firmware_version",
+    },
   ];
 };
 

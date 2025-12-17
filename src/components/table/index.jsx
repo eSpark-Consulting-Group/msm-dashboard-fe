@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { copyToClipboard, getValue } from "../../utils";
-import { view, edit, trash, copy } from "../../assets";
+import { view, edit, trash, copy, unassign } from "../../assets";
 
 const DynamicTable = ({
   data,
@@ -27,6 +27,8 @@ const DynamicTable = ({
   hideView,
   hideEdit,
   hideDelete,
+  showUnAssign,
+  handleUnAssign,
   page,
   pageSize,
   handlePageChange,
@@ -87,6 +89,17 @@ const DynamicTable = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(item);
+              }}
+            />
+          )}
+          {showUnAssign && (
+            <img
+              src={unassign}
+              alt="Unassign"
+              style={{ cursor: "pointer", width: "19px", height: "19px" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUnAssign(item);
               }}
             />
           )}
@@ -221,18 +234,28 @@ const DynamicTable = ({
           No Data Found
         </Typography>
       ) : (
-        <TableContainer>
+        <TableContainer
+          sx={
+            mqttTable
+              ? {
+                  maxHeight: "60vh",
+                  overflowY: "auto",
+                }
+              : {}
+          }
+        >
           <Table>
             <TableHead
               sx={{
                 ...(mqttTable && {
-                  "& .MuiTableRow-root": {
-                    background: "#F7F9FB",
-                    border: "1px solid #E9E9EA",
-                  },
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 2,
+                  backgroundColor: "#F7F9FB",
                   "& .MuiTableCell-root": {
                     padding: "8px 8px",
                     color: "#454545",
+                    backgroundColor: "#F7F9FB",
                   },
                 }),
               }}
@@ -328,7 +351,7 @@ const DynamicTable = ({
           )}
         </TableContainer>
       )}
-      {total > pageSize && !isLoading ? (
+      {data?.length > 0 && !isLoading ? (
         <Stack
           sx={{ marginTop: { xs: "20px", sm: "10px" } }}
           p={{ xs: 0, sm: 2 }}

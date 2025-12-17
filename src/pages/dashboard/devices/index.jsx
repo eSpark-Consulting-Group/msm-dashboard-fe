@@ -6,7 +6,6 @@ import {
   AddDeviceModal,
   AddGroupModal,
   DeleteModal,
-  Dropdown,
   DynamicModal,
   DynamicTable,
   DynamicTabs,
@@ -34,7 +33,7 @@ import { useSelector } from "react-redux";
 const Devices = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState();
@@ -65,8 +64,8 @@ const Devices = () => {
   };
 
   // Sorting state
-  // const [sortKey, setSortKey] = useState(null);
-  // const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
+  const [sortKey, setSortKey] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null); // "asc" | "desc"
 
   useEffect(() => {
     if (tab) {
@@ -84,8 +83,8 @@ const Devices = () => {
     }
     setPage(1);
     setSearch("");
-    // setSortKey(null);
-    // setSortOrder(null);
+    setSortKey(null);
+    setSortOrder(null);
   }, [activeTab]);
 
   const {
@@ -95,14 +94,7 @@ const Devices = () => {
     error: error,
     isFetching,
   } = useGetAllDevicesQuery(
-    {
-      page,
-      limit: pageSize,
-      search,
-      statusSort,
-      createdSort,
-      updatedSort,
-    },
+    { page, limit: pageSize, search },
     {
       skip: activeTab !== 0 || user?.role?.name === "user",
       refetchOnMountOrArgChange: true,
@@ -116,14 +108,7 @@ const Devices = () => {
     isError: isError2,
     error: error2,
   } = useGetAllAssignDevicesQuery(
-    {
-      page,
-      limit: pageSize,
-      search,
-      statusSort,
-      createdSort,
-      updatedSort,
-    },
+    { page, limit: pageSize, search },
     {
       skip: user?.role?.name !== "user",
       refetchOnMountOrArgChange: true,
@@ -176,9 +161,6 @@ const Devices = () => {
           user?.role?.name === "user"
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
-
-        const unAssign =
-          user?.role?.name === "user" ? true : item?.device_data?.device_imei;
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -192,11 +174,11 @@ const Devices = () => {
           userName: item?.userName || "-",
           groups:
             user?.role?.name === "user"
-              ? item?.device_data?.groups_data[0]?.name
+              ? item?.device_data?.groups_data?.name
               : item?.groups_data?.name || "-",
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
           lastUpdated: dayjs(
             user?.role?.name === "user"
@@ -210,18 +192,7 @@ const Devices = () => {
       setData(deviceData);
       setTotal(totalCount);
     }
-  }, [
-    isError,
-    error,
-    isError2,
-    error2,
-    user,
-    devicesData,
-    devicesData2,
-    statusSort,
-    createdSort,
-    updatedSort,
-  ]);
+  }, [isError, error, isError2, error2, user, devicesData, devicesData2]);
 
   useEffect(() => {
     if (isGroupError && groupError) {
@@ -318,11 +289,12 @@ const Devices = () => {
     setImportDeviceModal(true);
   };
 
-  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+  const [unassign, { isLoading: unassignLoading }] =
+    useUnAssignDeviceMutation();
 
   const handleUnAssign = (item) => {
     setDeviceUnAssign(item);
-  }
+  };
 
   const handleUnassignDevice = () => {
     unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
@@ -339,29 +311,29 @@ const Devices = () => {
   };
 
   // Sorting function
-  // const handleSortChange = (key, order) => {
-  //   setSortKey(key);
-  //   setSortOrder(order);
-  // };
+  const handleSortChange = (key, order) => {
+    setSortKey(key);
+    setSortOrder(order);
+  };
 
-  // const getSortedData = () => {
-  //   if (!sortKey || !sortOrder) return data;
+  const getSortedData = () => {
+    if (!sortKey || !sortOrder) return data;
 
-  //   return [...data].sort((a, b) => {
-  //     let aVal = a[sortKey];
-  //     let bVal = b[sortKey];
+    return [...data].sort((a, b) => {
+      let aVal = a[sortKey];
+      let bVal = b[sortKey];
 
-  //     // Special handling for status (Active/Inactive)
-  //     if (sortKey === "status") {
-  //       aVal = aVal?.label || "";
-  //       bVal = bVal?.label || "";
-  //     }
+      // Special handling for status (Active/Inactive)
+      if (sortKey === "status") {
+        aVal = aVal?.label || "";
+        bVal = bVal?.label || "";
+      }
 
-  //     if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
-  //     if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
-  //     return 0;
-  //   });
-  // };
+      if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  };
 
   return (
     <>
@@ -379,7 +351,7 @@ const Devices = () => {
           alignItems: "center",
         }}
       >
-        <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} />
+        <DynamicTabs tabs={tabs} />
         <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
           <SearchBar
             value={search}
@@ -408,17 +380,17 @@ const Devices = () => {
             options={
               user?.role?.name === "user"
                 ? [
-                  { label: "All", value: "" },
-                  { label: "Active", value: -1 },
-                  { label: "In Active", value: 1 },
-                  // { label: "Unassigned", value: 2 },
-                ]
+                    { label: "All", value: "" },
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    // { label: "Unassigned", value: 2 },
+                  ]
                 : [
-                  { label: "All", value: "" },
-                  { label: "Active", value: -1 },
-                  { label: "In Active", value: 1 },
-                  { label: "Un Assigned", value: 2 },
-                ]
+                    { label: "All", value: "" },
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    { label: "Un Assigned", value: 2 },
+                  ]
             }
             value={statusSort}
             handleChange={(e) => setStatusSort(e.target.value)}
@@ -436,10 +408,10 @@ const Devices = () => {
         </Box>
       </Box>
       <DynamicTable
-        data={data}
+        data={getSortedData()}
         columns={
           activeTab === 0
-            ? columns(user?.role?.name, statusSort, createdSort, updatedSort)
+            ? columns(user?.role?.name)
             : deviceGroupColumns(user?.role?.name)
         }
         isLoading={
@@ -456,14 +428,12 @@ const Devices = () => {
         handleUnAssign={handleUnAssign}
         page={page}
         pageSize={pageSize}
-        setPageSize={setPageSize}
         handlePageChange={handlePageChange}
         total={total}
         hideView={true}
-        // sortKey={sortKey}
-        // sortOrder={sortOrder}
-        // onSortChange={handleSortChange}
-        onSortChange={handleSort}
+        sortKey={sortKey}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
       />
       <DynamicModal
         open={openEditModal === 0}
@@ -493,8 +463,9 @@ const Devices = () => {
         loading={deleteGroupLoading || deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"
-            }`}
+          {`Are you sure you want to delete this ${
+            activeTab === 0 ? "device" : "group"
+          }`}
         </Typography>
       </DeleteModal>
       <DynamicModal

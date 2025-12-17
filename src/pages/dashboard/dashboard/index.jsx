@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { Box, Button, Typography } from "@mui/material";
 import {
   DeleteModal,
-  Dropdown,
   DynamicModal,
   DynamicTable,
   SearchBar,
@@ -32,7 +31,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
   const [deviceUnAssign, setDeviceUnAssign] = useState(false);
@@ -69,9 +68,8 @@ const Dashboard = () => {
       page,
       limit: pageSize,
       search,
-      statusSort,
-      createdSort,
-      updatedSort,
+      sortKey,
+      sortOrder,
     },
     {
       skip: !token || user?.role?.name === "user",
@@ -90,9 +88,8 @@ const Dashboard = () => {
       page,
       limit: pageSize,
       search,
-      statusSort,
-      createdSort,
-      updatedSort,
+      sortKey,
+      sortOrder,
     },
     {
       skip: !token || user?.role?.name !== "user",
@@ -175,9 +172,6 @@ const Dashboard = () => {
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
 
-        const unAssign =
-          user?.role?.name === "user" ? true : item?.device_data?.device_imei;
-
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -187,8 +181,8 @@ const Dashboard = () => {
               : item?.device_data?.device_uuid || "-",
           group:
             user?.role?.name === "user"
-              ? item?.device_data?.groups_data[0]?.name
-              : item?.groups_data[0]?.name || "-",
+              ? item?.device_data?.groups_data?.name
+              : item?.groups_data?.name || "-",
           name:
             user?.role?.name === "user" ? item?.device_data?.name : item?.name,
           createdBy:
@@ -196,8 +190,8 @@ const Dashboard = () => {
               ? item?.device_data?.user_id
               : item?.user_id,
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
           lastUpdated: dayjs(
             user?.role?.name === "user"
@@ -207,29 +201,29 @@ const Dashboard = () => {
         };
       }) || [];
 
-    // // ✅ apply client-side sorting
-    // if (sortKey && sortOrder) {
-    //   mappedData = mappedData.sort((a, b) => {
-    //     const aVal = a[sortKey];
-    //     const bVal = b[sortKey];
+    // ✅ apply client-side sorting
+    if (sortKey && sortOrder) {
+      mappedData = mappedData.sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
 
-    //     if (sortKey === "status") {
-    //       return sortOrder === "asc"
-    //         ? aVal.label.localeCompare(bVal.label)
-    //         : bVal.label.localeCompare(aVal.label);
-    //     }
+        if (sortKey === "status") {
+          return sortOrder === "asc"
+            ? aVal.label.localeCompare(bVal.label)
+            : bVal.label.localeCompare(aVal.label);
+        }
 
-    //     if (sortKey === "createdAt") {
-    //       return sortOrder === "asc"
-    //         ? new Date(aVal) - new Date(bVal)
-    //         : new Date(bVal) - new Date(aVal);
-    //     }
+        if (sortKey === "createdAt") {
+          return sortOrder === "asc"
+            ? new Date(aVal) - new Date(bVal)
+            : new Date(bVal) - new Date(aVal);
+        }
 
-    //     return sortOrder === "asc"
-    //       ? String(aVal).localeCompare(String(bVal))
-    //       : String(bVal).localeCompare(String(aVal));
-    //   });
-    // }
+        return sortOrder === "asc"
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+    }
 
     setData(mappedData);
     setTotal(totalCount);
@@ -237,9 +231,8 @@ const Dashboard = () => {
     isError,
     error,
     dashboardData,
-    statusSort,
-    createdSort,
-    updatedSort,
+    sortKey,
+    sortOrder,
     dashboardData2,
     user,
     isError2,
@@ -287,11 +280,12 @@ const Dashboard = () => {
     }
   };
 
-  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+  const [unassign, { isLoading: unassignLoading }] =
+    useUnAssignDeviceMutation();
 
   const handleUnAssign = (item) => {
     setDeviceUnAssign(item);
-  }
+  };
 
   const handleUnassignDevice = () => {
     unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
@@ -372,12 +366,7 @@ const Dashboard = () => {
 
       <DynamicTable
         data={data}
-        columns={columns(
-          user?.role?.name,
-          statusSort,
-          createdSort,
-          updatedSort
-        )}
+        columns={columns(user?.role?.name)}
         hideView
         hideEdit
         handleDelete={handleDelete}
@@ -386,13 +375,15 @@ const Dashboard = () => {
         isLoading={isLoading || isLoading2 || isFetching || isFetching2}
         page={page}
         pageSize={pageSize}
-        setPageSize={setPageSize}
         handlePageChange={handlePageChange}
         total={total}
         onRowClick={handleRowClick}
-        // sortKey={sortKey}
-        // sortOrder={sortOrder}
-        onSortChange={handleSort}
+        sortKey={sortKey}
+        sortOrder={sortOrder}
+        onSortChange={(key, order) => {
+          setSortKey(key);
+          setSortOrder(order);
+        }}
       />
 
       {/* <AddDashboardModal

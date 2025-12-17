@@ -2,8 +2,6 @@ import {
   dashboardIcon,
   devicesIcon,
   userIcon,
-  measurementIcon,
-  otaIcon,
   supportIcon,
   reportIcon,
   settingsIcon,
@@ -42,16 +40,6 @@ export const sidebarTabs = (role) => {
           icon: userIcon,
           title: "Users",
           link: "/users",
-        },
-        // {
-        //   icon: measurementIcon,
-        //   title: "Measurement",
-        //   link: "/measurement",
-        // },
-        {
-          icon: otaIcon,
-          title: "OTA updates",
-          link: "/ota",
         },
         // {
         //   icon: supportIcon,
@@ -654,12 +642,6 @@ export const energyCards = [
 export const infoData = (realData) => {
   return [
     { label: "DEVICE ID", value: realData?.device_uuid, key: "device_uuid" },
-    {
-      label: "DEVICE PASSWORD",
-      value: realData?.device_pass,
-      key: "device_pass",
-      password: true,
-    },
     { label: "DEVICE IMEI", value: realData?.device_imei, key: "device_imei" },
     { label: "DEVICE IP", value: realData?.device_ip, key: "device_ip" },
     {
@@ -691,14 +673,12 @@ export const infoData = (realData) => {
     },
     {
       label: "Hardware Version",
-      value:
-        realData?.hardware_version || "-",
+      value: realData?.hardware_version || "-",
       key: "hardware_version",
     },
     {
       label: "Firmware Version",
-      value:
-        realData?.firmware_version || "-",
+      value: realData?.firmware_version || "-",
       key: "firmware_version",
     },
   ];
@@ -804,120 +784,6 @@ export const sftp = (realData) => {
       value: realData?.data_interval,
       showIcon: true,
       key: "data_interval",
-    },
-  ];
-};
-
-export const ctRatioData = () => {
-  return [
-    { label: "DEVICE ID", value: "1002121", key: "device_uuid" },
-    { label: "DEVICE IMEI", value: "31231231", key: "device_imei" },
-    { label: "DEVICE IP", value: "1323123123", key: "device_ip" },
-    {
-      label: "MQTT STATUS",
-      value: true ? "Server Connected" : "No Connection",
-      key: "mqtt_status",
-    },
-    {
-      label: "SFTP STATUS",
-      value: true ? "Server Connected" : "No Connection",
-      key: "sftp_status",
-    },
-  ];
-};
-
-export const voltageData = () => {
-  return [
-    { label: "DEVICE ID", value: "1002121", key: "device_uuid" },
-    { label: "DEVICE IMEI", value: "31231231", key: "device_imei" },
-    { label: "DEVICE IP", value: "1323123123", key: "device_ip" },
-    {
-      label: "MQTT STATUS",
-      value: true ? "Server Connected" : "No Connection",
-      key: "mqtt_status",
-    },
-    {
-      label: "SFTP STATUS",
-      value: true ? "Server Connected" : "No Connection",
-      key: "sftp_status",
-    },
-  ];
-};
-
-export const ccData = () => {
-  return [
-    { label: "DEVICE ID", value: "1002121", key: "device_uuid" },
-    { label: "DEVICE IMEI", value: "31231231", key: "device_imei" },
-    { label: "DEVICE IP", value: "1323123123", key: "device_ip" },
-    {
-      label: "MQTT STATUS",
-      value: true ? "Server Connected" : "No Connection",
-      key: "mqtt_status",
-    },
-    {
-      label: "SFTP STATUS",
-      value: true ? "Server Connected" : "No Connection",
-      key: "sftp_status",
-    },
-  ];
-};
-
-export const mqttsProtocol = (realData) => {
-  const data = realData || {};
-  return [
-    {
-      label: "MQTTs_ENDPOINT",
-      value: data?.broker_ip,
-      key: "broker_ip",
-      showIcon: true,
-    },
-    {
-      label: "MQTTs_PORT",
-      value: data?.broker_port,
-      key: "broker_port",
-      showIcon: true,
-    },
-    {
-      label: "MQTTs_INTERVAL",
-      value: data?.data_interval,
-      key: "data_interval",
-      showIcon: true,
-    },
-    {
-      label: "CA1 cert",
-      value: data?.root_ca === true,
-      key: "root_ca",
-      checkBox: true,
-    },
-    {
-      label: "Claim cert",
-      value: data?.claim_cert === true,
-      key: "claim_cert",
-      checkBox: true,
-    },
-    {
-      label: "Claim key",
-      value: data?.claim_key === true,
-      key: "claim_key",
-      checkBox: true,
-    },
-  ];
-};
-
-export const otaData = (realData) => {
-  const data = realData || {};
-  return [
-    {
-      label: "Current Version",
-      value: data?.current_version || "-",
-      key: "current_version",
-    },
-    {
-      label: "Last Update",
-      value: realData
-        ? `${data?.last_update_date}T${data?.last_update_time}`
-        : "-",
-      key: "current_version",
     },
   ];
 };

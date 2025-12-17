@@ -75,7 +75,7 @@ const Energy = ({ data, newData }) => {
         const filtered = data.filter((d) => d.phase === phase);
 
         if (filtered.length > 0) {
-          const latestTime = filtered[filtered.length - 1]?.timestamp ?? null;
+          const latestTime = filtered[0]?.timestamp ?? null;
           setPhaseTimes((prev) => ({
             ...prev,
             [phase]: `Real Time ${dayjs(latestTime).fromNow()}`,

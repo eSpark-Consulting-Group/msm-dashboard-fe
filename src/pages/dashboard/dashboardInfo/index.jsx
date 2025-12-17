@@ -9,9 +9,7 @@ import DynamicTabs from "../../../components/tabs";
 import {
   infoData,
   mqttProtocol,
-  mqttsProtocol,
   networkProtocol,
-  otaData,
   sftp,
 } from "../../../constant";
 import {
@@ -21,16 +19,12 @@ import {
 } from "../../../services/devices";
 import { useGetNtpDevicesByIdQuery } from "../../../services/ntp";
 import { useGetSftpDevicesByIdQuery } from "../../../services/sftp";
-import {
-  useGetMqttByDeviceIdQuery,
-  useGetMqttsByDeviceIdQuery,
-} from "../../../services/mqtt";
+import { useGetMqttByDeviceIdQuery } from "../../../services/mqtt";
 import {
   addDeviceStatus,
   handleSelectedDevice,
 } from "../../../store/slices/devices";
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
-import { useGetCurrentOtaQuery } from "../../../services/ota";
 // import { useSocket } from "../../../SocketTest";
 
 const DashboardInfo = () => {
@@ -44,8 +38,6 @@ const DashboardInfo = () => {
     ntp: socketNtp,
     mqtt: socketMqtt,
     sftp: socketSftp,
-    mqtts: socketMqtts,
-    ota: socketOta,
   } = useSelector((state) => state.info);
 
   // const {
@@ -100,28 +92,6 @@ const DashboardInfo = () => {
   });
 
   const {
-    data: mqttsData,
-    isLoading: mqttsLoading,
-    isError: isMqttsError,
-    error: mqttsError,
-  } = useGetMqttsByDeviceIdQuery(id, {
-    skip: !id,
-    refetchOnMountOrArgChange: true,
-  });
-
-  const {
-    data: otaDeviceData,
-    isLoading: otaLoading,
-    isError: isOtaError,
-    error: otaError,
-    refetch: otaRefetch,
-    isFetching: otaFetching,
-  } = useGetCurrentOtaQuery(id, {
-    skip: !id,
-    refetchOnMountOrArgChange: true,
-  });
-
-  const {
     data: sftpData,
     isLoading: sftpLoading,
     isError: isSftpError,
@@ -144,10 +114,6 @@ const DashboardInfo = () => {
       toast.error(ntpError?.data?.message, { toastId: "NTPERROR" });
     if (isMqttError)
       toast.error(mqttError?.data?.message, { toastId: "MQTTERROR" });
-    if (isMqttsError)
-      toast.error(mqttsError?.data?.message, { toastId: "MQTTSERROR" });
-    if (isOtaError)
-      toast.error(otaError?.data?.message, { toastId: "OTAERROR" });
     if (isSftpError)
       toast.error(sftpError?.data?.message, { toastId: "SFTPERROR" });
   }, [
@@ -157,10 +123,6 @@ const DashboardInfo = () => {
     ntpError,
     isMqttError,
     mqttError,
-    isMqttsError,
-    mqttsError,
-    isOtaError,
-    otaError,
     isSftpError,
     sftpError,
     isDeviceError2,
@@ -267,7 +229,6 @@ const DashboardInfo = () => {
           onButtonClick={handleReboot}
           role={user?.role?.name}
           type={"INFO"}
-          id={deviceData?.data?.device_uuid}
         />
       ),
     },
@@ -304,7 +265,7 @@ const DashboardInfo = () => {
           onButtonClick={() => mqttRefetch()}
           role={user?.role?.name}
           buttonLoading={mqttFetching}
-          type={"MQTT"}
+          type={"MQTTS"}
           id={mqttData?.data[0]?._id}
         />
       ),
@@ -326,39 +287,6 @@ const DashboardInfo = () => {
         />
       ),
     },
-    {
-      label: "MQTTS",
-      component: (
-        <InfoCard
-          info={mqttsProtocol({
-            ...mqttsData?.data,
-            ...socketMqtts,
-          })}
-          title="MQTTS Protocol"
-          role={user?.role?.name}
-          type={"MQTTS"}
-          id={mqttsData?.data?.device_uuid}
-        />
-      ),
-    },
-    {
-      label: "OTA",
-      component: (
-        <InfoCard
-          info={otaData({
-            ...otaDeviceData?.data,
-            ...socketOta,
-          })}
-          title="OTA"
-          buttonLabel="Check updates"
-          onButtonClick={otaRefetch}
-          role={user?.role?.name}
-          buttonLoading={otaFetching}
-          type={"OTA"}
-          id={otaDeviceData?.data?.device_uuid}
-        />
-      ),
-    },
   ];
 
   return (
@@ -367,13 +295,11 @@ const DashboardInfo = () => {
         deviceLoading ||
         ntpLoading ||
         mqttLoading ||
-        mqttsLoading ||
-        otaLoading ||
         sftpLoading ||
         deviceLoading2
       }
     >
-      <DynamicTabs tabs={tabs} width="100%" maxWidth="100%" />
+      <DynamicTabs tabs={tabs} />
     </DashboardWrapper>
   );
 };

@@ -5,8 +5,6 @@ const initialState = {
   ntp: {},
   mqtt: {},
   sftp: {},
-  mqtts: {},
-  ota: {},
 };
 
 const infoSlice = createSlice({
@@ -25,12 +23,6 @@ const infoSlice = createSlice({
     updateSftpInfo: (state, action) => {
       state.sftp = { ...state.sftp, ...action.payload };
     },
-    updateMqttsInfo: (state, action) => {
-      state.mqtts = { ...state.mqtts, ...action.payload };
-    },
-    updateOtaInfo: (state, action) => {
-      state.ota = { ...state.ota, ...action.payload };
-    },
   },
 });
 
@@ -39,7 +31,5 @@ export const {
   updateNtpInfo,
   updateMqttInfo,
   updateSftpInfo,
-  updateMqttsInfo,
-  updateOtaInfo,
 } = infoSlice.actions;
 export default infoSlice.reducer;

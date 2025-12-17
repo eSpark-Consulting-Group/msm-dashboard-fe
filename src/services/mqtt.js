@@ -30,21 +30,6 @@ export const mqttApi = api.injectEndpoints({
       }),
       providesTags: ["mqtt"],
     }),
-    getMqttsByDeviceId: builder.query({
-      query: (device_uuid = "ESP90000005") => ({
-        url: `/mqtts/${device_uuid}`,
-        method: "GET",
-      }),
-      providesTags: ["mqtts"],
-    }),
-    updateMqtts: builder.mutation({
-      query: ({ id, formData }) => ({
-        url: `/mqtts/${id}`,
-        method: "PUT",
-        body: formData,
-      }),
-      invalidatesTags: ["mqtts"],
-    }),
   }),
 });
 
@@ -53,6 +38,4 @@ export const {
   useGetMqttByDeviceIdQuery,
   useGetMqttByIdQuery,
   useUpdateMqttMutation,
-  useGetMqttsByDeviceIdQuery,
-  useUpdateMqttsMutation
 } = mqttApi;

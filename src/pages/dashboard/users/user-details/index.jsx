@@ -19,14 +19,7 @@ import {
 const UserDetails = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
   const [deviceDelete, setDeviceDelete] = useState(false);
-
-  const handlePageChange = (page) => {
-    setPage(page);
-  };
 
   const params = useParams();
   const { search: searchQuery } = useLocation();
@@ -102,7 +95,6 @@ const UserDetails = () => {
           },
         })) || [];
       setData(deviceData);
-      setTotal(userDetailsData?.count || 0);
     }
   }, [userDetailsData]);
 
@@ -118,20 +110,15 @@ const UserDetails = () => {
           mqtt_username: item?.mqtt_user || "-",
           groups: item?.device_data?.groups_data?.name || "-",
           status: {
-            label: !item?.device_data?.device_data?.device_imei
-              ? "Unassigned"
-              : item?.device_data?.device_data?.device_status
+            label: item?.device_data?.device_data?.device_status
               ? "Active"
               : "Inactive",
-            variant: !item?.device_data?.device_data?.device_imei
-              ? "simple2"
-              : item?.device_data?.device_data?.device_status
+            variant: item?.device_data?.device_data?.device_status
               ? "green"
               : "red",
           },
         })) || [];
       setData(deviceData);
-      setTotal(userDetailsData2?.count || 0);
     }
   }, [userDetailsData2]);
 
@@ -143,26 +130,12 @@ const UserDetails = () => {
         userName={userName}
       />
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-          <SearchBar value={search} onChange={(val) => setSearch(val)} />
-        </Box>
+      <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
+        <SearchBar value={search} onChange={(val) => setSearch(val)} />
       </Box>
 
       <DynamicTable
         data={data}
-        page={page}
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-        total={total}
-        handlePageChange={handlePageChange}
         columns={columns()}
         handleDelete={handleDelete}
         hideView

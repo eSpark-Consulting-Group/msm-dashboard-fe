@@ -1,12 +1,13 @@
 import {
   Box,
+  Button,
   CircularProgress,
   LinearProgress,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import { info } from "../../../../assets";
+import { info, measurementIcon } from "../../../../assets";
 import { homeFlashCards } from "../../../../constant";
 import { NavigateHeader, Channels, DynamicTabs2 } from "../../../../components";
 import { useNavigate, useParams } from "react-router-dom";
@@ -87,6 +88,10 @@ const DashboardHome = () => {
 
   const handleInfo = () => {
     navigate(`/dashboard/${id}/info`);
+  };
+
+  const handleMeasurement = () => {
+    navigate(`/dashboard/${id}/measurement`);
   };
 
   const [activeTab, setActiveTab] = useState(1);
@@ -221,7 +226,7 @@ const DashboardHome = () => {
   // }
 
   return (
-    <Box>
+    <Box sx={{ position: "relative" }}>
       <NavigateHeader />
       <DynamicTabs2
         tabs={[
@@ -241,33 +246,80 @@ const DashboardHome = () => {
         </>
       ) : (
         <>
-          {/* Info Button */}
-          <Box
-            sx={{
-              background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",
-              borderTopLeftRadius: "8px",
-              borderTopRightRadius: "8px",
-              p: "6px 20px",
-              display: "flex",
-              columnGap: "10px",
-              width: "fit-content",
-              ml: "30px",
-              border: "1px solid #0077FF",
-              mt: "30px",
-              cursor: "pointer",
-            }}
-            onClick={handleInfo}
-          >
-            <img src={info} alt="Icon" />
-            <Typography
-              sx={{ fontSize: "21px", fontWeight: "500", color: "#ffffff" }}
-            >
-              Info
-            </Typography>
-          </Box>
-
           {/* Channels */}
-          <Paper sx={{ padding: "30px" }}>
+          <Paper sx={{ padding: "30px", position: "relative", my: 8 }}>
+            {/* Info Button */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: -45,
+                left: 100,
+                width: 136,
+                height: 45,
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  background: "linear-gradient(to right, #0095FF, #0886E0)",
+                  gap: "8px",
+                  border: "1px solid #0077FF",
+                  borderTopLeftRadius: "12px",
+                  borderTopRightRadius: "12px",
+                  borderBottomLeftRadius: "0",
+                  borderBottomRightRadius: "0",
+                }}
+                onClick={handleInfo}
+              >
+                <img
+                  src={info}
+                  alt="Home"
+                  width={18}
+                  height={18}
+                  style={{ display: "inline-block" }}
+                />
+                Info
+              </Button>
+            </Box>
+
+            {/* Measurement Button */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: -45,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: 200,
+                height: 45,
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  background: "linear-gradient(to right, #0095FF, #0886E0)",
+                  gap: "8px",
+                  border: "1px solid #0077FF",
+                  borderTopLeftRadius: "12px",
+                  borderTopRightRadius: "12px",
+                  borderBottomLeftRadius: "0",
+                  borderBottomRightRadius: "0",
+                  img: {
+                    filter:
+                      "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)",
+                  },
+                }}
+                onClick={handleMeasurement}
+              >
+                <img
+                  src={measurementIcon}
+                  alt="Home"
+                  width={18}
+                  height={18}
+                  style={{ display: "inline-block" }}
+                />
+                Measurement
+              </Button>
+            </Box>
             <Box
               sx={{
                 display: "flex",

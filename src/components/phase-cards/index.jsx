@@ -99,17 +99,20 @@ const PhaseCards = ({
         <Typography
           sx={{
             fontSize: time ? "34px" : "44px",
-            fontWeight: 700,
+            fontWeight: "700",
             color: getValueColor(),
           }}
         >
           {(() => {
-            const match = String(value).match(/^(-?[\d.]+)([a-zA-Z%]+)?$/);
-            if (!match) return value;
+            // extract number and unit
+            const match = String(value).match(/^([\d.]+)([a-zA-Z%]+)?$/);
+
+            if (!match) return value; // fallback if doesn't match
 
             const num = parseFloat(match[1]);
             const unit = match[2] || "";
-            return `${num.toFixed(3)} ${unit}`;
+
+            return `${num.toFixed(2)} ${unit}`;
           })()}
         </Typography>
       </Box>

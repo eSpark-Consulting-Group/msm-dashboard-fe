@@ -25,7 +25,7 @@ const Devices = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [total] = useState(9);
+  const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
@@ -71,6 +71,7 @@ const Devices = () => {
     isLoading: deviceLoading,
     isError: isError,
     error: error,
+    data: assignDevicesData2,
     refetch,
   } = useGetAllDevicesQuery(
     { page, limit: pageSize, search, statusSort, updatedSort },
@@ -86,6 +87,7 @@ const Devices = () => {
     isError: isError2,
     error: error2,
     refetch: refetch2,
+    data: assignDevicesData,
   } = useGetAllAssignDevicesQuery(
     { page, limit: pageSize, search, statusSort, updatedSort },
     {
@@ -111,6 +113,10 @@ const Devices = () => {
       setData([]);
       return;
     }
+    const totalCount =
+      user?.role?.name === "user"
+        ? assignDevicesData?.count
+        : assignDevicesData2?.count;
     const sourceData = user?.role?.name === "user" ? devicesData2 : devicesData;
     const deviceData =
       sourceData?.map((item) => {
@@ -154,7 +160,19 @@ const Devices = () => {
         };
       }) || [];
     setData(deviceData);
-  }, [isError, error, isError2, error2, devicesData, statusSort, updatedSort]);
+    setTotal(totalCount);
+    // console.log(sourceData);
+  }, [
+    isError,
+    error,
+    isError2,
+    error2,
+    devicesData,
+    statusSort,
+    updatedSort,
+    assignDevicesData,
+    assignDevicesData2,
+  ]);
 
   const handlePageChange = (page) => {
     setPage(page);

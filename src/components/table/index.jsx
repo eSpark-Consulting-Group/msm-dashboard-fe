@@ -232,8 +232,26 @@ const DynamicTable = ({
     return <Typography sx={{ whiteSpace: "pre-line" }}>{cell}</Typography>;
   };
 
+  const startItem = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const endItem = Math.min(page * pageSize, total);
+
   return (
     <>
+      {total > 0 && !isLoading && (
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+          sx={{ mt: 2, px: 2 }}
+        >
+          {/* Left: Item info */}
+          <Typography fontSize={14} color="#555">
+            Showing <b>{startItem}</b> – <b>{endItem}</b> of <b>{total}</b>{" "}
+            items &nbsp; (Page <b>{page}</b>)
+          </Typography>
+        </Stack>
+      )}
       {data?.length === 0 && !isLoading ? (
         <Typography
           fontSize={20}

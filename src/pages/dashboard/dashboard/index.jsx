@@ -196,9 +196,13 @@ const Dashboard = () => {
               ? item?.device_data?.user_id
               : item?.user_id,
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
+          // status: {
+          //   label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
+          //   variant: !unAssign ? "simple2" : status ? "green" : "red",
+          // },
           lastUpdated: dayjs(
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_status_updated_at
@@ -287,11 +291,12 @@ const Dashboard = () => {
     }
   };
 
-  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+  const [unassign, { isLoading: unassignLoading }] =
+    useUnAssignDeviceMutation();
 
   const handleUnAssign = (item) => {
     setDeviceUnAssign(item);
-  }
+  };
 
   const handleUnassignDevice = () => {
     unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
@@ -351,7 +356,7 @@ const Dashboard = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
+                    // { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

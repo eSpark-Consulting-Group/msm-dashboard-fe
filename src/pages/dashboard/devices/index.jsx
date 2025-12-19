@@ -194,9 +194,13 @@ const Devices = () => {
             user?.role?.name === "user"
               ? item?.device_data?.groups_data[0]?.name
               : item?.groups_data?.name || "-",
+          // status: {
+          //   label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
+          //   variant: !unAssign ? "simple2" : status ? "green" : "red",
+          // },
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
           lastUpdated: dayjs(
             user?.role?.name === "user"
@@ -318,11 +322,12 @@ const Devices = () => {
     setImportDeviceModal(true);
   };
 
-  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+  const [unassign, { isLoading: unassignLoading }] =
+    useUnAssignDeviceMutation();
 
   const handleUnAssign = (item) => {
     setDeviceUnAssign(item);
-  }
+  };
 
   const handleUnassignDevice = () => {
     unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
@@ -408,17 +413,17 @@ const Devices = () => {
             options={
               user?.role?.name === "user"
                 ? [
-                  { label: "All", value: "" },
-                  { label: "Active", value: -1 },
-                  { label: "In Active", value: 1 },
-                  // { label: "Unassigned", value: 2 },
-                ]
+                    { label: "All", value: "" },
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    // { label: "Unassigned", value: 2 },
+                  ]
                 : [
-                  { label: "All", value: "" },
-                  { label: "Active", value: -1 },
-                  { label: "In Active", value: 1 },
-                  { label: "Un Assigned", value: 2 },
-                ]
+                    { label: "All", value: "" },
+                    { label: "Active", value: -1 },
+                    { label: "In Active", value: 1 },
+                    // { label: "Un Assigned", value: 2 },
+                  ]
             }
             value={statusSort}
             handleChange={(e) => setStatusSort(e.target.value)}
@@ -493,8 +498,9 @@ const Devices = () => {
         loading={deleteGroupLoading || deleteLoading}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: "400" }}>
-          {`Are you sure you want to delete this ${activeTab === 0 ? "device" : "group"
-            }`}
+          {`Are you sure you want to delete this ${
+            activeTab === 0 ? "device" : "group"
+          }`}
         </Typography>
       </DeleteModal>
       <DynamicModal

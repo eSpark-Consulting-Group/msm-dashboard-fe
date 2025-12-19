@@ -23,7 +23,7 @@ const SftpEditModal = ({ data, handleCancel }) => {
       try {
         const obj = {
           server_ip: values?.server_ip,
-          // server_port: values?.server_port,
+          server_port: data?.server_port,
           username: values?.username,
           password: values?.password,
           data_interval: values?.data_interval,

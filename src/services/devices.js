@@ -10,12 +10,30 @@ export const deviceApi = api.injectEndpoints({
         statusSort,
         createdSort,
         updatedSort,
-      }) => ({
-        url: `/devices/user?page=${page}&limit=${limit}&search=${search}&status_sort=${
-          statusSort === 2 ? 0 : statusSort
-        }&created_sort=${createdSort}&updated_sort=${updatedSort}`,
-        method: "GET",
-      }),
+      }) => {
+        const params = new URLSearchParams({
+          page,
+          limit,
+          search,
+        });
+
+        if (statusSort !== undefined) {
+          params.append("status_sort", statusSort === 2 ? 0 : statusSort);
+        }
+
+        if (createdSort !== undefined) {
+          params.append("created_sort", createdSort);
+        }
+
+        if (updatedSort !== undefined) {
+          params.append("updated_sort", updatedSort);
+        }
+
+        return {
+          url: `/devices/user?${params.toString()}`,
+          method: "GET",
+        };
+      },
       credentials: "include",
       providesTags: ["Devices"],
     }),
@@ -80,8 +98,8 @@ export const deviceApi = api.injectEndpoints({
       ],
     }),
     getUserDevices: builder.query({
-      query: (id) => ({
-        url: `/devices/user_devices/${id}`,
+      query: ({ id, page = 1, limit = 10, search = "" }) => ({
+        url: `/devices/user_devices/${id}?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
     }),

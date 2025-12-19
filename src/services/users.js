@@ -3,7 +3,14 @@ import { api } from "./rtk";
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: ({ page = 1, limit = 10, search = "", statusSort, createdSort, countSort }) => ({
+      query: ({
+        page = 1,
+        limit = 10,
+        search = "",
+        statusSort,
+        createdSort,
+        countSort,
+      }) => ({
         url: `/users?page=${page}&limit=${limit}&search=${search}&status_sort=${statusSort}&created_sort=${createdSort}&devices_no=${countSort}`,
         method: "GET",
       }),
@@ -11,8 +18,8 @@ export const userApi = api.injectEndpoints({
     }),
 
     getUserById: builder.query({
-      query: (id) => ({
-        url: `/devices/user/id/${id}`,
+      query: ({ id, page = 1, limit = 10, search = "" }) => ({
+        url: `/devices/user/id/${id}?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
       providesTags: (result, error, id) => [{ type: "Users", id }],

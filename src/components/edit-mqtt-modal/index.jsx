@@ -25,7 +25,7 @@ const EditMqtt = ({ data, handleCancel }) => {
         const obj = {
           broker_ip: values?.broker_ip,
           broker_pass: values?.broker_pass,
-          // broker_port: values?.broker_port,
+          broker_port: data?.broker_port,
           broker_user: values?.broker_user,
           data_interval: values?.data_interval,
           mqtt_topic: values?.mqtt_topic,

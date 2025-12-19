@@ -142,9 +142,13 @@ const Devices = () => {
               ? item?.device_data?.groups_data?.name
               : item?.groups_data?.name || "-",
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
+          // status: {
+          //   label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
+          //   variant: !unAssign ? "simple2" : status ? "green" : "red",
+          // },
           version:
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.ota[0]?.current_version
@@ -384,7 +388,7 @@ const Devices = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
+                    // { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

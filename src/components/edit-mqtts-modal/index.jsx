@@ -24,11 +24,11 @@ const EditMqtts = ({ data, handleCancel }) => {
       try {
         const obj = {
           broker_ip: values?.broker_ip,
-          // broker_port: values?.broker_port,
+          broker_port: data?.broker_port,
           data_interval: values?.data_interval,
-          root_ca: values?.root_ca ? "true" : "false",
-          claim_cert: values?.claim_cert ? "true" : "false",
-          claim_key: values?.claim_key ? "true" : "false",
+          root_ca: values?.root_ca,
+          claim_cert: values?.claim_cert,
+          claim_key: values?.claim_key,
         };
         const res = await mqtts({ formData: obj, id: values?.id });
         if (res?.data) {
@@ -91,7 +91,7 @@ const EditMqtts = ({ data, handleCancel }) => {
           />
         </Box> */}
 
-        {/* <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="MQTTs Interval"
             placeholder="MQTTs Interval"
@@ -101,11 +101,14 @@ const EditMqtts = ({ data, handleCancel }) => {
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.data_interval && Boolean(formik.errors.data_interval)
+              formik.touched.data_interval &&
+              Boolean(formik.errors.data_interval)
             }
-            helperText={formik.touched.data_interval && formik.errors.data_interval}
+            helperText={
+              formik.touched.data_interval && formik.errors.data_interval
+            }
           />
-        </Box> */}
+        </Box>
 
         {/* <Box
           display="flex"

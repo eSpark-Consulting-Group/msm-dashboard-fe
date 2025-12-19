@@ -166,60 +166,63 @@ const EditUserModal = ({ user, handleCancel }) => {
         }}
         disabled={!user?.isPasswordChanged ? true : false}
       />
-      <Stack>
-        {/* ✅ Devices Multi Select */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography fontSize="14px" mb={1} sx={{ color: "#454545" }}>
-            {"Assign Devices"}
-          </Typography>
+      {user?.role?.name === "user" && (
+        <Stack>
+          {/* ✅ Devices Multi Select */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography fontSize="14px" mb={1} sx={{ color: "#454545" }}>
+              {"Assign Devices"}
+            </Typography>
+          </Stack>
+          <Autocomplete
+            multiple
+            id="user-devices"
+            options={deviceOptions || []}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option.label}
+            value={deviceOptions.filter((opt) =>
+              formik.values.userDevices.includes(opt.value)
+            )}
+            onChange={(e, value) =>
+              formik.setFieldValue(
+                "userDevices",
+                value.map((v) => v.value)
+              )
+            }
+            renderOption={(props, option, { selected }) => {
+              const { key, ...optionProps } = props;
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option.label}
+                </li>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder="Select devices"
+                error={
+                  formik.touched.userDevices &&
+                  Boolean(formik.errors.userDevices)
+                }
+                helperText={
+                  formik.touched.userDevices && formik.errors.userDevices
+                }
+              />
+            )}
+          />
         </Stack>
-        <Autocomplete
-          multiple
-          id="user-devices"
-          options={deviceOptions || []}
-          disableCloseOnSelect
-          getOptionLabel={(option) => option.label}
-          value={deviceOptions.filter((opt) =>
-            formik.values.userDevices.includes(opt.value)
-          )}
-          onChange={(e, value) =>
-            formik.setFieldValue(
-              "userDevices",
-              value.map((v) => v.value)
-            )
-          }
-          renderOption={(props, option, { selected }) => {
-            const { key, ...optionProps } = props;
-            return (
-              <li key={key} {...optionProps}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {option.label}
-              </li>
-            );
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Select devices"
-              error={
-                formik.touched.userDevices && Boolean(formik.errors.userDevices)
-              }
-              helperText={
-                formik.touched.userDevices && formik.errors.userDevices
-              }
-            />
-          )}
-        />
-      </Stack>
+      )}
 
       {/* Actions */}
       <Box

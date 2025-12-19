@@ -414,7 +414,7 @@ const DynamicTable = ({
           )}
         </TableContainer>
       )}
-      {data?.length > 0 && !isLoading ? (
+      {!mqttTable && data?.length > 0 && !isLoading ? (
         <Stack
           sx={{ marginTop: { xs: "20px", sm: "10px" } }}
           p={{ xs: 0, sm: 2 }}

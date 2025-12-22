@@ -4,6 +4,7 @@ import {
   Button,
   DynamicTable,
   DynamicTabs2,
+  MqttDataGrid,
   NavigateHeader,
 } from "../../../components";
 import { useEffect, useState } from "react";
@@ -369,22 +370,31 @@ const MqttProtocol = () => {
           overflow: "auto",
         }}
       >
-        {mqttDataHistoryLoading ? (
+        {mqttDataHistoryLoading || (dataState === 0 && data?.length === 0) ? (
           <LinearProgress />
         ) : (
-          <DynamicTable
+          // <DynamicTable
+          //   data={data}
+          //   columns={columns}
+          //   isLoading={
+          //     dataState === 0 && data?.length === 0
+          //       ? true
+          //       : mqttDataHistoryLoading
+          //   }
+          //   page={page}
+          //   pageSize={pageSize}
+          //   handlePageChange={setPage}
+          //   total={total}
+          //   mqttTable={true}
+          // />
+          <MqttDataGrid
             data={data}
             columns={columns}
-            isLoading={
-              dataState === 0 && data?.length === 0
-                ? true
-                : mqttDataHistoryLoading
-            }
-            page={page}
-            pageSize={pageSize}
-            handlePageChange={setPage}
-            total={total}
-            mqttTable={true}
+            // loading={
+            //   dataState === 0 && data?.length === 0
+            //     ? true
+            //     : mqttDataHistoryLoading
+            // }
           />
         )}
       </Box>

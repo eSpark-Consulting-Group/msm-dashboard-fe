@@ -29,6 +29,7 @@ const OutlinedInput = ({
   isEndorementText,
   min,
   max,
+  step,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -135,6 +136,7 @@ const OutlinedInput = ({
             ? {
                 min,
                 max,
+                step,
               }
             : {}
         }

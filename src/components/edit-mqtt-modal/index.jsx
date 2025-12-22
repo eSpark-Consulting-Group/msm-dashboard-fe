@@ -32,7 +32,7 @@ const EditMqtt = ({ data, handleCancel }) => {
         };
         const res = await mqtt({ formData: obj, id: values?.id });
         if (res?.data) {
-          toast.success("MQTTS Protocol updated successfully");
+          toast.success("MQTTs Protocol updated successfully");
           handleCancel();
         }
         if (res?.error) {

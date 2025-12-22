@@ -136,7 +136,8 @@ const SftpEditModal = ({ data, handleCancel }) => {
             }
             endAdornment={"Seconds"}
             isEndorementText={true}
-            min={1}
+            min={5}
+            step={5}
           />
         </Box>
 

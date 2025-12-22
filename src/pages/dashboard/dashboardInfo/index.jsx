@@ -327,14 +327,14 @@ const DashboardInfo = () => {
       ),
     },
     {
-      label: "MQTTS",
+      label: "MQTTs",
       component: (
         <InfoCard
           info={mqttsProtocol({
             ...mqttsData?.data,
             ...socketMqtts,
           })}
-          title="MQTTS Protocol"
+          title="MQTTs Protocol"
           role={user?.role?.name}
           type={"MQTTS"}
           id={mqttsData?.data?.device_uuid}

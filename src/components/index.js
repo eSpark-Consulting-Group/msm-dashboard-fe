@@ -27,6 +27,7 @@ import NtpEditModal from "./ntp-edit-modal";
 import EditMqtt from "./edit-mqtt-modal";
 import SftpEditModal from "./sftp-edit-modal";
 import EditMeasurementModal from "./edit-measurement-modal";
+import MqttDataGrid from "./data-grid";
 
 export {
   Button,
@@ -58,4 +59,5 @@ export {
   EditMqtt,
   SftpEditModal,
   EditMeasurementModal,
+  MqttDataGrid,
 };

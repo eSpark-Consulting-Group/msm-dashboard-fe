@@ -32,7 +32,7 @@ const EditMqtts = ({ data, handleCancel }) => {
         };
         const res = await mqtts({ formData: obj, id: values?.id });
         if (res?.data) {
-          toast.success("MQTTS Protocol updated successfully");
+          toast.success("MQTTs Protocol updated successfully");
           handleCancel();
         }
         if (res?.error) {
@@ -49,7 +49,7 @@ const EditMqtts = ({ data, handleCancel }) => {
   return (
     <div>
       <Typography variant="h6" fontWeight="bold" fontSize="25px" color="#000">
-        MQTTS Protocol
+        MQTTs Protocol
       </Typography>
       <Box
         sx={{
@@ -73,6 +73,7 @@ const EditMqtts = ({ data, handleCancel }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.broker_ip && Boolean(formik.errors.broker_ip)}
             helperText={formik.touched.broker_ip && formik.errors.broker_ip}
+            disabled={true}
           />
         </Box>
         {/* <Box sx={{ width: "100%" }}>

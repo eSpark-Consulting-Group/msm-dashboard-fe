@@ -100,6 +100,8 @@ const EditMeasurementModal = ({ type, editData, handleClose }) => {
                   helperText={
                     formik.touched[fieldName] && formik.errors[fieldName]
                   }
+                  min={1}
+                  max={1000}
                 />
               </Grid>
             );

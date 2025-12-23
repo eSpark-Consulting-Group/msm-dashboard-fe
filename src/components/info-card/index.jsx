@@ -29,8 +29,14 @@ import dayjs from "dayjs";
 import Dropdown from "../drop-down";
 import { copyToClipboard, decrypt } from "../../utils";
 import EditMqtts from "../edit-mqtts-modal";
-import { useGetVersionsListQuery, useUpdateVersionMutation } from "../../services/ota";
-import { useResetDevicePasswordMutation, useVerifyPasswordMutation } from "../../services/auth";
+import {
+  useGetVersionsListQuery,
+  useUpdateVersionMutation,
+} from "../../services/ota";
+import {
+  useResetDevicePasswordMutation,
+  useVerifyPasswordMutation,
+} from "../../services/auth";
 import { useFormik } from "formik";
 import { devicePasswordScehma } from "../../schemas";
 
@@ -84,7 +90,7 @@ const InfoCard = ({
       }, 1000);
     } else if (timeLeft === 0) {
       setIsRunning(false);
-      setDashboardPw("")
+      setDashboardPw("");
     }
 
     return () => clearInterval(timer);
@@ -117,7 +123,7 @@ const InfoCard = ({
     } else if (type === "SFTP") {
       setSftpModal(true);
     } else if (type === "MQTTS") {
-      setMqttsModal(true)
+      setMqttsModal(true);
     }
   };
 
@@ -163,48 +169,53 @@ const InfoCard = ({
     isError: isVersionError,
     error: versionError,
     refetch: refetchVersionsList,
-  } = useGetVersionsListQuery(
-    "",
-    {
-      skip: user?.role?.name === "user" || type !== "OTA",
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  } = useGetVersionsListQuery("", {
+    skip: user?.role?.name === "user" || type !== "OTA",
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (isVersionError && versionError) {
       toast.error(versionError?.data?.message, { toastId: "VERSIONERROR" });
       return;
     }
-
   }, [isVersionError, versionError]);
 
-  const [updateVersion, { isLoading: versionUpdateLoading }] = useUpdateVersionMutation();
+  const [updateVersion, { isLoading: versionUpdateLoading }] =
+    useUpdateVersionMutation();
 
   const handleUpdateVersion = () => {
-    const payload = { devices: [{ device_uuid: id, version: selectedVersion?.replace("MSM_", "") }] }
-    updateVersion(payload).then((res) => {
-      if (res?.data) {
-        toast.success(res?.data?.message);
-        setModal(false)
-        navigate(`/dashboard`);
-        return
-      }
-      if (res?.error) {
-        toast.error(res?.error?.data?.message, { toastId: "OTAERROR" });
+    const payload = {
+      devices: [
+        { device_uuid: id, version: selectedVersion?.replace("MSM_", "") },
+      ],
+    };
+    updateVersion(payload)
+      .then((res) => {
+        if (res?.data) {
+          toast.success(res?.data?.message);
+          setModal(false);
+          navigate(`/dashboard`);
+          return;
+        }
+        if (res?.error) {
+          toast.error(res?.error?.data?.message, { toastId: "OTAERROR" });
+          setModal(false);
+          return;
+        }
+      })
+      .catch((err) => {
+        toast.error("Something went wrong!");
         setModal(false);
-        return;
-      }
-    }).catch((err) => {
-      toast.error("Something went wrong!");
-      setModal(false);
-      console.log(err, "err")
-    });
-  }
+        console.log(err, "err");
+      });
+  };
 
-  const [verify, { isLoading: passwordVerificationLoading }] = useVerifyPasswordMutation();
+  const [verify, { isLoading: passwordVerificationLoading }] =
+    useVerifyPasswordMutation();
 
-  const [resetPass, { isLoading: devicePwChangeLoading }] = useResetDevicePasswordMutation();
+  const [resetPass, { isLoading: devicePwChangeLoading }] =
+    useResetDevicePasswordMutation();
 
   const formik = useFormik({
     initialValues: {
@@ -258,51 +269,49 @@ const InfoCard = ({
             size="small"
             onClick={type === "OTA" ? refetchVersionsList : onButtonClick}
             loading={buttonLoading}
-            disabled={type === "OTA" ? false :
-              selectedDevice !== null &&
-              (user?.role?.name === "user"
-                ? selectedDevice?.device_data?.device_data?.device_status ===
-                false
-                : selectedDevice?.device_data?.device_status === false)
+            disabled={
+              type === "OTA"
+                ? false
+                : selectedDevice !== null &&
+                  (user?.role?.name === "user"
+                    ? selectedDevice?.device_data?.device_data
+                        ?.device_status === false
+                    : selectedDevice?.device_data?.device_status === false)
             }
           >
             {buttonLabel}
           </Button>
         )}
-        {(
-          type === "CC" ||
+        {(type === "CC" ||
           type === "Voltage" ||
           type === "CTR" ||
-          (
-            type !== "INFO" &&
+          (type !== "INFO" &&
             type !== "OTA" &&
             role !== "user" &&
             selectedDevice !== null &&
-            selectedDevice?.device_data?.device_status
-          )
-        ) && (
-            // <img
-            //   src={pen}
-            //   alt="icon"
-            //   style={{ width: 18, height: 18, cursor: "pointer" }}
-            //   // onClick={() => handleEdit(info)}
-            //   onClick={() => handleEdit(info)}
-            // />
-            <Button
-              sx={{
-                width: "103px",
-                border: "1px solid #0C89E2",
-                color: "#0C89E2",
-                borderRadius: "10px",
-                fontSize: "16px",
-              }}
-              variant="outlined"
-              size="small"
-              onClick={() => handleEdit(info)}
-            >
-              Edit
-            </Button>
-          )}
+            selectedDevice?.device_data?.device_status)) && (
+          // <img
+          //   src={pen}
+          //   alt="icon"
+          //   style={{ width: 18, height: 18, cursor: "pointer" }}
+          //   // onClick={() => handleEdit(info)}
+          //   onClick={() => handleEdit(info)}
+          // />
+          <Button
+            sx={{
+              width: "103px",
+              border: "1px solid #0C89E2",
+              color: "#0C89E2",
+              borderRadius: "10px",
+              fontSize: "16px",
+            }}
+            variant="outlined"
+            size="small"
+            onClick={() => handleEdit(info)}
+          >
+            Edit
+          </Button>
+        )}
       </Box>
 
       <Box>
@@ -311,7 +320,7 @@ const InfoCard = ({
           spacing={2}
           justifyContent={isSmallScreen ? "center" : "flex-start"}
         >
-          {type === "OTA" &&
+          {type === "OTA" && (
             <Grid
               item
               xs={12}
@@ -349,10 +358,13 @@ const InfoCard = ({
                     placeholder="Select Version"
                     noLabel
                     loading={versionLoading || versionFetching}
-                    options={versionsList?.data?.map((version) => ({
-                      label: version,
-                      value: version,
-                    })) || []} value={selectedVersion}
+                    options={
+                      versionsList?.data?.map((version) => ({
+                        label: version,
+                        value: version,
+                      })) || []
+                    }
+                    value={selectedVersion}
                     handleChange={(e) => setSelectedVersion(e.target.value)}
                     renderValueSx={{
                       color: "#000",
@@ -367,8 +379,8 @@ const InfoCard = ({
                     disabled={
                       selectedDevice !== null &&
                       (user?.role?.name === "user"
-                        ? selectedDevice?.device_data?.device_data?.device_status ===
-                        false
+                        ? selectedDevice?.device_data?.device_data
+                            ?.device_status === false
                         : selectedDevice?.device_data?.device_status === false)
                     }
                   />
@@ -380,152 +392,163 @@ const InfoCard = ({
                       color: "#0C89E2",
                       borderRadius: "10px",
                       fontSize: "16px",
-                      height: "56px"
+                      height: "56px",
                     }}
                     variant="outlined"
                     size="small"
                     onClick={() => setModal(true)}
                     loading={buttonLoading}
-                    disabled={selectedVersion === "" ||
-                      selectedDevice !== null &&
-                      (user?.role?.name === "user"
-                        ? selectedDevice?.device_data?.device_data?.device_status ===
-                        false
-                        : selectedDevice?.device_data?.device_status === false)
+                    disabled={
+                      selectedVersion === "" ||
+                      (selectedDevice !== null &&
+                        (user?.role?.name === "user"
+                          ? selectedDevice?.device_data?.device_data
+                              ?.device_status === false
+                          : selectedDevice?.device_data?.device_status ===
+                            false))
                     }
                   >
                     Start OTA
                   </Button>
                 </Box>
               </Card>
-            </Grid>}
-          {info.filter(i => !i?.checkBox)?.map((item, index) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              key={index}
-              sx={{
-                width: "100%",
-                boxShadow: "none",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
-              <Card
-                elevation={1}
+            </Grid>
+          )}
+          {info
+            .filter((i) => !i?.checkBox)
+            ?.map((item, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                key={index}
                 sx={{
-                  p: 2,
-                  borderRadius: 1,
+                  width: "100%",
                   boxShadow: "none",
-                  border: "1px solid #E4E4E4",
-                  height: "100%",
+                  textAlign: isSmallScreen ? "center" : "left",
                 }}
               >
-                <Box
-                  display="flex"
-                  justifyContent={isSmallScreen ? "center" : "space-between"}
-                  alignItems="center"
-                  flexWrap="wrap"
-                  gap={1}
-                  flexDirection={isSmallScreen ? "column" : "row"}
+                <Card
+                  elevation={1}
+                  sx={{
+                    p: 2,
+                    borderRadius: 1,
+                    boxShadow: "none",
+                    border: "1px solid #E4E4E4",
+                    height: "100%",
+                  }}
                 >
-                  <Typography
-                    variant="subtitle2"
-                    color="text.secondary !important"
-                    fontSize="20px"
-                    fontWeight="400"
-                    sx={{ mr: isSmallScreen ? 0 : 2 }}
-                  >
-                    {item.label}
-                  </Typography>
                   <Box
                     display="flex"
+                    justifyContent={isSmallScreen ? "center" : "space-between"}
                     alignItems="center"
-                    gap={{
-                      xs: "8px",
-                      sm: "20px",
-                    }}
-                    justifyContent={isSmallScreen ? "center" : "flex-start"}
-                    sx={{ wordBreak: "break-word" }}
+                    flexWrap="wrap"
+                    gap={1}
+                    flexDirection={isSmallScreen ? "column" : "row"}
                   >
-                    {isEditMode && item?.key === editId ? (
-                      <OutlinedInput
-                        name={item?.key}
-                        value={newVal}
-                        onInputChange={(e) => setNewVal(e.target.value)}
-                        sx={{ width: "350px" }}
-                      />
-                    ) : (
-                      <Typography
-                        variant="body1"
-                        fontWeight="medium"
-                        fontSize="20px"
-                      >
-                        {item?.password ? item.value?.slice(0, 6)?.split("").map(i => "*").join("") : item.value}
-                      </Typography>
-                    )}
-                    {
-                      item?.password && <img
-                        onClick={() => setOpenPermissionModal(item.value)}
-                        src={eye}
-                        alt="Icon"
-                        style={{
-                          cursor: "pointer",
-                          width: "24px",
-                          height: "24px",
-                          marginRight: "10px",
-                          marginTop: "5px",
-                        }}
-                      />
-                    }
-                    {item.showIcon &&
-                      role !== "user" &&
-                      editId !== item?.key &&
-                      selectedDevice !== null &&
-                      selectedDevice?.device_data?.device_status === true && (
-                        // <img
-                        //   src={pen}
-                        //   alt="icon"
-                        //   style={{ width: 18, height: 18, cursor: "pointer" }}
-                        //   // onClick={() => handleEdit(info)}
-                        //   onClick={() => handleEdit(info)}
-                        // />
-                        <></>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary !important"
+                      fontSize="20px"
+                      fontWeight="400"
+                      sx={{ mr: isSmallScreen ? 0 : 2 }}
+                    >
+                      {item.label}
+                    </Typography>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={{
+                        xs: "8px",
+                        sm: "20px",
+                      }}
+                      justifyContent={isSmallScreen ? "center" : "flex-start"}
+                      sx={{ wordBreak: "break-word" }}
+                    >
+                      {isEditMode && item?.key === editId ? (
+                        <OutlinedInput
+                          name={item?.key}
+                          value={newVal}
+                          onInputChange={(e) => setNewVal(e.target.value)}
+                          sx={{ width: "350px" }}
+                        />
+                      ) : (
+                        <Typography
+                          variant="body1"
+                          fontWeight="medium"
+                          fontSize="20px"
+                        >
+                          {item?.password
+                            ? item.value
+                                ?.slice(0, 6)
+                                ?.split("")
+                                .map((i) => "*")
+                                .join("")
+                            : item.value}
+                        </Typography>
                       )}
-                    {item.showIcon &&
-                      role !== "user" &&
-                      editId === item?.key &&
-                      !isLoading &&
-                      !mqttLoading &&
-                      !sftpLoading && (
-                        <Box sx={{ display: "flex", columnGap: "10px" }}>
-                          <CloseIcon
-                            sx={{ color: "red", cursor: "pointer" }}
-                            onClick={() => {
-                              setEditId("");
-                              setIsEditMode(false);
-                              setNewVal("");
-                            }}
-                          />
-                          <CheckIcon
-                            sx={{ color: "green", cursor: "pointer" }}
-                            onClick={handleFinalEdit}
-                          />
-                        </Box>
+                      {item?.password && (
+                        <img
+                          onClick={() => setOpenPermissionModal(item.value)}
+                          src={eye}
+                          alt="Icon"
+                          style={{
+                            cursor: "pointer",
+                            width: "24px",
+                            height: "24px",
+                            marginRight: "10px",
+                            marginTop: "5px",
+                          }}
+                        />
                       )}
-                    {item.showIcon &&
-                      role !== "user" &&
-                      editId === item?.key &&
-                      (isLoading || mqttLoading || sftpLoading) && (
-                        <CircularProgress size={15} />
-                      )}
+                      {item.showIcon &&
+                        role !== "user" &&
+                        editId !== item?.key &&
+                        selectedDevice !== null &&
+                        selectedDevice?.device_data?.device_status === true && (
+                          // <img
+                          //   src={pen}
+                          //   alt="icon"
+                          //   style={{ width: 18, height: 18, cursor: "pointer" }}
+                          //   // onClick={() => handleEdit(info)}
+                          //   onClick={() => handleEdit(info)}
+                          // />
+                          <></>
+                        )}
+                      {item.showIcon &&
+                        role !== "user" &&
+                        editId === item?.key &&
+                        !isLoading &&
+                        !mqttLoading &&
+                        !sftpLoading && (
+                          <Box sx={{ display: "flex", columnGap: "10px" }}>
+                            <CloseIcon
+                              sx={{ color: "red", cursor: "pointer" }}
+                              onClick={() => {
+                                setEditId("");
+                                setIsEditMode(false);
+                                setNewVal("");
+                              }}
+                            />
+                            <CheckIcon
+                              sx={{ color: "green", cursor: "pointer" }}
+                              onClick={handleFinalEdit}
+                            />
+                          </Box>
+                        )}
+                      {item.showIcon &&
+                        role !== "user" &&
+                        editId === item?.key &&
+                        (isLoading || mqttLoading || sftpLoading) && (
+                          <CircularProgress size={15} />
+                        )}
+                    </Box>
                   </Box>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
-          {type === "MQTTS" &&
+                </Card>
+              </Grid>
+            ))}
+          {type === "MQTTS" && (
             <Grid
               item
               xs={12}
@@ -555,17 +578,27 @@ const InfoCard = ({
                   gap={1}
                   flexDirection={isSmallScreen ? "column" : "row"}
                   sx={{ ".MuiFormControl-root ": { flex: 1 } }}
-                >{info?.filter(i => i?.checkBox).map(item => {
-                  return (
-                    <FormControlLabel
-                      control={<Checkbox disabled checked={item?.value} sx={{ color: "#151515" }} />}
-                      label={item?.label}
-                    />)
-                })}
+                >
+                  {info
+                    ?.filter((i) => i?.checkBox)
+                    .map((item) => {
+                      return (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              disabled
+                              checked={item?.value}
+                              sx={{ color: "#151515" }}
+                            />
+                          }
+                          label={item?.label}
+                        />
+                      );
+                    })}
                 </Box>
               </Card>
             </Grid>
-          }
+          )}
         </Grid>
       </Box>
 
@@ -692,24 +725,30 @@ const InfoCard = ({
         disabled={isRunning}
         handleCancel={() => setOpenPermissionModal(false)}
         handleAccept={() => {
-          verify({ body: { password: dashboardPw } }).then((res) => {
-            if (res?.data?.success) {
-              toast.success("Password Verified");
-              startTimer()
-              setDashboardPw(decrypt(openPermissionModal));
-            } else {
-              toast.error("Incorrect Password");
-              return;
-            }
-          }).catch((err) => {
-            toast.error("Something went wrong!");
-            console.log(err, "err")
-          });
+          verify({ body: { password: dashboardPw } })
+            .then((res) => {
+              if (res?.data?.success) {
+                toast.success("Password Verified");
+                startTimer();
+                setDashboardPw(decrypt(openPermissionModal));
+              } else {
+                toast.error("Incorrect Password");
+                return;
+              }
+            })
+            .catch((err) => {
+              toast.error("Something went wrong!");
+              console.log(err, "err");
+            });
         }}
         heading={"Permission!"}
         isLoading={passwordVerificationLoading}
       >
-        <Typography textAlign={"center"} fontSize={"26px"}>{timeLeft > 0 ? "Your device password" : "Enter you dashboard password"}</Typography>
+        <Typography textAlign={"center"} fontSize={"26px"}>
+          {timeLeft > 0
+            ? "Your device password"
+            : "Enter you dashboard password"}
+        </Typography>
         <OutlinedInput
           label="Password"
           name="password"
@@ -719,20 +758,40 @@ const InfoCard = ({
           disabled={isRunning}
           onInputChange={(e) => setDashboardPw(e.target.value)}
           sx={{ ".Mui-disabled": { "-webkit-text-fill-color": "#000000" } }}
-          endAdornment={timeLeft > 0 ?
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
-              <img style={{ cursor: "pointer" }} onClick={() => copyToClipboard(dashboardPw)} src={copy} alt="copy" />
-              <img style={{ cursor: "pointer" }} onClick={() => {
-                setEditPwModal(openPermissionModal)
-                setOpenPermissionModal(null)
-                setTimeLeft(0)
-              }} src={edit} alt="copy" />
-            </Box>
-            : null
+          endAdornment={
+            timeLeft > 0 ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                <img
+                  style={{ cursor: "pointer" }}
+                  onClick={() => copyToClipboard(dashboardPw)}
+                  src={copy}
+                  alt="copy"
+                />
+                <img
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setEditPwModal(openPermissionModal);
+                    setOpenPermissionModal(null);
+                    setTimeLeft(0);
+                  }}
+                  src={edit}
+                  alt="copy"
+                />
+              </Box>
+            ) : null
           }
         />
-        {timeLeft > 0 && <Typography>Note the password within {timeLeft} seconds</Typography>}
-      </DynamicModal >
+        {timeLeft > 0 && (
+          <Typography>Note the password within {timeLeft} seconds</Typography>
+        )}
+      </DynamicModal>
       <DynamicModal
         open={modal}
         handleClose={() => setModal(false)}
@@ -743,7 +802,9 @@ const InfoCard = ({
         heading={"Confirm OTA Start"}
         isLoading={versionUpdateLoading}
       >
-        <Typography fontSize="24px">Are you sure you want to start OTA?</Typography>
+        <Typography fontSize="24px">
+          Are you sure you want to start OTA?
+        </Typography>
       </DynamicModal>
       <DynamicModal
         open={editPwModal}
@@ -756,7 +817,9 @@ const InfoCard = ({
         isLoading={devicePwChangeLoading}
       >
         <Box component={"form"} onSubmit={formik.handleSubmit}>
-          <Typography my={2} fontSize="24px">Are you sure you want to update the device password?</Typography>
+          <Typography my={2} fontSize="24px">
+            Are you sure you want to update the device password?
+          </Typography>
           <OutlinedInput
             label="Old Password"
             name="old_password"
@@ -765,8 +828,12 @@ const InfoCard = ({
             value={formik.values.old_password}
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.old_password && Boolean(formik.errors.old_password)}
-            helperText={formik.touched.old_password && formik.errors.old_password}
+            error={
+              formik.touched.old_password && Boolean(formik.errors.old_password)
+            }
+            helperText={
+              formik.touched.old_password && formik.errors.old_password
+            }
           />
           <OutlinedInput
             label="New Password"
@@ -776,8 +843,12 @@ const InfoCard = ({
             value={formik.values.new_password}
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.new_password && Boolean(formik.errors.new_password)}
-            helperText={formik.touched.new_password && formik.errors.new_password}
+            error={
+              formik.touched.new_password && Boolean(formik.errors.new_password)
+            }
+            helperText={
+              formik.touched.new_password && formik.errors.new_password
+            }
           />
           <OutlinedInput
             label="Confirm Password"
@@ -787,8 +858,14 @@ const InfoCard = ({
             value={formik.values.confirm_new_password}
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.confirm_new_password && Boolean(formik.errors.confirm_new_password)}
-            helperText={formik.touched.confirm_new_password && formik.errors.confirm_new_password}
+            error={
+              formik.touched.confirm_new_password &&
+              Boolean(formik.errors.confirm_new_password)
+            }
+            helperText={
+              formik.touched.confirm_new_password &&
+              formik.errors.confirm_new_password
+            }
           />
         </Box>
       </DynamicModal>

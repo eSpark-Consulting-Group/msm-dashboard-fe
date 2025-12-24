@@ -163,8 +163,12 @@ const Measurement = () => {
 
   useEffect(() => {
     if (isError) {
-      toast.error(error?.data?.message || "Failed to fetch measurements");
+      toast.error(error?.data?.message || "Failed to fetch measurements", {
+        toastId: "Measurement Error",
+      });
       setCtRatios({});
+      setIOfset({});
+      setVOfset({});
       return;
     }
     setCtRatios(measurements?.ct_ratio || {});
@@ -191,6 +195,23 @@ const Measurement = () => {
       return;
     }
   }, [vOffsetError, isvOffsetError]);
+
+  const DEFAULT_EDIT_DATA = Object.freeze(
+    Array.from({ length: 12 }, (_, i) => ({
+      [`channel-${i + 1}`]: 0,
+    })).reduce((acc, curr) => ({ ...acc, ...curr }), {})
+  );
+
+  const getEditData = (data) => {
+    if (!data || Object.keys(data).length === 0) {
+      return { ...DEFAULT_EDIT_DATA };
+    }
+
+    return {
+      ...DEFAULT_EDIT_DATA, // ensures missing channels default to 0
+      ...data, // API values override defaults
+    };
+  };
 
   const ChannelsParentComp = ({ obj, unit }) => {
     return (
@@ -239,7 +260,7 @@ const Measurement = () => {
                 onClick={() => {
                   setModalOpen(true);
                   setType("set-ct-ratio");
-                  setEditData(measurements?.ct_ratio);
+                  setEditData(getEditData(ctRatios));
                 }}
               >
                 Edit
@@ -268,7 +289,7 @@ const Measurement = () => {
                 onClick={() => {
                   setModalOpen(true);
                   setType("set-v-offset");
-                  setEditData(measurements?.v_offset);
+                  setEditData(getEditData(vOffset));
                 }}
               >
                 Edit
@@ -297,7 +318,7 @@ const Measurement = () => {
                 onClick={() => {
                   setModalOpen(true);
                   setType("set-i-offset");
-                  setEditData(measurements?.i_offset);
+                  setEditData(getEditData(iOffset));
                 }}
               >
                 Edit
@@ -413,7 +434,7 @@ const Measurement = () => {
         handleClose={() => {
           setModalOpen(false);
           setType("");
-          setEditData({});
+          setEditData(DEFAULT_EDIT_DATA);
         }}
       >
         <EditMeasurementModal
@@ -422,7 +443,7 @@ const Measurement = () => {
           handleClose={() => {
             setModalOpen(false);
             setType("");
-            setEditData({});
+            setEditData(DEFAULT_EDIT_DATA);
           }}
         />
       </DynamicModal>

@@ -31,6 +31,7 @@ import {
 } from "../../../store/slices/devices";
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
 import { useGetCurrentOtaQuery } from "../../../services/ota";
+import { resetTabs } from "../../../store/slices/info";
 // import { useSocket } from "../../../SocketTest";
 
 const DashboardInfo = () => {
@@ -236,6 +237,10 @@ const DashboardInfo = () => {
     }
   }, [mqttsData]);
 
+  useEffect(() => {
+    dispatch(resetTabs());
+  }, [id]);
+
   const handleReboot = async () => {
     try {
       const res = await reboot(id);
@@ -284,7 +289,7 @@ const DashboardInfo = () => {
           date={dayjs(ntpData?.data?.createdAt).format("DD-MM-YYYY")}
           time={dayjs(ntpData?.data?.createdAt).format("hh:mm")}
           role={user?.role?.name}
-          id={ntpData?.data?._id}
+          id={id}
           buttonLoading={ntpFetching}
           type={"NTP"}
         />
@@ -305,7 +310,7 @@ const DashboardInfo = () => {
           role={user?.role?.name}
           buttonLoading={mqttFetching}
           type={"MQTT"}
-          id={mqttData?.data[0]?._id}
+          id={id}
         />
       ),
     },

@@ -31,6 +31,14 @@ const infoSlice = createSlice({
     updateOtaInfo: (state, action) => {
       state.ota = { ...state.ota, ...action.payload };
     },
+    resetTabs: (state, action) => {
+      state.info = {};
+      state.ntp = {};
+      state.mqtt = {};
+      state.sftp = {};
+      state.mqtts = {};
+      state.ota = {};
+    },
   },
 });
 
@@ -41,5 +49,6 @@ export const {
   updateSftpInfo,
   updateMqttsInfo,
   updateOtaInfo,
+  resetTabs,
 } = infoSlice.actions;
 export default infoSlice.reducer;

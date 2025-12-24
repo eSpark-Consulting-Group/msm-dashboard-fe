@@ -63,6 +63,18 @@ const EditMqtt = ({ data, handleCancel }) => {
         noValidate
         onSubmit={formik.handleSubmit}
       >
+        <input
+          type="text"
+          name="username"
+          autoComplete="username"
+          style={{ display: "none" }}
+        />
+        <input
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          style={{ display: "none" }}
+        />
         <Box sx={{ width: "100%" }}>
           <OutlinedInput
             label="Broker IP"
@@ -104,6 +116,7 @@ const EditMqtt = ({ data, handleCancel }) => {
               formik.touched.broker_user && Boolean(formik.errors.broker_user)
             }
             helperText={formik.touched.broker_user && formik.errors.broker_user}
+            autoComplete="one-time-code"
           />
         </Box>
 
@@ -120,6 +133,7 @@ const EditMqtt = ({ data, handleCancel }) => {
               formik.touched.broker_pass && Boolean(formik.errors.broker_pass)
             }
             helperText={formik.touched.broker_pass && formik.errors.broker_pass}
+            autoComplete="new-password"
           />
         </Box>
 

@@ -175,6 +175,31 @@ export function useSocket() {
     };
   }, [deviceid, dispatch]);
 
+  useEffect(() => {
+    if (!socketInstance) return;
+
+    const handleNewVersion = (data) => {
+      if (Array.isArray(data)) {
+        const versions = data?.join(", ");
+        toast.success(
+          `New version${
+            data?.length > 1 ? "s" : ""
+          } ${versions} updated successfully`
+        );
+      } else {
+        toast.success(data);
+      }
+    };
+
+    // ✅ Remove old listener before adding new
+    socketInstance.off("new_versions", handleNewVersion);
+    socketInstance.on("new_versions", handleNewVersion);
+
+    return () => {
+      socketInstance.off("new_versions", handleNewVersion);
+    };
+  }, []);
+
   // Telemetry listeners
   useEffect(() => {
     if (!deviceid || !socketInstance) return;

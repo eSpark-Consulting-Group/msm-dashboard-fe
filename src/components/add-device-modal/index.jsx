@@ -45,12 +45,18 @@ const credentials = [
   // { name: "clientId", label: "MQTTS Client ID", placeholder: "ID" },
   // { name: "user", label: "MQTTS User", placeholder: "User" },
   // { name: "userName", label: "MQTTS User Name", placeholder: "User Name" },
-  { name: "device_uuid", label: "Device ID", placeholder: "device Id" },
   {
-    name: "password",
+    name: "device_uuid",
+    autoComplete: "one-time-code",
+    label: "Device ID",
+    placeholder: "device Id",
+  },
+  {
+    name: "device_password",
+    type: "password",
+    autoComplete: "new-password",
     label: "Device Password",
     placeholder: "Password",
-    type: "password",
   },
 ];
 
@@ -93,7 +99,7 @@ const AddDeviceModal = ({ onCancel }) => {
       // owners: "",
       groups: "",
       device_uuid: "",
-      password: "",
+      device_password: "",
       // user: "",
       // userName: "",
       // clientId: "",
@@ -115,7 +121,7 @@ const AddDeviceModal = ({ onCancel }) => {
         // mqtt_client_id: values?.clientId,
         // mqtt_user: values?.user,
         // mqtt_username: values?.userName,
-        mqtt_password: values?.password,
+        mqtt_password: values?.device_password,
       };
       addDevice(bodyToSend).then((res) => {
         if (res?.error) {
@@ -130,7 +136,13 @@ const AddDeviceModal = ({ onCancel }) => {
     },
   });
 
-  const renderInput = ({ name, label, placeholder, type }) => (
+  const renderInput = ({
+    name,
+    label,
+    placeholder,
+    type,
+    autoComplete = "off",
+  }) => (
     <Box key={name} sx={{ width: { xs: "100%", md: "46%", lg: "47%" } }}>
       <OutlinedInput
         label={label}
@@ -143,6 +155,7 @@ const AddDeviceModal = ({ onCancel }) => {
         onBlur={formik.handleBlur}
         error={formik.touched[name] && Boolean(formik.errors[name])}
         helperText={formik.touched[name] && formik.errors[name]}
+        autoComplete={autoComplete}
       />
     </Box>
   );
@@ -166,7 +179,21 @@ const AddDeviceModal = ({ onCancel }) => {
         rowGap: "17px",
         mt: "15px",
       }}
+      autoComplete="off"
     >
+      <input
+        type="text"
+        name="username"
+        autoComplete="username"
+        style={{ display: "none" }}
+      />
+      <input
+        type="password"
+        name="password"
+        autoComplete="current-password"
+        style={{ display: "none" }}
+      />
+
       {fields.map(renderInput)}
 
       <Box sx={{ width: { xs: "100%", md: "46%", lg: "47%" } }}>

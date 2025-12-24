@@ -36,7 +36,7 @@ const PhaseCards = ({
         border: "0.9px solid #1E1E1E",
         borderRadius: "24.22px",
         // width: "330px",
-        p: time ? "14px 10px" : "24px 2px",
+        p: "14px 10px",
         display: "flex",
         flexDirection: "column",
         rowGap: "15px",

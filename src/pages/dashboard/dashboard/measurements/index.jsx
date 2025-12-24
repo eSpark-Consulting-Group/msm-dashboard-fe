@@ -201,12 +201,11 @@ const Measurement = () => {
               "Channel " + key.split("-")[1]?.padStart(2, "0");
             return (
               <PhaseCards
-                color={"red"}
                 heading={formattedKey}
                 icon={flashBlack}
                 value={`${Number(value).toFixed(2)} ${unit}`}
                 valueColor={"green"}
-                headingSize={"18.05px"}
+                headingSize={"20px"}
                 key={ind}
                 phase={"A"}
               />

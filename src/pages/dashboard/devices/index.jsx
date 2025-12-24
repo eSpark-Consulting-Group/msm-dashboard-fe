@@ -193,7 +193,7 @@ const Devices = () => {
           groups:
             user?.role?.name === "user"
               ? item?.device_data?.groups_data[0]?.name
-              : item?.groups_data?.name || "-",
+              : item?.groups_data[0]?.name || "-",
           // status: {
           //   label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
           //   variant: !unAssign ? "simple2" : status ? "green" : "red",

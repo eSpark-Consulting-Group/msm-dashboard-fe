@@ -88,7 +88,7 @@ const EditDeviceModal = ({ data, handleModalClose, handleCancel }) => {
       deviceName: data?.name || "",
       label: data?.label || "",
       // customerName: data?.customerName || "",
-      groups: data?.groups_data?._id || "",
+      groups: data?.groups_data[0]?._id || "",
       // status: "Active",
     },
     validationSchema: editDeviceSchema,

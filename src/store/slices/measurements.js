@@ -19,21 +19,21 @@ const measurementsSlice = createSlice({
       state.measurements = main;
     },
     updateCtRatio: (state, action) => {
-      const ct_ratio = action.payload?.ct_ratio;
+      const ct_ratio = action.payload?.measurements;
       state.measurements = {
         ...state.measurements,
         ct_ratio,
       };
     },
     updateVoffSet: (state, action) => {
-      const v_offset = action.payload?.v_offset;
+      const v_offset = action.payload?.measurements;
       state.measurements = {
         ...state.measurements,
         v_offset,
       };
     },
     updateIoffSet: (state, action) => {
-      const i_offset = action.payload?.i_offset;
+      const i_offset = action.payload?.measurements;
       state.measurements = {
         ...state.measurements,
         i_offset,

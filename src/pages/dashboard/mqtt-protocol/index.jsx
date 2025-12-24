@@ -254,7 +254,7 @@ const MqttProtocol = () => {
                     .filter((d) => d !== null)
                     .sort((a, b) => a - b);
 
-                  console.log(timestamps, "TIMESTAMPS");
+                  // console.log(timestamps, "TIMESTAMPS");
 
                   const startDate = timestamps[0]
                     ? `${timestamps[0].getFullYear()}${String(

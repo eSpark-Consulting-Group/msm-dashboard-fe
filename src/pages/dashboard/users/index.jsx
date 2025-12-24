@@ -133,7 +133,7 @@ const Users = () => {
   };
 
   const handleUserClick = (item) => {
-    console.log(item);
+    // console.log(item);
     navigate(
       `/users/${item?._id}?name=${encodeURIComponent(
         item?.userName?.name

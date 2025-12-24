@@ -37,7 +37,7 @@ const EditUserModal = ({ user, handleCancel }) => {
     }
   }, [devicesData]);
 
-  console.log(user, "user");
+  // console.log(user, "user");
   const formik = useFormik({
     initialValues: {
       name: user?.name || "",

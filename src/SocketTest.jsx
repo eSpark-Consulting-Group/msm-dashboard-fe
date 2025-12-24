@@ -179,7 +179,6 @@ export function useSocket() {
     if (!socketInstance) return;
 
     const handleNewVersion = (data) => {
-      console.log(data);
       if (Array.isArray(data)) {
         const versions = data?.join(", ");
         toast.success(

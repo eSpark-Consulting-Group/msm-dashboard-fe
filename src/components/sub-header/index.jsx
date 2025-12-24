@@ -12,6 +12,8 @@ const SubHeader = ({
   variant = "outlined",
   userDetails,
   userName = "User",
+  btnLoading,
+  disabled,
 }) => {
   const { user } = useSelector((state) => state.auth);
   return (
@@ -70,6 +72,8 @@ const SubHeader = ({
             variant={variant}
             onClick={onClick ? onClick : () => {}}
             disableRipple
+            loading={btnLoading}
+            disabled={disabled}
           >
             {buttonText}
           </Button>

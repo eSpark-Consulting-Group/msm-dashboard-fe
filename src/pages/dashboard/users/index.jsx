@@ -41,7 +41,7 @@ const Users = () => {
     } else if (key === "total_devices_count") {
       setCountSort(dir);
     }
-  }
+  };
 
   // Sorting state
   // const [sortKey, setSortKey] = useState(null);
@@ -80,21 +80,22 @@ const Users = () => {
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
           customer_name: item?.customer_name || "-",
           userName: {
-            image: `${import.meta.env.VITE_IMAGE_BASE_URL}${item?.profile_image
-              }`,
+            image: `${import.meta.env.VITE_IMAGE_BASE_URL}${
+              item?.profile_image
+            }`,
             name: item?.name,
           },
           status: {
             label: !item?.isPasswordChanged
               ? "Pending"
               : item?.status === "active"
-                ? "Active"
-                : "Inactive",
+              ? "Active"
+              : "Inactive",
             variant: !item?.isPasswordChanged
               ? "simple2"
               : item?.status === "active"
-                ? "green"
-                : "red",
+              ? "green"
+              : "red",
           },
           deviceId: "-",
           tags: groups,
@@ -182,10 +183,12 @@ const Users = () => {
           variant="blue"
         />
         <Box sx={{ width: { xs: "100%", sm: "495px" } }}>
-          <SearchBar onChange={(e) => {
-            setPage(1);
-            setSearch(e);
-          }} />
+          <SearchBar
+            onChange={(e) => {
+              setPage(1);
+              setSearch(e);
+            }}
+          />
         </Box>
         <DynamicTable
           isLoading={isLoading || isFetching}

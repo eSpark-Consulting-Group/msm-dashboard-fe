@@ -31,6 +31,7 @@ import { copyToClipboard, decrypt } from "../../utils";
 import EditMqtts from "../edit-mqtts-modal";
 import {
   useGetVersionsListQuery,
+  useLazyCheckUpdatesQuery,
   useUpdateVersionMutation,
 } from "../../services/ota";
 import {
@@ -107,6 +108,7 @@ const InfoCard = ({
   const [ntpModal, setNtpModal] = useState(false);
   const [sftpModal, setSftpModal] = useState(false);
   const [mqttsModal, setMqttsModal] = useState(false);
+  const [versionData, setversionData] = useState([]);
 
   const handleEdit = (info) => {
     const result = info.reduce((acc, item) => {
@@ -168,11 +170,17 @@ const InfoCard = ({
     isFetching: versionFetching,
     isError: isVersionError,
     error: versionError,
+    isSuccess: versionSuccess,
     refetch: refetchVersionsList,
   } = useGetVersionsListQuery("", {
     skip: user?.role?.name === "user" || type !== "OTA",
     refetchOnMountOrArgChange: true,
   });
+
+  const [
+    checkUpdateQuery,
+    { isLoading: updateLoading, data: updateData, isFetching: updateFetching },
+  ] = useLazyCheckUpdatesQuery();
 
   useEffect(() => {
     if (isVersionError && versionError) {
@@ -241,6 +249,35 @@ const InfoCard = ({
     },
   });
 
+  useEffect(() => {
+    if (versionSuccess && Array.isArray(versionsList?.data)) {
+      const data = versionsList.data.map((version) => ({
+        label: version,
+        value: version,
+      }));
+      setversionData(data);
+    }
+  }, [versionsList?.data, versionSuccess]);
+
+  const isOTA = type === "OTA";
+  const isOtaLoading = versionLoading || versionFetching;
+
+  const isDeviceOffline =
+    selectedDevice !== null &&
+    (user?.role?.name === "user"
+      ? selectedDevice?.device_data?.device_data?.device_status === false
+      : selectedDevice?.device_data?.device_status === false);
+  const isDisabled = isOTA ? isOtaLoading : isDeviceOffline;
+
+  const handleUpdates = async () => {
+    const res = await checkUpdateQuery();
+    if (res?.data?.status) {
+      await refetchVersionsList();
+    } else if (res?.error) {
+      setversionData([]);
+    }
+  };
+
   return (
     <>
       <Box
@@ -267,17 +304,10 @@ const InfoCard = ({
             }}
             variant="outlined"
             size="small"
-            onClick={type === "OTA" ? refetchVersionsList : onButtonClick}
-            loading={buttonLoading}
-            disabled={
-              type === "OTA"
-                ? false
-                : selectedDevice !== null &&
-                  (user?.role?.name === "user"
-                    ? selectedDevice?.device_data?.device_data
-                        ?.device_status === false
-                    : selectedDevice?.device_data?.device_status === false)
-            }
+            // onClick={type === "OTA" ? refetchVersionsList : onButtonClick}
+            onClick={type === "OTA" ? handleUpdates : onButtonClick}
+            loading={buttonLoading || updateLoading || updateFetching}
+            disabled={isDisabled}
           >
             {buttonLabel}
           </Button>
@@ -358,12 +388,7 @@ const InfoCard = ({
                     placeholder="Select Version"
                     noLabel
                     loading={versionLoading || versionFetching}
-                    options={
-                      versionsList?.data?.map((version) => ({
-                        label: version,
-                        value: version,
-                      })) || []
-                    }
+                    options={versionData}
                     value={selectedVersion}
                     handleChange={(e) => setSelectedVersion(e.target.value)}
                     renderValueSx={{

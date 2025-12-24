@@ -18,6 +18,7 @@ import {
 import { useSelector } from "react-redux";
 import {
   useGetVersionsListQuery,
+  useLazyCheckUpdatesQuery,
   useUpdateVersionMutation,
 } from "../../../services/ota";
 
@@ -54,10 +55,16 @@ const Devices = () => {
     isError: isVersionError,
     error: versionError,
     refetch: refetchVersionsList,
+    isSuccess: versionSuccess,
   } = useGetVersionsListQuery("", {
     skip: user?.role?.name === "user",
     refetchOnMountOrArgChange: true,
   });
+
+  const [
+    checkUpdateQuery,
+    { isLoading: updateLoading, data: updateData, isFetching: updateFetching },
+  ] = useLazyCheckUpdatesQuery();
 
   useEffect(() => {
     if (isVersionError && versionError) {
@@ -210,6 +217,7 @@ const Devices = () => {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [modal, setModal] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [versionData, setversionData] = useState([]);
 
   const handleSelectRow = (id, checked) => {
     setSelectedRows((prev) => {
@@ -283,14 +291,35 @@ const Devices = () => {
       });
   };
 
+  useEffect(() => {
+    if (versionSuccess && Array.isArray(versionsList?.data)) {
+      const data = versionsList.data.map((version) => ({
+        label: version,
+        value: version,
+      }));
+      setversionData(data);
+    }
+  }, [versionsList?.data, versionSuccess]);
+
+  const handleUpdates = async () => {
+    const res = await checkUpdateQuery();
+    if (res?.data?.status) {
+      await refetchVersionsList();
+    } else if (res?.error) {
+      setversionData([]);
+    }
+  };
+
   return (
     <>
       <SubHeader
         heading="OTA"
         subHeading="Here’s what’s happening with your device and users"
         buttonText={"Check updates"}
-        onClick={() => refetchVersionsList()}
+        onClick={handleUpdates}
         variant="contained"
+        btnLoading={updateLoading || updateFetching}
+        disabled={versionLoading || versionFetching}
       />
       <Box
         sx={{
@@ -317,12 +346,7 @@ const Devices = () => {
             placeholder="Select Version"
             noLabel
             loading={versionLoading || versionFetching}
-            options={
-              versionsList?.data?.map((version) => ({
-                label: version,
-                value: version,
-              })) || []
-            }
+            options={versionData}
             value={selectedVersion}
             handleChange={(e) => setSelectedVersion(e.target.value)}
             renderValueSx={{

@@ -75,9 +75,9 @@ const DashboardWrapper = ({ loading, children }) => {
           }}
         >
           {selectedDevice === null ||
-            (user?.role?.name === "user"
-              ? selectedDevice?.device_data?.device_data?.device_status === false
-              : selectedDevice?.device_data?.device_status === false) ? (
+          (user?.role?.name === "user"
+            ? selectedDevice?.device_data?.device_data?.device_status === false
+            : selectedDevice?.device_data?.device_status === false) ? (
             <></>
           ) : (
             <>
@@ -113,43 +113,46 @@ const DashboardWrapper = ({ loading, children }) => {
                   &nbsp;Home
                 </Button>
               </Box>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: -45,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: 200,
-                  height: 45,
-                }}
-              >
-                <Button
-                  variant="contained"
+              {user?.role?.name === "super_admin" && (
+                <Box
                   sx={{
-                    background: "linear-gradient(to right, #0095FF, #0886E0)",
-                    gap: "8px",
-                    border: "1px solid #0077FF",
-                    borderTopLeftRadius: "12px",
-                    borderTopRightRadius: "12px",
-                    borderBottomLeftRadius: "0",
-                    borderBottomRightRadius: "0",
-                    img: {
-                      filter:
-                        "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)",
-                    },
+                    position: "absolute",
+                    top: -45,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: 200,
+                    height: 45,
                   }}
-                  onClick={handleMeasurement}
                 >
-                  <img
-                    src={measurementIcon}
-                    alt="Home"
-                    width={18}
-                    height={18}
-                    style={{ display: "inline-block" }}
-                  />
-                  Measurement
-                </Button>
-              </Box></>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      background: "linear-gradient(to right, #0095FF, #0886E0)",
+                      gap: "8px",
+                      border: "1px solid #0077FF",
+                      borderTopLeftRadius: "12px",
+                      borderTopRightRadius: "12px",
+                      borderBottomLeftRadius: "0",
+                      borderBottomRightRadius: "0",
+                      img: {
+                        filter:
+                          "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(105%)",
+                      },
+                    }}
+                    onClick={handleMeasurement}
+                  >
+                    <img
+                      src={measurementIcon}
+                      alt="Home"
+                      width={18}
+                      height={18}
+                      style={{ display: "inline-block" }}
+                    />
+                    Measurement
+                  </Button>
+                </Box>
+              )}
+            </>
           )}
 
           {loading ? <LinearProgress sx={{ width: "100%" }} /> : children}

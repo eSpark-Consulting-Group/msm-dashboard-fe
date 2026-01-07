@@ -362,14 +362,30 @@ const telemetrySlice = createSlice({
       if (!timestamp || isNaN(new Date(timestamp).getTime())) {
         myTimeString = "Last update unknown";
       } else {
-        const diffMs = new Date() - new Date(timestamp);
-        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffMs = Date.now() - new Date(timestamp).getTime();
 
-        if (diffMinutes <= 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30)); // approx
+
+        if (diffMinutes < 1) {
           myTimeString = "Last update a few seconds ago";
-        } else {
+        } else if (diffMinutes < 60) {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
+          } ago`;
+        } else if (diffHours < 24) {
+          myTimeString = `Last update ${diffHours} hour${
+            diffHours > 1 ? "s" : ""
+          } ago`;
+        } else if (diffDays < 30) {
+          myTimeString = `Last update ${diffDays} day${
+            diffDays > 1 ? "s" : ""
+          } ago`;
+        } else {
+          myTimeString = `Last update ${diffMonths} month${
+            diffMonths > 1 ? "s" : ""
           } ago`;
         }
       }
@@ -399,14 +415,30 @@ const telemetrySlice = createSlice({
       if (!timestamp || isNaN(new Date(timestamp).getTime())) {
         myTimeString = "Last update unknown";
       } else {
-        const diffMs = new Date() - new Date(timestamp);
-        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffMs = Date.now() - new Date(timestamp).getTime();
 
-        if (diffMinutes <= 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30)); // approx
+
+        if (diffMinutes < 1) {
           myTimeString = "Last update a few seconds ago";
-        } else {
+        } else if (diffMinutes < 60) {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
+          } ago`;
+        } else if (diffHours < 24) {
+          myTimeString = `Last update ${diffHours} hour${
+            diffHours > 1 ? "s" : ""
+          } ago`;
+        } else if (diffDays < 30) {
+          myTimeString = `Last update ${diffDays} day${
+            diffDays > 1 ? "s" : ""
+          } ago`;
+        } else {
+          myTimeString = `Last update ${diffMonths} month${
+            diffMonths > 1 ? "s" : ""
           } ago`;
         }
       }
@@ -445,14 +477,30 @@ const telemetrySlice = createSlice({
       if (!timestamp || isNaN(new Date(timestamp).getTime())) {
         myTimeString = "Last update unknown";
       } else {
-        const diffMs = new Date() - new Date(timestamp);
-        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffMs = Date.now() - new Date(timestamp).getTime();
 
-        if (diffMinutes <= 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30)); // approx
+
+        if (diffMinutes < 1) {
           myTimeString = "Last update a few seconds ago";
-        } else {
+        } else if (diffMinutes < 60) {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
+          } ago`;
+        } else if (diffHours < 24) {
+          myTimeString = `Last update ${diffHours} hour${
+            diffHours > 1 ? "s" : ""
+          } ago`;
+        } else if (diffDays < 30) {
+          myTimeString = `Last update ${diffDays} day${
+            diffDays > 1 ? "s" : ""
+          } ago`;
+        } else {
+          myTimeString = `Last update ${diffMonths} month${
+            diffMonths > 1 ? "s" : ""
           } ago`;
         }
       }

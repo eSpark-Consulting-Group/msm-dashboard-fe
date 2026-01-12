@@ -176,7 +176,9 @@ const Dashboard = () => {
             : item?.device_data?.device_status;
 
         const unAssign =
-          user?.role?.name === "user" ? true : item?.device_data?.device_imei;
+          user?.role?.name === "user"
+            ? item?.device_data?.device_data?.device_imei
+            : item?.device_data?.device_imei;
 
         return {
           ...item,
@@ -195,14 +197,14 @@ const Dashboard = () => {
             user?.role?.name === "user"
               ? item?.device_data?.user_id
               : item?.user_id,
-          status: {
-            label: status ? "Active" : "Inactive",
-            variant: status ? "green" : "red",
-          },
           // status: {
-          //   label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-          //   variant: !unAssign ? "simple2" : status ? "green" : "red",
+          //   label: status ? "Active" : "Inactive",
+          //   variant: status ? "green" : "red",
           // },
+          status: {
+            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
+            variant: !unAssign ? "simple2" : status ? "green" : "red",
+          },
           lastUpdated: dayjs(
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_status_updated_at
@@ -350,13 +352,13 @@ const Dashboard = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    // { label: "Unassigned", value: 2 },
+                    { label: "Unassigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    // { label: "Un Assigned", value: 2 },
+                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

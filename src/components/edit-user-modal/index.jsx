@@ -1,32 +1,37 @@
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { Box, Checkbox, Stack, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
-import { pencil } from "../../assets";
+import OutlinedInput from "../input";
 import Button from "../buttons";
 import Dropdown from "../drop-down";
-import OutlinedInput from "../input";
-import { toast } from "react-toastify";
-import { useUpdateUserMutation } from "../../services/users";
-import { editUserSchema } from "../../schemas";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { useUpdateUserMutation } from "../../services/users";
 import { useGetAllDevicesQuery } from "../../services/devices";
-import { useEffect, useState } from "react";
+import { editUserSchema } from "../../schemas";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+const filter = createFilterOptions({
+  stringify: (option) => option.label.toLowerCase(),
+});
 
 const EditUserModal = ({ user, handleCancel }) => {
   const [editUser, { isLoading }] = useUpdateUserMutation();
   const [deviceOptions, setDeviceOptions] = useState([]);
 
-  const { data: devicesData } = useGetAllDevicesQuery({
-    page: "",
-    limit: "",
-    pageSize: "",
-    search: "",
-  });
+  const { data: devicesData, isLoading: deviceDataLoading } =
+    useGetAllDevicesQuery({
+      page: "",
+      limit: "",
+      pageSize: "",
+      search: "",
+    });
 
+  // Map all devices to {label, value} format
   useEffect(() => {
     if (devicesData?.data) {
       const options = devicesData.data.map((device) => ({
@@ -37,7 +42,14 @@ const EditUserModal = ({ user, handleCancel }) => {
     }
   }, [devicesData]);
 
-  // console.log(user, "user");
+  // Map user’s selected devices to match deviceOptions objects
+  const getSelectedDevices = () => {
+    if (!user?.userDevicesData || !deviceOptions.length) return [];
+    return user.userDevicesData
+      .map((d) => deviceOptions.find((o) => o.value === d.device_id))
+      .filter(Boolean); // remove any unmatched
+  };
+
   const formik = useFormik({
     initialValues: {
       name: user?.name || "",
@@ -48,15 +60,15 @@ const EditUserModal = ({ user, handleCancel }) => {
         ? "Pending"
         : user?.status?.label === "Active"
         ? "active"
-        : "inactive" || "inactive",
-      userDevices: user?.userDevicesData?.map((d) => d.device_id) || [],
+        : "inactive",
+      userDevices: getSelectedDevices(),
     },
     enableReinitialize: true,
     validationSchema: editUserSchema,
     onSubmit: (values) => {
       const formData = {
         ...values,
-        userDevices: values.userDevices,
+        userDevices: values.userDevices.map((d) => d.value),
       };
 
       editUser({ id: user?._id, formData }).then((res) => {
@@ -71,22 +83,16 @@ const EditUserModal = ({ user, handleCancel }) => {
       });
     },
   });
+
   return (
     <Box
       component="form"
       onSubmit={formik.handleSubmit}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        mt: "25px",
-        rowGap: "15px",
-      }}
+      sx={{ display: "flex", flexDirection: "column", mt: 3, rowGap: 2 }}
     >
-      {/* Name */}
       <OutlinedInput
         label="User Name"
         placeholder="Enter User Name"
-        endAdornment={pencil}
         name="name"
         value={formik.values.name}
         onInputChange={formik.handleChange}
@@ -95,7 +101,6 @@ const EditUserModal = ({ user, handleCancel }) => {
         helperText={formik.touched.name && formik.errors.name}
       />
 
-      {/* Email */}
       <OutlinedInput
         label="Email"
         placeholder="Enter Email"
@@ -107,11 +112,9 @@ const EditUserModal = ({ user, handleCancel }) => {
         helperText={formik.touched.email && formik.errors.email}
       />
 
-      {/* Phone */}
       <OutlinedInput
         label="Phone No"
         placeholder="Enter Phone No"
-        endAdornment={pencil}
         name="phone_number"
         value={formik.values.phone_number}
         onInputChange={formik.handleChange}
@@ -122,11 +125,9 @@ const EditUserModal = ({ user, handleCancel }) => {
         helperText={formik.touched.phone_number && formik.errors.phone_number}
       />
 
-      {/* Customer */}
       <OutlinedInput
         label="Customer Name"
         placeholder="Enter Customer Name"
-        endAdornment={pencil}
         name="customer_name"
         value={formik.values.customer_name}
         onInputChange={formik.handleChange}
@@ -137,7 +138,6 @@ const EditUserModal = ({ user, handleCancel }) => {
         helperText={formik.touched.customer_name && formik.errors.customer_name}
       />
 
-      {/* Status */}
       <Dropdown
         name="status"
         customLabel="Status"
@@ -155,62 +155,40 @@ const EditUserModal = ({ user, handleCancel }) => {
         renderValueSx={{
           color: formik.values.status === "active" ? "#35B21C" : "#EB1B1B",
           fontWeight: 600,
-          position: "relative",
-          bottom: "8px",
         }}
-        selectSx={{
-          backgroundColor:
-            formik.values.status === "active" ? "#EFEFEF" : "#FDE8E8",
-          border: "1.38px solid #DBD6D6",
-          borderRadius: "6.92px",
-        }}
-        disabled={!user?.isPasswordChanged ? true : false}
       />
+
       {user?.role?.name === "user" && (
         <Stack>
-          {/* ✅ Devices Multi Select */}
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography fontSize="14px" mb={1} sx={{ color: "#454545" }}>
-              {"Assign Devices"}
-            </Typography>
-          </Stack>
+          <Typography fontSize="14px" mb={1} sx={{ color: "#454545" }}>
+            Assign Devices
+          </Typography>
           <Autocomplete
             multiple
-            id="user-devices"
-            options={deviceOptions || []}
             disableCloseOnSelect
-            getOptionLabel={(option) => option.label}
-            value={deviceOptions.filter((opt) =>
-              formik.values.userDevices.includes(opt.value)
-            )}
-            onChange={(e, value) =>
-              formik.setFieldValue(
-                "userDevices",
-                value.map((v) => v.value)
-              )
+            options={deviceOptions}
+            value={formik.values.userDevices}
+            onChange={(event, newValue) =>
+              formik.setFieldValue("userDevices", newValue)
             }
-            renderOption={(props, option, { selected }) => {
-              const { key, ...optionProps } = props;
-              return (
-                <li key={key} {...optionProps}>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option.label}
-                </li>
-              );
-            }}
+            loading={deviceDataLoading}
+            getOptionLabel={(option) => option.label || ""}
+            filterOptions={filter}
+            renderOption={(props, option, { selected }) => (
+              <li {...props} key={option.value}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.label}
+              </li>
+            )}
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder="Select devices"
+                placeholder="Select Devices"
                 error={
                   formik.touched.userDevices &&
                   Boolean(formik.errors.userDevices)
@@ -224,21 +202,20 @@ const EditUserModal = ({ user, handleCancel }) => {
         </Stack>
       )}
 
-      {/* Actions */}
       <Box
         sx={{
-          mt: "30px",
+          mt: 3,
           display: "flex",
           justifyContent: "flex-end",
-          columnGap: "20px",
+          columnGap: 2,
         }}
       >
-        <Box sx={{ width: "203.70px", height: "50px" }}>
+        <Box sx={{ width: 200, height: 50 }}>
           <Button variant="outlined" disableRipple onClick={handleCancel}>
             Cancel
           </Button>
         </Box>
-        <Box sx={{ width: "203.70px", height: "50px" }}>
+        <Box sx={{ width: 200, height: 50 }}>
           <Button
             disabled={isLoading}
             loading={isLoading}

@@ -95,7 +95,12 @@ const DynamicModal = ({
           >
             <Box sx={{ width: "203.70px", height: "50px" }}>
               {cancelButtonText && (
-                <Button variant="outlined" disableRipple onClick={handleCancel}>
+                <Button
+                  variant="outlined"
+                  disableRipple
+                  disabled={isLoading}
+                  onClick={handleCancel}
+                >
                   {cancelButtonText}
                 </Button>
               )}
@@ -107,7 +112,7 @@ const DynamicModal = ({
                   disableRipple
                   onClick={handleAccept}
                   disabled={disabled}
-                  isLoading={isLoading}
+                  loading={isLoading}
                 >
                   {acceptButtonText}
                 </Button>

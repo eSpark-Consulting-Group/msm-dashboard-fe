@@ -591,8 +591,6 @@ const AddUserModal = ({ onCancel }) => {
         status: "active",
       };
 
-      console.log(bodyToSend, "bodyToSend");
-
       createUser(bodyToSend).then((res) => {
         if (res?.error) {
           toast.error(res?.error?.data?.message || "Failed to create user");

@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import { Box, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Checkbox,
+  TextField,
+  Typography,
+} from "@mui/material";
 import {
   Button,
   Dropdown,
@@ -17,10 +23,13 @@ import {
 } from "../../../services/devices";
 import { useSelector } from "react-redux";
 import {
+  useExportSelectedVersionMutation,
   useGetVersionsListQuery,
   useLazyCheckUpdatesQuery,
   useUpdateVersionMutation,
 } from "../../../services/ota";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 
 const Devices = () => {
   const [search, setSearch] = useState("");
@@ -33,6 +42,11 @@ const Devices = () => {
   const [statusSort, setStatusSort] = useState("");
   // const [createdSort, setCreatedSort] = useState(-1);
   const [updatedSort, setUpdatedSort] = useState(-1);
+  const [OTA_ImportFileModal, Set_OTA_ImportFileModal] = useState(false);
+  const [OTA_ExportFileModal, Set_OTA_ExportFileModal] = useState(false);
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
   const handleSort = (key, dir) => {
     if (key === "status") {
@@ -66,6 +80,9 @@ const Devices = () => {
     { isLoading: updateLoading, data: updateData, isFetching: updateFetching },
   ] = useLazyCheckUpdatesQuery();
 
+  const [exportSelectedVersion, { isLoading: exportSelectedVersionLoading }] =
+    useExportSelectedVersionMutation();
+
   useEffect(() => {
     if (isVersionError && versionError) {
       toast.error(versionError?.data?.message, { toastId: "VERSIONERROR" });
@@ -85,7 +102,7 @@ const Devices = () => {
     {
       skip: user?.role?.name === "user",
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
 
   const {
@@ -100,11 +117,11 @@ const Devices = () => {
     {
       skip: user?.role?.name !== "user",
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
 
   const { devices: devicesData, assignDevices: devicesData2 } = useSelector(
-    (state) => state.devices
+    (state) => state.devices,
   );
 
   useEffect(() => {
@@ -168,8 +185,8 @@ const Devices = () => {
                 ? `${item?.device_data?.device_data?.ota[0]?.last_update_date} ${item?.device_data?.device_data?.ota[0]?.last_update_time}`
                 : "-"
               : item?.device_data?.ota?.length > 0
-              ? `${item?.device_data?.ota[0]?.last_update_date} ${item?.device_data?.ota[0]?.last_update_time}`
-              : "-",
+                ? `${item?.device_data?.ota[0]?.last_update_date} ${item?.device_data?.ota[0]?.last_update_time}`
+                : "-",
         };
       }) || [];
     setData(deviceData);
@@ -220,6 +237,13 @@ const Devices = () => {
   const [modal, setModal] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [versionData, setversionData] = useState([]);
+  const [selectedVersions, setSelectedVersions] = useState([]);
+
+  const versionOptions =
+    versionsList?.data?.map((item) => ({
+      label: item,
+      value: item,
+    })) || [];
 
   const handleSelectRow = (id, checked) => {
     setSelectedRows((prev) => {
@@ -312,6 +336,40 @@ const Devices = () => {
     }
   };
 
+  const handleExportVersion = async (selectedVersion) => {
+    const versions = selectedVersion?.map((v) => v.value); // ["MSM_2.1.3", "MSM_2.1.4"]
+
+    try {
+      const payload = { names: versions };
+
+      const blob = await exportSelectedVersion(payload).unwrap();
+
+      const fileBlob =
+        blob instanceof Blob
+          ? blob
+          : new Blob([blob], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+      const url = window.URL.createObjectURL(fileBlob);
+
+      const link = document.createElement("a");
+      link.href = url;
+
+      // 🔥 filename fix
+      link.download = `OTA_file.xlsx`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      Set_OTA_ExportFileModal(false);
+    } catch (error) {
+      toast("error", error);
+    }
+  };
+
   return (
     <>
       <SubHeader
@@ -322,6 +380,10 @@ const Devices = () => {
         variant="contained"
         btnLoading={updateLoading || updateFetching}
         disabled={versionLoading || versionFetching}
+        OTA_Files_Download_Button={true}
+        exportButtonLoading={exportSelectedVersionLoading}
+        onExportClick={() => Set_OTA_ExportFileModal(true)}
+        onImportClick={() => Set_OTA_ImportFileModal(true)}
       />
       <Box
         sx={{
@@ -337,6 +399,7 @@ const Devices = () => {
           flexWrap="wrap"
           gap={1}
           sx={{
+            flexDirection: { xs: "row", lg: "row" },
             width: { xs: "100%", lg: "auto" },
             ".MuiFormControl-root ": { flex: 1 },
           }}
@@ -467,6 +530,54 @@ const Devices = () => {
         <Typography fontSize="24px">
           Are you sure you want to start OTA?
         </Typography>
+      </DynamicModal>
+      <DynamicModal
+        open={OTA_ImportFileModal}
+        handleClose={() => Set_OTA_ImportFileModal(false)}
+        acceptButtonText="Upload"
+        handleCancel={() => Set_OTA_ImportFileModal(false)}
+        // handleAccept={() => handleExportVersion(selectedVersions)}
+        heading={"Import OTA Files"}
+        // isLoading={exportSelectedVersionLoading}
+      >
+        UPload
+      </DynamicModal>
+      <DynamicModal
+        open={OTA_ExportFileModal}
+        handleClose={() => Set_OTA_ExportFileModal(false)}
+        acceptButtonText="Export"
+        handleCancel={() => Set_OTA_ExportFileModal(false)}
+        handleAccept={() => handleExportVersion(selectedVersions)}
+        heading={"Export OTA Files"}
+        isLoading={exportSelectedVersionLoading}
+      >
+        <Autocomplete
+          multiple
+          disabled={exportSelectedVersionLoading}
+          disableCloseOnSelect
+          options={versionOptions}
+          value={selectedVersions}
+          onChange={(_, newValue) => {
+            setSelectedVersions(newValue);
+          }}
+          getOptionLabel={(option) => option.label}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          renderOption={(props, option, { selected }) => (
+            <li {...props} key={option.value}>
+              <Checkbox
+                icon={icon}
+                checkedIcon={checkedIcon}
+                sx={{ mr: 1 }}
+                checked={selected}
+              />
+              {option.label}
+            </li>
+          )}
+          renderInput={(params) => (
+            <TextField {...params} placeholder="Select OTA Files" />
+          )}
+          sx={{ mt: 2 }}
+        />
       </DynamicModal>
     </>
   );

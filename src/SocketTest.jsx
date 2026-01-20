@@ -33,6 +33,7 @@ import {
   updateIoffSet,
   updateVoffSet,
 } from "./store/slices/measurements";
+import { toast } from "react-toastify";
 
 dayjs.extend(utc);
 let socketInstance = null;
@@ -109,18 +110,45 @@ export function useSocket() {
   useEffect(() => {
     if (!deviceid || !socketInstance) return;
 
-    const handleDeviceInfo = (data) => dispatch(updateDeviceInfo(data));
-    const handleNtpInfo = (data) => dispatch(updateNtpInfo(data));
-    const handleMqttInfo = (data) => dispatch(updateMqttInfo(data));
-    const handleSftpInfo = (data) => dispatch(updateSftpInfo(data));
-    const handleMqttsInfo = (data) => dispatch(updateMqttsInfo(data));
-    const handleOtaInfo = (data) => dispatch(updateOtaInfo(data));
+    const handleDeviceInfo = (data) => {
+      toast.success(`Info for device id: ${deviceid} updated.`);
+      dispatch(updateDeviceInfo(data));
+    };
+    const handleNtpInfo = (data) => {
+      toast.success(`NTP Protocol for device id: ${deviceid} updated.`);
+      dispatch(updateNtpInfo(data));
+    };
+    const handleMqttInfo = (data) => {
+      toast.success(`MQTT Protocol for device id: ${deviceid} updated.`);
+      dispatch(updateMqttInfo(data));
+    };
+    const handleSftpInfo = (data) => {
+      toast.success(`SFTP Protocol for device id: ${deviceid} updated.`);
+      dispatch(updateSftpInfo(data));
+    };
+    const handleMqttsInfo = (data) => {
+      toast.success(`MQTTs Protocol for device id: ${deviceid} updated.`);
+      dispatch(updateMqttsInfo(data));
+    };
+    const handleOtaInfo = (data) => {
+      toast.success(`OTA for device id: ${deviceid} updated.`);
+      dispatch(updateOtaInfo(data));
+    };
     // const handleMeasurementsInfo = (data) =>
     //   dispatch(updateDeviceMeasurements(data));
 
-    const handleCtRatio = (data) => dispatch(updateCtRatio(data));
-    const handleVoffSet = (data) => dispatch(updateVoffSet(data));
-    const handleIoffSet = (data) => dispatch(updateIoffSet(data));
+    const handleCtRatio = (data) => {
+      toast.success(`CT Ratio for the device id: ${deviceid} updated.`);
+      dispatch(updateCtRatio(data));
+    };
+    const handleVoffSet = (data) => {
+      toast.success(`V Offset for the device id: ${deviceid} updated.`);
+      dispatch(updateVoffSet(data));
+    };
+    const handleIoffSet = (data) => {
+      toast.success(`I Offset for the device id: ${deviceid} updated.`);
+      dispatch(updateIoffSet(data));
+    };
 
     socketInstance.on(`device_info:${deviceid}`, handleDeviceInfo);
     socketInstance.on(`ntp_info:${deviceid}`, handleNtpInfo);
@@ -146,6 +174,31 @@ export function useSocket() {
       socketInstance.off(`i_offset:${deviceid}`, handleIoffSet);
     };
   }, [deviceid, dispatch]);
+
+  useEffect(() => {
+    if (!socketInstance) return;
+
+    const handleNewVersion = (data) => {
+      if (Array.isArray(data)) {
+        const versions = data?.join(", ");
+        toast.success(
+          `New version${
+            data?.length > 1 ? "s" : ""
+          } ${versions} updated successfully`
+        );
+      } else {
+        toast.success(data);
+      }
+    };
+
+    // ✅ Remove old listener before adding new
+    socketInstance.off("new_versions", handleNewVersion);
+    socketInstance.on("new_versions", handleNewVersion);
+
+    return () => {
+      socketInstance.off("new_versions", handleNewVersion);
+    };
+  }, []);
 
   // Telemetry listeners
   useEffect(() => {

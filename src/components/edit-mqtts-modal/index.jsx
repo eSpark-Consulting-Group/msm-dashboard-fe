@@ -24,15 +24,15 @@ const EditMqtts = ({ data, handleCancel }) => {
       try {
         const obj = {
           broker_ip: values?.broker_ip,
-          // broker_port: values?.broker_port,
+          broker_port: data?.broker_port,
           data_interval: values?.data_interval,
-          root_ca: values?.root_ca ? "true" : "false",
-          claim_cert: values?.claim_cert ? "true" : "false",
-          claim_key: values?.claim_key ? "true" : "false",
+          root_ca: values?.root_ca,
+          claim_cert: values?.claim_cert,
+          claim_key: values?.claim_key,
         };
         const res = await mqtts({ formData: obj, id: values?.id });
         if (res?.data) {
-          toast.success("MQTTS Protocol updated successfully");
+          toast.success("MQTTs Protocol updated successfully");
           handleCancel();
         }
         if (res?.error) {
@@ -49,7 +49,7 @@ const EditMqtts = ({ data, handleCancel }) => {
   return (
     <div>
       <Typography variant="h6" fontWeight="bold" fontSize="25px" color="#000">
-        MQTTS Protocol
+        MQTTs Protocol
       </Typography>
       <Box
         sx={{
@@ -73,6 +73,7 @@ const EditMqtts = ({ data, handleCancel }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.broker_ip && Boolean(formik.errors.broker_ip)}
             helperText={formik.touched.broker_ip && formik.errors.broker_ip}
+            disabled={true}
           />
         </Box>
         {/* <Box sx={{ width: "100%" }}>
@@ -101,9 +102,12 @@ const EditMqtts = ({ data, handleCancel }) => {
             onInputChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.data_interval && Boolean(formik.errors.data_interval)
+              formik.touched.data_interval &&
+              Boolean(formik.errors.data_interval)
             }
-            helperText={formik.touched.data_interval && formik.errors.data_interval}
+            helperText={
+              formik.touched.data_interval && formik.errors.data_interval
+            }
           />
         </Box>
 

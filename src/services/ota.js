@@ -21,6 +21,12 @@ export const otaApi = api.injectEndpoints({
         body: payload,
       }),
     }),
+    checkUpdates: builder.query({
+      query: () => ({
+        url: "/version-list/check-updates",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -28,4 +34,5 @@ export const {
   useGetCurrentOtaQuery,
   useGetVersionsListQuery,
   useUpdateVersionMutation,
+  useLazyCheckUpdatesQuery,
 } = otaApi;

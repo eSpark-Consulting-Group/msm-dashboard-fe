@@ -5,36 +5,36 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { eye, eyeClose } from "../../assets";
 
 const OutlinedInput = ({
   label,
   name,
   placeholder,
-  onInputChange,
-  sx,
   value,
-  startAdornment,
-  multiline,
-  onKeyDown,
-  disabled,
-  type = "text",
-  readOnly,
-  error,
-  helperText,
+  onInputChange,
   onBlur,
+  sx,
+  type = "text",
+  disabled = false,
+  readOnly = false,
+  multiline = false,
+  error = false,
+  helperText = "",
+  startAdornment,
   endAdornment,
   labelStyle,
   isEndorementText,
+  onKeyDown,
   min,
   max,
+  step,
+  autoComplete = "off",
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const isPassword = type === "password";
 
   return (
     <Box
@@ -50,7 +50,7 @@ const OutlinedInput = ({
           component="label"
           sx={{
             fontSize: "14px",
-            fontWeight: "400",
+            fontWeight: 400,
             color: "#454545",
             ...labelStyle,
           }}
@@ -58,68 +58,52 @@ const OutlinedInput = ({
           {label}
         </Typography>
       )}
+
       <TextField
         name={name}
+        value={value}
         placeholder={placeholder}
         onChange={onInputChange}
-        value={value}
-        sx={sx}
+        onBlur={onBlur}
         onKeyDown={onKeyDown}
         disabled={disabled}
         multiline={multiline}
-        onBlur={onBlur}
-        type={type === "password" ? (showPassword ? "text" : "password") : type}
+        sx={sx}
+        error={error}
+        type={isPassword ? (showPassword ? "text" : "password") : type}
         InputProps={{
+          readOnly,
+
           startAdornment: startAdornment && (
             <InputAdornment position="start">
               {typeof startAdornment === "string" ? (
-                <img
-                  src={startAdornment}
-                  alt="icon"
-                  style={{ width: 24, height: 24 }}
-                />
+                <img src={startAdornment} alt="icon" width={24} height={24} />
               ) : (
                 startAdornment
               )}
             </InputAdornment>
           ),
+
           endAdornment: (
             <>
-              {type === "password" && value?.length > 0 && (
-                <IconButton onClick={handleTogglePassword} edge="end">
-                  {showPassword ? (
-                    <img
-                      src={eye}
-                      alt="Icon"
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        marginRight: "10px",
-                        marginTop: "5px",
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={eyeClose}
-                      alt="Icon"
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        marginRight: "10px",
-                        marginTop: "5px",
-                      }}
-                    />
-                  )}
+              {isPassword && value?.length > 0 && (
+                <IconButton
+                  onClick={() => setShowPassword((p) => !p)}
+                  edge="end"
+                >
+                  <img
+                    src={showPassword ? eye : eyeClose}
+                    alt="toggle"
+                    width={24}
+                    height={24}
+                  />
                 </IconButton>
               )}
+
               {endAdornment && (
                 <InputAdornment position="end" sx={{ mr: "5px" }}>
                   {typeof endAdornment === "string" && !isEndorementText ? (
-                    <img
-                      src={endAdornment}
-                      alt="icon"
-                      style={{ width: 24, height: 24 }}
-                    />
+                    <img src={endAdornment} alt="icon" width={24} height={24} />
                   ) : (
                     endAdornment
                   )}
@@ -127,22 +111,21 @@ const OutlinedInput = ({
               )}
             </>
           ),
-
-          readOnly: readOnly,
         }}
-        inputProps={
-          type === "number"
-            ? {
-                min,
-                max,
-              }
-            : {}
-        }
-        error={error}
+        /** 🔥 THIS is what fixes Chrome autofill */
+        inputProps={{
+          autoComplete,
+          min,
+          max,
+          step,
+        }}
       />
-      <Typography variant="caption" color="red" sx={{ display: "block" }}>
-        {helperText ? helperText : ""}
-      </Typography>
+
+      {helperText && (
+        <Typography variant="caption" color="red">
+          {helperText}
+        </Typography>
+      )}
     </Box>
   );
 };

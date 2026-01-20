@@ -31,6 +31,7 @@ import {
 } from "../../../store/slices/devices";
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
 import { useGetCurrentOtaQuery } from "../../../services/ota";
+import { resetTabs } from "../../../store/slices/info";
 // import { useSocket } from "../../../SocketTest";
 
 const DashboardInfo = () => {
@@ -181,13 +182,13 @@ const DashboardInfo = () => {
       dispatch(addDeviceStatus(data?.device_data?.device_data?.device_status));
       dispatch(
         addCurrentData(
-          data?.device_data?.device_data?.device_status === false ? 1 : 0
-        )
+          data?.device_data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(
         addMqttDataState(
-          data?.device_data?.device_data?.device_status === false ? 1 : 0
-        )
+          data?.device_data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(handleSelectedDevice(data));
 
@@ -200,13 +201,13 @@ const DashboardInfo = () => {
       dispatch(addDeviceStatus(deviceData?.data?.device_data?.device_status));
       dispatch(
         addCurrentData(
-          deviceData?.data?.device_data?.device_status === false ? 1 : 0
-        )
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(
         addMqttDataState(
-          deviceData?.data?.device_data?.device_status === false ? 1 : 0
-        )
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
 
       // requestDeviceInfo(id);
@@ -230,6 +231,15 @@ const DashboardInfo = () => {
       // requestSftpInfo(id);
     }
   }, [sftpData]);
+
+  useEffect(() => {
+    if (mqttsData) {
+    }
+  }, [mqttsData]);
+
+  useEffect(() => {
+    dispatch(resetTabs());
+  }, [id]);
 
   const handleReboot = async () => {
     try {
@@ -279,7 +289,7 @@ const DashboardInfo = () => {
           date={dayjs(ntpData?.data?.createdAt).format("DD-MM-YYYY")}
           time={dayjs(ntpData?.data?.createdAt).format("hh:mm")}
           role={user?.role?.name}
-          id={ntpData?.data?._id}
+          id={id}
           buttonLoading={ntpFetching}
           type={"NTP"}
         />
@@ -300,7 +310,7 @@ const DashboardInfo = () => {
           role={user?.role?.name}
           buttonLoading={mqttFetching}
           type={"MQTT"}
-          id={mqttData?.data[0]?._id}
+          id={id}
         />
       ),
     },
@@ -322,14 +332,14 @@ const DashboardInfo = () => {
       ),
     },
     {
-      label: "MQTTS",
+      label: "MQTTs",
       component: (
         <InfoCard
           info={mqttsProtocol({
             ...mqttsData?.data,
             ...socketMqtts,
           })}
-          title="MQTTS Protocol"
+          title="MQTTs Protocol"
           role={user?.role?.name}
           type={"MQTTS"}
           id={mqttsData?.data?.device_uuid}

@@ -176,7 +176,9 @@ const Dashboard = () => {
             : item?.device_data?.device_status;
 
         const unAssign =
-          user?.role?.name === "user" ? true : item?.device_data?.device_imei;
+          user?.role?.name === "user"
+            ? item?.device_data?.device_data?.device_imei
+            : item?.device_data?.device_imei;
 
         return {
           ...item,
@@ -195,6 +197,10 @@ const Dashboard = () => {
             user?.role?.name === "user"
               ? item?.device_data?.user_id
               : item?.user_id,
+          // status: {
+          //   label: status ? "Active" : "Inactive",
+          //   variant: status ? "green" : "red",
+          // },
           status: {
             label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
             variant: !unAssign ? "simple2" : status ? "green" : "red",
@@ -287,11 +293,12 @@ const Dashboard = () => {
     }
   };
 
-  const [unassign, { isLoading: unassignLoading }] = useUnAssignDeviceMutation();
+  const [unassign, { isLoading: unassignLoading }] =
+    useUnAssignDeviceMutation();
 
   const handleUnAssign = (item) => {
     setDeviceUnAssign(item);
-  }
+  };
 
   const handleUnassignDevice = () => {
     unassign(deviceUnAssign?.device_data?.device_uuid).then((res) => {
@@ -345,7 +352,7 @@ const Dashboard = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    // { label: "Unassigned", value: 2 },
+                    { label: "Unassigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },

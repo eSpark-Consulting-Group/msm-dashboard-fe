@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { logout } from "../../store/slices/auth";
 import { deleteInfo, modalClose } from "../../assets";
+import { clearDevices } from "../../store/slices/devices";
+import { resetChannelFlags } from "../../store/slices/telemetry";
 
-const LogoutModal = ({
-  open,
-  handleClose,
-}) => {
+const LogoutModal = ({ open, handleClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -98,10 +97,16 @@ const LogoutModal = ({
             </Button>
           </Box>
           <Box sx={{ width: { xs: "100%", md: "47%" }, height: "44px" }}>
-            <Button variant="delete" disableRipple onClick={() => {
-              dispatch(logout())
-              navigate('/login')
-            }}>
+            <Button
+              variant="delete"
+              disableRipple
+              onClick={() => {
+                dispatch(logout());
+                dispatch(clearDevices());
+                dispatch(resetChannelFlags());
+                navigate("/login");
+              }}
+            >
               Logout
             </Button>
           </Box>

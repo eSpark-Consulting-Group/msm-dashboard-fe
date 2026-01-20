@@ -18,6 +18,7 @@ import {
 import { useSelector } from "react-redux";
 import {
   useGetVersionsListQuery,
+  useLazyCheckUpdatesQuery,
   useUpdateVersionMutation,
 } from "../../../services/ota";
 
@@ -25,7 +26,7 @@ const Devices = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [total] = useState(9);
+  const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
@@ -54,10 +55,16 @@ const Devices = () => {
     isError: isVersionError,
     error: versionError,
     refetch: refetchVersionsList,
+    isSuccess: versionSuccess,
   } = useGetVersionsListQuery("", {
     skip: user?.role?.name === "user",
     refetchOnMountOrArgChange: true,
   });
+
+  const [
+    checkUpdateQuery,
+    { isLoading: updateLoading, data: updateData, isFetching: updateFetching },
+  ] = useLazyCheckUpdatesQuery();
 
   useEffect(() => {
     if (isVersionError && versionError) {
@@ -71,6 +78,7 @@ const Devices = () => {
     isLoading: deviceLoading,
     isError: isError,
     error: error,
+    data: assignDevicesData2,
     refetch,
   } = useGetAllDevicesQuery(
     { page, limit: pageSize, search, statusSort, updatedSort },
@@ -86,6 +94,7 @@ const Devices = () => {
     isError: isError2,
     error: error2,
     refetch: refetch2,
+    data: assignDevicesData,
   } = useGetAllAssignDevicesQuery(
     { page, limit: pageSize, search, statusSort, updatedSort },
     {
@@ -111,6 +120,10 @@ const Devices = () => {
       setData([]);
       return;
     }
+    const totalCount =
+      user?.role?.name === "user"
+        ? assignDevicesData?.count
+        : assignDevicesData2?.count;
     const sourceData = user?.role?.name === "user" ? devicesData2 : devicesData;
     const deviceData =
       sourceData?.map((item) => {
@@ -119,7 +132,9 @@ const Devices = () => {
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
         const unAssign =
-          user?.role?.name === "user" ? true : item?.device_data?.device_imei;
+          user?.role?.name === "user"
+            ? item?.device_data?.device_data?.device_imei
+            : item?.device_data?.device_imei;
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -135,6 +150,10 @@ const Devices = () => {
             user?.role?.name === "user"
               ? item?.device_data?.groups_data?.name
               : item?.groups_data?.name || "-",
+          // status: {
+          //   label: status ? "Active" : "Inactive",
+          //   variant: status ? "green" : "red",
+          // },
           status: {
             label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
             variant: !unAssign ? "simple2" : status ? "green" : "red",
@@ -154,7 +173,19 @@ const Devices = () => {
         };
       }) || [];
     setData(deviceData);
-  }, [isError, error, isError2, error2, devicesData, statusSort, updatedSort]);
+    setTotal(totalCount);
+    // console.log(sourceData);
+  }, [
+    isError,
+    error,
+    isError2,
+    error2,
+    devicesData,
+    statusSort,
+    updatedSort,
+    assignDevicesData,
+    assignDevicesData2,
+  ]);
 
   const handlePageChange = (page) => {
     setPage(page);
@@ -188,6 +219,7 @@ const Devices = () => {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [modal, setModal] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [versionData, setversionData] = useState([]);
 
   const handleSelectRow = (id, checked) => {
     setSelectedRows((prev) => {
@@ -261,14 +293,35 @@ const Devices = () => {
       });
   };
 
+  useEffect(() => {
+    if (versionSuccess && Array.isArray(versionsList?.data)) {
+      const data = versionsList.data.map((version) => ({
+        label: version,
+        value: version,
+      }));
+      setversionData(data);
+    }
+  }, [versionsList?.data, versionSuccess]);
+
+  const handleUpdates = async () => {
+    const res = await checkUpdateQuery();
+    if (res?.data?.status) {
+      await refetchVersionsList();
+    } else if (res?.error) {
+      setversionData([]);
+    }
+  };
+
   return (
     <>
       <SubHeader
         heading="OTA"
         subHeading="Here’s what’s happening with your device and users"
         buttonText={"Check updates"}
-        onClick={() => refetchVersionsList()}
+        onClick={handleUpdates}
         variant="contained"
+        btnLoading={updateLoading || updateFetching}
+        disabled={versionLoading || versionFetching}
       />
       <Box
         sx={{
@@ -295,12 +348,7 @@ const Devices = () => {
             placeholder="Select Version"
             noLabel
             loading={versionLoading || versionFetching}
-            options={
-              versionsList?.data?.map((version) => ({
-                label: version,
-                value: version,
-              })) || []
-            }
+            options={versionData}
             value={selectedVersion}
             handleChange={(e) => setSelectedVersion(e.target.value)}
             renderValueSx={{
@@ -360,7 +408,7 @@ const Devices = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    // { label: "Unassigned", value: 2 },
+                    { label: "Un Assigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },

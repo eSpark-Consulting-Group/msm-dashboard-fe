@@ -101,7 +101,7 @@ export const mapGeneralData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.frequency}Hz`,
       // valueColor: "red",
-      headingSize: "17px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -121,7 +121,7 @@ export const mapPowerData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_apparent_power}kVA`,
       // valueColor: "green",
-      headingSize: "18.05px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -134,7 +134,7 @@ export const mapPowerData = (telemetryData) => {
       heading,
       value: `${item?.avg_active_power}kW`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -148,7 +148,7 @@ export const mapPowerData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_reactive_power}kVAR`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -162,7 +162,7 @@ export const mapPowerData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_power_factor}%`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -186,7 +186,7 @@ export const mapEnergyData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_active_energy_positive}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -199,7 +199,7 @@ export const mapEnergyData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_active_energy_negative}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -212,7 +212,7 @@ export const mapEnergyData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_reactive_energy_positive}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -225,7 +225,7 @@ export const mapEnergyData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.avg_reactive_energy_negative}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -291,7 +291,7 @@ export const mapGeneralRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.frequency}Hz`,
       // valueColor: "red",
-      headingSize: "17px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -311,7 +311,7 @@ export const mapPowerRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.apparent_power}kVA`,
       // valueColor: "green",
-      headingSize: "18.05px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -324,7 +324,7 @@ export const mapPowerRTData = (telemetryData) => {
       heading,
       value: `${item?.active_power}kW`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -338,7 +338,7 @@ export const mapPowerRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.reactive_power}kVAR`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -352,7 +352,7 @@ export const mapPowerRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.power_factor}%`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -376,7 +376,7 @@ export const mapEnergyRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.active_energy_positive}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -389,7 +389,7 @@ export const mapEnergyRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.active_energy_negative}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -402,7 +402,7 @@ export const mapEnergyRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.reactive_energy_positive}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -415,7 +415,7 @@ export const mapEnergyRTData = (telemetryData) => {
       time: `Last update ${dayjs(item?.updatedAt).fromNow()}`,
       value: `${item?.reactive_energy_negative}kWh`,
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase,
     };
   });
@@ -428,7 +428,6 @@ export const mapEnergyRTData = (telemetryData) => {
 };
 
 const ENCRYPTION_KEY = import.meta.env.VITE_ENC_KEY;
-
 
 export const decrypt = (cipherText) => {
   try {
@@ -446,11 +445,15 @@ export const decrypt = (cipherText) => {
         padding: CryptoJS.pad.Pkcs7,
       }
     );
-    console.log(cipherText, decrypted.toString(CryptoJS.enc.Utf8), "decrypted.toString(CryptoJS.enc.Utf8)", ENCRYPTION_KEY)
+    console.log(
+      cipherText,
+      decrypted.toString(CryptoJS.enc.Utf8),
+      "decrypted.toString(CryptoJS.enc.Utf8)",
+      ENCRYPTION_KEY
+    );
     return decrypted.toString(CryptoJS.enc.Utf8);
   } catch (err) {
     console.error("Decryption failed:", err);
     return null;
   }
 };
-

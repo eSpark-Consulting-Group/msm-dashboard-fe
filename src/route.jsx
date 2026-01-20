@@ -53,7 +53,12 @@ const Router = () => {
           )}
 
           <Route path="/dashboard/:id/home" element={<DashboardHome />} />
-          <Route path="/dashboard/:id/measurement" element={<Measurement />} />
+          {user?.role?.name === "super_admin" && (
+            <Route
+              path="/dashboard/:id/measurement"
+              element={<Measurement />}
+            />
+          )}
           <Route
             path="/dashboard/:id/home/:channelId"
             element={<ChannelInfo />}

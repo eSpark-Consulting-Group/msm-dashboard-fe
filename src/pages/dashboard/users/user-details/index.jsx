@@ -40,16 +40,24 @@ const UserDetails = () => {
     isLoading,
     isError,
     error,
-  } = useGetUserByIdQuery(params?.id, { skip: !params?.id || role === "user" });
+    isFetching: userDetailsFetching,
+  } = useGetUserByIdQuery(
+    { id: params?.id, page, limit: pageSize, search },
+    { skip: !params?.id || role === "user" }
+  );
 
   const {
     data: userDetailsData2,
     isLoading: isLoading2,
     isError: isError2,
     error: error2,
-  } = useGetUserDevicesQuery(params?.id, {
-    skip: !params?.id || role !== "user",
-  });
+    isFetching: userDetailsFetching2,
+  } = useGetUserDevicesQuery(
+    { id: params?.id, page, limit: pageSize, search },
+    {
+      skip: !params?.id || role !== "user",
+    }
+  );
 
   const [deleteDashboard, { isLoading: deleteLoading }] =
     useDeleteUserDeviceMutation();
@@ -118,17 +126,25 @@ const UserDetails = () => {
           mqtt_username: item?.mqtt_user || "-",
           groups: item?.device_data?.groups_data?.name || "-",
           status: {
-            label: !item?.device_data?.device_data?.device_imei
-              ? "Unassigned"
-              : item?.device_data?.device_data?.device_status
+            label: item?.device_data?.device_data?.device_status
               ? "Active"
               : "Inactive",
-            variant: !item?.device_data?.device_data?.device_imei
-              ? "simple2"
-              : item?.device_data?.device_data?.device_status
+            variant: item?.device_data?.device_data?.device_status
               ? "green"
               : "red",
           },
+          // status: {
+          //   label: !item?.device_data?.device_data?.device_imei
+          //     ? "Unassigned"
+          //     : item?.device_data?.device_data?.device_status
+          //     ? "Active"
+          //     : "Inactive",
+          //   variant: !item?.device_data?.device_data?.device_imei
+          //     ? "simple2"
+          //     : item?.device_data?.device_data?.device_status
+          //     ? "green"
+          //     : "red",
+          // },
         })) || [];
       setData(deviceData);
       setTotal(userDetailsData2?.count || 0);
@@ -167,7 +183,9 @@ const UserDetails = () => {
         handleDelete={handleDelete}
         hideView
         hideEdit
-        isLoading={isLoading || isLoading2}
+        isLoading={
+          isLoading || isLoading2 || userDetailsFetching || userDetailsFetching2
+        }
       />
 
       <DeleteModal

@@ -36,7 +36,7 @@ const PhaseCards = ({
         border: "0.9px solid #1E1E1E",
         borderRadius: "24.22px",
         // width: "330px",
-        p: time ? "14px 10px" : "24px 2px",
+        p: "14px 10px",
         display: "flex",
         flexDirection: "column",
         rowGap: "15px",
@@ -104,15 +104,12 @@ const PhaseCards = ({
           }}
         >
           {(() => {
-            // extract number and unit
-            const match = String(value).match(/^([\d.]+)([a-zA-Z%]+)?$/);
-
-            if (!match) return value; // fallback if doesn't match
+            const match = String(value).match(/^(-?[\d.]+)([a-zA-Z%]+)?$/);
+            if (!match) return value;
 
             const num = parseFloat(match[1]);
             const unit = match[2] || "";
-
-            return `${num.toFixed(2)} ${unit}`;
+            return `${num.toFixed(3)} ${unit}`;
           })()}
         </Typography>
       </Box>

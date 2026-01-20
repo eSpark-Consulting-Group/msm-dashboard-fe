@@ -149,7 +149,7 @@ export const deviceSchema = Yup.object().shape({
   // userName: Yup.string()
   //   .required("MQTTS Username is required"),
 
-  password: Yup.string().required("MQTTS Password is required"),
+  device_password: Yup.string().required("MQTTS Password is required"),
 });
 
 export const verifyEmailSchema = Yup.object({

@@ -11,7 +11,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0KVA",
       // valueColor: "green",
-      headingSize: "18.05px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -21,7 +21,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0KVA",
       // valueColor: "green",
-      headingSize: "18.05px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -31,7 +31,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0KVA",
       // valueColor: "green",
-      headingSize: "18.05px",
+      headingSize: "20px",
       phase: "C",
     },
     {
@@ -39,7 +39,7 @@ const initialState = {
       heading: "PHASE A-Active Power",
       value: "0KW",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -47,7 +47,7 @@ const initialState = {
       heading: "PHASE B-Active Power",
       value: "0KW",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -55,7 +55,7 @@ const initialState = {
       heading: "PHASE C-Active Power",
       value: "0KW",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
     {
@@ -65,7 +65,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0KVAR",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -75,7 +75,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0KVAR",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -85,7 +85,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0KVAR",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
     {
@@ -95,7 +95,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0%",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -105,7 +105,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0%",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -115,7 +115,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0%",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
   ],
@@ -125,7 +125,7 @@ const initialState = {
       heading: "PHASE A-Active Energy (+)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -133,7 +133,7 @@ const initialState = {
       heading: "PHASE B-Active Energy (+)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -141,7 +141,7 @@ const initialState = {
       heading: "PHASE C-Active Energy (+)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
     {
@@ -149,7 +149,7 @@ const initialState = {
       heading: "PHASE A-Active Energy (-)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -157,7 +157,7 @@ const initialState = {
       heading: "PHASE B-Active Energy (-)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -165,7 +165,7 @@ const initialState = {
       heading: "PHASE C-Active Energy (-)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
     {
@@ -173,7 +173,7 @@ const initialState = {
       heading: "PHASE A-Reactive Energy (+)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -181,7 +181,7 @@ const initialState = {
       heading: "PHASE B-Reactive Energy (+)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -189,7 +189,7 @@ const initialState = {
       heading: "PHASE C-Reactive Energy (+)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
     {
@@ -197,7 +197,7 @@ const initialState = {
       heading: "PHASE A-Reactive Energy (-)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -205,7 +205,7 @@ const initialState = {
       heading: "PHASE B-Reactive Energy (-)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -213,7 +213,7 @@ const initialState = {
       heading: "PHASE C-Reactive Energy (-)",
       value: "0KWh",
       // valueColor: "green",
-      headingSize: "19.5px",
+      headingSize: "20px",
       phase: "C",
     },
   ],
@@ -317,7 +317,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0Hz",
       // valueColor: "red",
-      headingSize: "17px",
+      headingSize: "20px",
       phase: "A",
     },
     {
@@ -327,7 +327,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0Hz",
       // valueColor: "red",
-      headingSize: "17px",
+      headingSize: "20px",
       phase: "B",
     },
     {
@@ -337,7 +337,7 @@ const initialState = {
       time: "Last update 3h ago",
       value: "0Hz",
       // valueColor: "red",
-      headingSize: "17px",
+      headingSize: "20px",
       phase: "C",
     },
   ],
@@ -362,14 +362,30 @@ const telemetrySlice = createSlice({
       if (!timestamp || isNaN(new Date(timestamp).getTime())) {
         myTimeString = "Last update unknown";
       } else {
-        const diffMs = new Date() - new Date(timestamp);
-        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffMs = Date.now() - new Date(timestamp).getTime();
 
-        if (diffMinutes <= 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30)); // approx
+
+        if (diffMinutes < 1) {
           myTimeString = "Last update a few seconds ago";
-        } else {
+        } else if (diffMinutes < 60) {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
+          } ago`;
+        } else if (diffHours < 24) {
+          myTimeString = `Last update ${diffHours} hour${
+            diffHours > 1 ? "s" : ""
+          } ago`;
+        } else if (diffDays < 30) {
+          myTimeString = `Last update ${diffDays} day${
+            diffDays > 1 ? "s" : ""
+          } ago`;
+        } else {
+          myTimeString = `Last update ${diffMonths} month${
+            diffMonths > 1 ? "s" : ""
           } ago`;
         }
       }
@@ -399,14 +415,30 @@ const telemetrySlice = createSlice({
       if (!timestamp || isNaN(new Date(timestamp).getTime())) {
         myTimeString = "Last update unknown";
       } else {
-        const diffMs = new Date() - new Date(timestamp);
-        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffMs = Date.now() - new Date(timestamp).getTime();
 
-        if (diffMinutes <= 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30)); // approx
+
+        if (diffMinutes < 1) {
           myTimeString = "Last update a few seconds ago";
-        } else {
+        } else if (diffMinutes < 60) {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
+          } ago`;
+        } else if (diffHours < 24) {
+          myTimeString = `Last update ${diffHours} hour${
+            diffHours > 1 ? "s" : ""
+          } ago`;
+        } else if (diffDays < 30) {
+          myTimeString = `Last update ${diffDays} day${
+            diffDays > 1 ? "s" : ""
+          } ago`;
+        } else {
+          myTimeString = `Last update ${diffMonths} month${
+            diffMonths > 1 ? "s" : ""
           } ago`;
         }
       }
@@ -445,14 +477,30 @@ const telemetrySlice = createSlice({
       if (!timestamp || isNaN(new Date(timestamp).getTime())) {
         myTimeString = "Last update unknown";
       } else {
-        const diffMs = new Date() - new Date(timestamp);
-        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffMs = Date.now() - new Date(timestamp).getTime();
 
-        if (diffMinutes <= 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30)); // approx
+
+        if (diffMinutes < 1) {
           myTimeString = "Last update a few seconds ago";
-        } else {
+        } else if (diffMinutes < 60) {
           myTimeString = `Last update ${diffMinutes} minute${
             diffMinutes > 1 ? "s" : ""
+          } ago`;
+        } else if (diffHours < 24) {
+          myTimeString = `Last update ${diffHours} hour${
+            diffHours > 1 ? "s" : ""
+          } ago`;
+        } else if (diffDays < 30) {
+          myTimeString = `Last update ${diffDays} day${
+            diffDays > 1 ? "s" : ""
+          } ago`;
+        } else {
+          myTimeString = `Last update ${diffMonths} month${
+            diffMonths > 1 ? "s" : ""
           } ago`;
         }
       }

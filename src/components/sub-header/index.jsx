@@ -85,7 +85,7 @@ const SubHeader = ({
               loading={importButtonLoading}
               disabled={disabled}
             >
-              {"Import OTA File"}
+              {importButtonLoading ? "" : "Import OTA File"}
             </Button>
           )}
           {OTA_Files_Download_Button && user?.role?.name !== "user" && (
@@ -101,7 +101,7 @@ const SubHeader = ({
               loading={exportButtonLoading}
               disabled={disabled}
             >
-              {"Export OTA Files"}
+              {exportButtonLoading ? "" : "Export OTA Files"}
             </Button>
           )}
           {user?.role?.name !== "user" && buttonText && (
@@ -117,7 +117,7 @@ const SubHeader = ({
               loading={btnLoading}
               disabled={disabled}
             >
-              {buttonText}
+              {btnLoading ? "" : buttonText}
             </Button>
           )}
         </Stack>

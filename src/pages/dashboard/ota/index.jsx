@@ -159,10 +159,6 @@ const Devices = () => {
           user?.role?.name === "user"
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
-        const unAssign =
-          user?.role?.name === "user"
-            ? item?.device_data?.device_data?.device_imei
-            : item?.device_data?.device_imei;
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -178,14 +174,30 @@ const Devices = () => {
             user?.role?.name === "user"
               ? item?.device_data?.groups_data?.name
               : item?.groups_data?.name || "-",
-          // status: {
-          //   label: status ? "Active" : "Inactive",
-          //   variant: status ? "green" : "red",
-          // },
+
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
+          imei_status: !(
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei
+              : item?.device_data?.device_imei) &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .trim() !== "" &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .toLowerCase() !== "unknown"
+          )
+            ? "Unknown"
+            : "Available",
           version:
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.ota[0]?.current_version
@@ -272,8 +284,6 @@ const Devices = () => {
 
     const enabledIds = data
       .filter((item) => {
-        const isInactive = item?.status?.label === "Inactive";
-
         const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
         const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
 
@@ -281,7 +291,7 @@ const Devices = () => {
 
         const isOtaStarted = otaStatus === "started";
 
-        return !isInactive && !isOtaStarted;
+        return !isOtaStarted;
       })
       .map((item) => item._id);
 
@@ -545,13 +555,11 @@ const Devices = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

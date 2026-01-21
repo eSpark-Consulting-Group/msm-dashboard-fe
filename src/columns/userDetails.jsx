@@ -7,6 +7,7 @@ export const columns = () => {
     // { name: "Label", key: "label" },
     // { name: "User Name", key: "mqtt_username" },
     { name: "Status ", key: "status", chip: true },
+    { name: "IMEI Status", key: "imei_status" },
     { name: "Actions", key: "action" },
   ];
 };

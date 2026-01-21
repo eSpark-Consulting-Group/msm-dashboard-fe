@@ -197,13 +197,29 @@ const Devices = () => {
               ? item?.device_data?.groups_data[0]?.name
               : item?.groups_data[0]?.name || "-",
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
-          // status: {
-          //   label: status ? "Active" : "Inactive",
-          //   variant: status ? "green" : "red",
-          // },
+          imei_status: !(
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei
+              : item?.device_data?.device_imei) &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .trim() !== "" &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .toLowerCase() !== "unknown"
+          )
+            ? "Unknown"
+            : "Available",
+
           lastUpdated: dayjs(
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_status_updated_at
@@ -427,13 +443,11 @@ const Devices = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

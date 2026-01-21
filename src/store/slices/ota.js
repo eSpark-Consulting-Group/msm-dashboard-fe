@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { logout } from "./auth";
 
 const initialState = {
   OTA_file_import_loading: false,
@@ -15,6 +16,9 @@ const otaSlice = createSlice({
     setExportLoading: (state, action) => {
       state.OTA_file_export_loading = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout, () => initialState); // ✅ reset OTA state
   },
 });
 

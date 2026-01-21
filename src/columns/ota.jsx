@@ -9,4 +9,5 @@ export const columns = (statusSort, updatedSort) => [
     sortDir: updatedSort,
   },
   { name: "Status", key: "status", chip: true },
+  { name: "IMEI Status", key: "imei_status", },
 ];

@@ -83,7 +83,7 @@ const SubHeader = ({
               onClick={onImportClick}
               disableRipple
               loading={importButtonLoading}
-              disabled={exportButtonLoading}
+              disabled={disabled}
             >
               {"Import OTA File"}
             </Button>
@@ -99,7 +99,7 @@ const SubHeader = ({
               onClick={onExportClick}
               disableRipple
               loading={exportButtonLoading}
-              disabled={importButtonLoading}
+              disabled={disabled}
             >
               {"Export OTA Files"}
             </Button>

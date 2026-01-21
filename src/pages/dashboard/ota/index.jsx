@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import {
@@ -21,15 +21,17 @@ import {
   useGetAllAssignDevicesQuery,
   useGetAllDevicesQuery,
 } from "../../../services/devices";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useExportSelectedVersionMutation,
   useGetVersionsListQuery,
+  useImportVersionMutation,
   useLazyCheckUpdatesQuery,
   useUpdateVersionMutation,
 } from "../../../services/ota";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import { setExportLoading, setImportLoading } from "../../../store/slices/ota";
 
 const Devices = () => {
   const [search, setSearch] = useState("");
@@ -38,13 +40,14 @@ const Devices = () => {
   const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const { user } = useSelector((state) => state.auth);
-
   const [statusSort, setStatusSort] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   // const [createdSort, setCreatedSort] = useState(-1);
   const [updatedSort, setUpdatedSort] = useState(-1);
   const [OTA_ImportFileModal, Set_OTA_ImportFileModal] = useState(false);
   const [OTA_ExportFileModal, Set_OTA_ExportFileModal] = useState(false);
-
+  const fileInputRef = useRef(null);
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -82,6 +85,14 @@ const Devices = () => {
 
   const [exportSelectedVersion, { isLoading: exportSelectedVersionLoading }] =
     useExportSelectedVersionMutation();
+
+  const [importVersion, { isLoading: importVersionLoading }] =
+    useImportVersionMutation();
+
+  const dispatch = useDispatch();
+  const { OTA_file_import_loading, OTA_file_export_loading } = useSelector(
+    (state) => state?.ota,
+  );
 
   useEffect(() => {
     if (isVersionError && versionError) {
@@ -191,7 +202,6 @@ const Devices = () => {
       }) || [];
     setData(deviceData);
     setTotal(totalCount);
-    // console.log(sourceData);
   }, [
     isError,
     error,
@@ -337,11 +347,19 @@ const Devices = () => {
   };
 
   const handleExportVersion = async (selectedVersion) => {
-    const versions = selectedVersion?.map((v) => v.value); // ["MSM_2.1.3", "MSM_2.1.4"]
+    if (!selectedVersion?.length) {
+      toast.info("Please select at least one version");
+      return;
+    }
+
+    const versions = selectedVersion.map((v) => v.value);
+
+    Set_OTA_ExportFileModal(false);
+
+    dispatch(setExportLoading(true));
 
     try {
       const payload = { names: versions };
-
       const blob = await exportSelectedVersion(payload).unwrap();
 
       const fileBlob =
@@ -352,22 +370,75 @@ const Devices = () => {
             });
 
       const url = window.URL.createObjectURL(fileBlob);
-
       const link = document.createElement("a");
       link.href = url;
-
-      // 🔥 filename fix
-      link.download = `OTA_file.xlsx`;
+      link.download = "OTA_file.zip";
 
       document.body.appendChild(link);
       link.click();
 
       link.remove();
       window.URL.revokeObjectURL(url);
-      Set_OTA_ExportFileModal(false);
+
+      toast.success("Exported Successfully");
     } catch (error) {
-      toast("error", error);
+      toast.error("Export failed", error);
+    } finally {
+      dispatch(setExportLoading(false));
     }
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast.info("Please select a file first");
+      return;
+    }
+
+    Set_OTA_ImportFileModal(false);
+
+    const formData = new FormData();
+    formData.append("versionFile", selectedFile);
+
+    dispatch(setImportLoading(true));
+
+    try {
+      await importVersion(formData).unwrap();
+      toast.success("File uploaded successfully");
+      setSelectedFile(null); // optional reset
+    } catch (err) {
+      toast.error(err || "Upload failed");
+    } finally {
+      dispatch(setImportLoading(false));
+    }
+  };
+
+  const handleBoxClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -381,7 +452,10 @@ const Devices = () => {
         btnLoading={updateLoading || updateFetching}
         disabled={versionLoading || versionFetching}
         OTA_Files_Download_Button={true}
-        exportButtonLoading={exportSelectedVersionLoading}
+        importButtonLoading={importVersionLoading || OTA_file_import_loading}
+        exportButtonLoading={
+          exportSelectedVersionLoading || OTA_file_export_loading
+        }
         onExportClick={() => Set_OTA_ExportFileModal(true)}
         onImportClick={() => Set_OTA_ImportFileModal(true)}
       />
@@ -533,23 +607,67 @@ const Devices = () => {
       </DynamicModal>
       <DynamicModal
         open={OTA_ImportFileModal}
-        handleClose={() => Set_OTA_ImportFileModal(false)}
-        acceptButtonText="Upload"
+        handleClose={() => {
+          setSelectedFile(null);
+          Set_OTA_ImportFileModal(false);
+        }}
+        acceptButtonText="Import"
+        handleAccept={handleUpload}
         handleCancel={() => Set_OTA_ImportFileModal(false)}
-        // handleAccept={() => handleExportVersion(selectedVersions)}
-        heading={"Import OTA Files"}
-        // isLoading={exportSelectedVersionLoading}
+        heading="Import OTA Files"
+        isLoading={importVersionLoading}
+        disabled={!selectedFile}
       >
-        UPload
+        <Box
+          onClick={handleBoxClick}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          sx={{
+            border: "2px dashed",
+            borderColor:
+              selectedFile !== null || isDragging ? "#147FCC" : "grey.400",
+            borderRadius: 2,
+            mt: 2,
+            p: 3,
+            textAlign: "center",
+            cursor: "pointer",
+            backgroundColor: isDragging ? "action.hover" : "transparent",
+          }}
+        >
+          <Typography variant="body1">Drag & drop file here</Typography>
+
+          <Typography variant="body2">
+            or click anywhere to select file
+          </Typography>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            hidden
+            accept="*/*"
+            onChange={handleFileChange}
+          />
+
+          {selectedFile && (
+            <Typography mt={2} variant="body2">
+              Selected: <b>{selectedFile.name}</b>
+            </Typography>
+          )}
+        </Box>
       </DynamicModal>
+
       <DynamicModal
-        open={OTA_ExportFileModal}
-        handleClose={() => Set_OTA_ExportFileModal(false)}
+        open={OTA_ExportFileModal && !exportSelectedVersionLoading}
+        handleClose={() =>
+          !exportSelectedVersionLoading && Set_OTA_ExportFileModal(false)
+        }
         acceptButtonText="Export"
         handleCancel={() => Set_OTA_ExportFileModal(false)}
         handleAccept={() => handleExportVersion(selectedVersions)}
         heading={"Export OTA Files"}
         isLoading={exportSelectedVersionLoading}
+        disabled={selectedVersions?.length === 0}
       >
         <Autocomplete
           multiple

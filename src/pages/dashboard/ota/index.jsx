@@ -614,7 +614,7 @@ const Devices = () => {
         acceptButtonText="Import"
         handleAccept={handleUpload}
         handleCancel={() => Set_OTA_ImportFileModal(false)}
-        heading="Import OTA Files"
+        heading="Import OTA File"
         isLoading={importVersionLoading}
         disabled={!selectedFile}
       >

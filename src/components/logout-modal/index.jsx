@@ -1,14 +1,13 @@
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { logout } from "../../store/slices/auth";
 import { deleteInfo, modalClose } from "../../assets";
 import { clearDevices } from "../../store/slices/devices";
 import { resetChannelFlags } from "../../store/slices/telemetry";
+import { api } from "../../services/rtk";
 
 const LogoutModal = ({ open, handleClose }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   return (
     <Modal
@@ -101,10 +100,11 @@ const LogoutModal = ({ open, handleClose }) => {
               variant="delete"
               disableRipple
               onClick={() => {
+                dispatch(api?.util?.resetApiState());
                 dispatch(logout());
                 dispatch(clearDevices());
                 dispatch(resetChannelFlags());
-                navigate("/login");
+                window.location.href = "/login";
               }}
             >
               Logout

@@ -42,7 +42,7 @@ const DynamicModal = ({
           maxHeight: "90vh",
           background: "#FFF",
           borderRadius: "35px",
-          padding: "20px 20px 50px 20px",
+          padding: "20px 20px 30px 20px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -55,9 +55,15 @@ const DynamicModal = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: 2,
           }}
         >
-          <Typography sx={{ color: "#147FCC", fontSize: "34.55px" }}>
+          <Typography
+            sx={{
+              color: "#147FCC",
+              fontSize: { xs: "26px", md: "30px", lg: "34.55px" },
+            }}
+          >
             {heading}
           </Typography>
           {!hideClose && (
@@ -93,21 +99,36 @@ const DynamicModal = ({
               mt: "30px",
             }}
           >
-            <Box sx={{ width: "203.70px", height: "50px" }}>
+            <Box
+              sx={{ width: { xs: "150px", md: "203.70px" }, height: "50px" }}
+            >
               {cancelButtonText && (
-                <Button variant="outlined" disableRipple onClick={handleCancel}>
+                <Button
+                  variant="outlined"
+                  disableRipple
+                  disabled={isLoading}
+                  onClick={handleCancel}
+                  sx={{
+                    fontSize: { xs: "14px", md: "16px", lg: "18px" },
+                  }}
+                >
                   {cancelButtonText}
                 </Button>
               )}
             </Box>
-            <Box sx={{ width: "203.70px", height: "50px" }}>
+            <Box
+              sx={{ width: { xs: "150px", md: "203.70px" }, height: "50px" }}
+            >
               {acceptButtonText && (
                 <Button
                   variant="contained"
                   disableRipple
                   onClick={handleAccept}
                   disabled={disabled}
-                  isLoading={isLoading}
+                  loading={isLoading}
+                  sx={{
+                    fontSize: { xs: "14px", md: "16px", lg: "18px" },
+                  }}
                 >
                   {acceptButtonText}
                 </Button>

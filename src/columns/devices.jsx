@@ -15,5 +15,6 @@ export const columns = (role, statusSort, createdSort, updatedSort) => [
     sortDir: updatedSort,
   },
   { name: "Status", key: "status", chip: true },
+  { name: "IMEI Status", key: "imei_status" },
   ...(role !== "user" ? [{ name: "Actions", key: "action" }] : []),
 ];

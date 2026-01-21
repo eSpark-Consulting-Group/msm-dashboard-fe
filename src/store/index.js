@@ -8,6 +8,7 @@ import telemetry from "./slices/telemetry";
 import mqtt from "./slices/mqtt";
 import info from "./slices/info";
 import measurements from "./slices/measurements";
+import ota from "./slices/ota";
 import { authApi } from "../services/auth";
 
 const store = configureStore({
@@ -21,6 +22,7 @@ const store = configureStore({
     mqtt,
     info,
     measurements,
+    ota,
     [authApi.reducerPath]: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

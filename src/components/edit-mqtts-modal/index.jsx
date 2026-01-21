@@ -111,7 +111,7 @@ const EditMqtts = ({ data, handleCancel }) => {
           />
         </Box>
 
-        {/* <Box
+        <Box
           display="flex"
           sx={{ width: "100%", justifyContent: { xs: "center", sm: "space-around" }, flexDirection: { xs: "column", sm: "row" }, ".MuiFormControl-root ": { flex: 1 } }}
           alignItems="flex-end"
@@ -153,7 +153,7 @@ const EditMqtts = ({ data, handleCancel }) => {
             }
             label="Claim key"
           />
-        </Box> */}
+        </Box>
 
         <Box
           sx={{

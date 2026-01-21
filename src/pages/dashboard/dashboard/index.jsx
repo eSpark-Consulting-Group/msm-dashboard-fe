@@ -76,7 +76,7 @@ const Dashboard = () => {
     {
       skip: !token || user?.role?.name === "user",
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
 
   const {
@@ -97,11 +97,11 @@ const Dashboard = () => {
     {
       skip: !token || user?.role?.name !== "user",
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
 
   const { devices: dashboardData, assignDevices: dashboardData2 } = useSelector(
-    (state) => state.devices
+    (state) => state.devices,
   );
 
   const [deleteDashboard, { isLoading: deleteLoading }] =
@@ -175,11 +175,6 @@ const Dashboard = () => {
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
 
-        const unAssign =
-          user?.role?.name === "user"
-            ? item?.device_data?.device_data?.device_imei
-            : item?.device_data?.device_imei;
-
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -197,18 +192,34 @@ const Dashboard = () => {
             user?.role?.name === "user"
               ? item?.device_data?.user_id
               : item?.user_id,
-          // status: {
-          //   label: status ? "Active" : "Inactive",
-          //   variant: status ? "green" : "red",
-          // },
+
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
+          imei_status: !(
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei
+              : item?.device_data?.device_imei) &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .trim() !== "" &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .toLowerCase() !== "unknown"
+          )
+            ? "Unknown"
+            : "Available",
           lastUpdated: dayjs(
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_status_updated_at
-              : item?.device_data?.device_status_updated_at
+              : item?.device_data?.device_status_updated_at,
           ).format("DD-MM-YYYY HH:mm"),
         };
       }) || [];
@@ -267,25 +278,25 @@ const Dashboard = () => {
     if (user?.role?.name === "user") {
       dispatch(
         addCurrentData(
-          item?.device_data?.device_data?.device_status === false ? 1 : 0
-        )
+          item?.device_data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(
         addMqttDataState(
-          item?.device_data?.device_data?.device_status === false ? 1 : 0
-        )
+          item?.device_data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(addDeviceStatus(item?.device_data?.device_data?.device_status));
       item?.device_data?.device_data?.device_uuid &&
         navigate(
-          `/dashboard/${item?.device_data?.device_data?.device_uuid}/info`
+          `/dashboard/${item?.device_data?.device_data?.device_uuid}/info`,
         );
     } else {
       dispatch(
-        addCurrentData(item?.device_data?.device_status === false ? 1 : 0)
+        addCurrentData(item?.device_data?.device_status === false ? 1 : 0),
       );
       dispatch(
-        addMqttDataState(item?.device_data?.device_status === false ? 1 : 0)
+        addMqttDataState(item?.device_data?.device_status === false ? 1 : 0),
       );
       dispatch(addDeviceStatus(item?.device_data?.device_status));
       item?.device_data?.device_uuid &&
@@ -352,13 +363,11 @@ const Dashboard = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Unassigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}
@@ -383,7 +392,7 @@ const Dashboard = () => {
           user?.role?.name,
           statusSort,
           createdSort,
-          updatedSort
+          updatedSort,
         )}
         hideView
         hideEdit

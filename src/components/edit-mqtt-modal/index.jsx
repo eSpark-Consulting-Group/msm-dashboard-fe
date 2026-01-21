@@ -60,7 +60,6 @@ const EditMqtt = ({ data, handleCancel }) => {
           mt: "10px",
         }}
         component={"form"}
-        noValidate
         onSubmit={formik.handleSubmit}
       >
         <input
@@ -194,7 +193,7 @@ const EditMqtt = ({ data, handleCancel }) => {
               disabled={isLoading}
               loading={isLoading}
               variant="contained"
-              // disableRipple
+              disableRipple
               type="submit"
             >
               Update

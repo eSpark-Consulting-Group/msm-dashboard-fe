@@ -43,7 +43,7 @@ const UserDetails = () => {
     isFetching: userDetailsFetching,
   } = useGetUserByIdQuery(
     { id: params?.id, page, limit: pageSize, search },
-    { skip: !params?.id || role === "user" }
+    { skip: !params?.id || role === "user" },
   );
 
   const {
@@ -56,7 +56,7 @@ const UserDetails = () => {
     { id: params?.id, page, limit: pageSize, search },
     {
       skip: !params?.id || role !== "user",
-    }
+    },
   );
 
   const [deleteDashboard, { isLoading: deleteLoading }] =
@@ -133,18 +133,16 @@ const UserDetails = () => {
               ? "green"
               : "red",
           },
-          // status: {
-          //   label: !item?.device_data?.device_data?.device_imei
-          //     ? "Unassigned"
-          //     : item?.device_data?.device_data?.device_status
-          //     ? "Active"
-          //     : "Inactive",
-          //   variant: !item?.device_data?.device_data?.device_imei
-          //     ? "simple2"
-          //     : item?.device_data?.device_data?.device_status
-          //     ? "green"
-          //     : "red",
-          // },
+          imei_status: !(
+            item?.device_data?.device_data?.device_imei &&
+            item?.device_data?.device_data?.device_imei.toString().trim() !==
+              "" &&
+            item?.device_data?.device_data?.device_imei
+              .toString()
+              .toLowerCase() !== "unknown"
+          )
+            ? "Unknown"
+            : "Available",
         })) || [];
       setData(deviceData);
       setTotal(userDetailsData2?.count || 0);

@@ -106,7 +106,7 @@ const Devices = () => {
     {
       skip: activeTab !== 0 || user?.role?.name === "user",
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
 
   const {
@@ -127,11 +127,11 @@ const Devices = () => {
     {
       skip: user?.role?.name !== "user",
       refetchOnMountOrArgChange: true,
-    }
+    },
   );
 
   const { devices: devicesData, assignDevices: devicesData2 } = useSelector(
-    (state) => state.devices
+    (state) => state.devices,
   );
   const {
     data: groupData,
@@ -141,7 +141,7 @@ const Devices = () => {
     error: groupError,
   } = useGetAllGroupsQuery(
     { page, limit: pageSize, search },
-    { skip: activeTab !== 1 || user?.role?.name === "user" }
+    { skip: activeTab !== 1 },
   );
 
   useEffect(() => {
@@ -177,10 +177,6 @@ const Devices = () => {
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
 
-        const unAssign =
-          user?.role?.name === "user"
-            ? item?.device_data?.device_data?.device_imei
-            : item?.device_data?.device_imei;
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -197,17 +193,33 @@ const Devices = () => {
               ? item?.device_data?.groups_data[0]?.name
               : item?.groups_data[0]?.name || "-",
           status: {
-            label: !unAssign ? "Unassigned" : status ? "Active" : "Inactive",
-            variant: !unAssign ? "simple2" : status ? "green" : "red",
+            label: status ? "Active" : "Inactive",
+            variant: status ? "green" : "red",
           },
-          // status: {
-          //   label: status ? "Active" : "Inactive",
-          //   variant: status ? "green" : "red",
-          // },
+          imei_status: !(
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei
+              : item?.device_data?.device_imei) &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .trim() !== "" &&
+            (user?.role?.name === "user"
+              ? item?.device_data?.device_data?.device_imei || "-"
+              : item?.device_data?.device_imei || "-"
+            )
+              .toString()
+              .toLowerCase() !== "unknown"
+          )
+            ? "Unknown"
+            : "Available",
+
           lastUpdated: dayjs(
             user?.role?.name === "user"
               ? item?.device_data?.device_data?.device_status_updated_at
-              : item?.device_data?.device_status_updated_at
+              : item?.device_data?.device_status_updated_at,
           ).format("DD-MM-YYYY HH:mm"),
         };
       }) || [];
@@ -243,18 +255,27 @@ const Devices = () => {
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
         };
       }) || [];
-    setTotal(groupData?.count);
+
+    const totalCount =
+      user?.role?.name === "user"
+        ? assignDevicesData2?.count
+        : assignDevicesData?.count;
+
     setDeviceGroupData(deviceGroupData);
     if (activeTab === 1 && user?.role?.name !== "user") {
       setData(deviceGroupData);
+      setTotal(groupData?.count);
     } else if (activeTab === 1 && user?.role?.name === "user") {
-      const data = devicesData2?.map((item) => ({
-        createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
-        name: item?.device_data?.groups_data?.name,
-        description: item?.device_data?.groups_data?.description,
+      const temp = devicesData2?.map((item) => item?.device_data?.groups_data);
+      const result = temp?.flat()?.map((item) => ({
+        createdAt: dayjs(item?.createdAt)?.format("DD-MM-YYYY HH:mm"),
+        name: item?.name,
+        description: item?.description,
       }));
-      setData(data);
-      setTotal(assignDevicesData2?.count);
+      setData(result);
+      setTotal(result?.length);
+    } else if (activeTab === 0) {
+      setTotal(totalCount);
     }
   }, [isGroupError, groupError, groupData, user, devicesData2, activeTab]);
 
@@ -394,8 +415,9 @@ const Devices = () => {
               setSearch(val);
               setPage(1);
             }}
-            label={activeTab === 0 ? "Type Device Name to Search" : null}
-            placeholder="Enter Device Name"
+            placeholder={
+              activeTab === 0 ? "Enter device name" : "Enter group name"
+            }
           />
         </Box>
       </Box>
@@ -418,13 +440,11 @@ const Devices = () => {
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
                 : [
                     { label: "All", value: "" },
                     { label: "Active", value: -1 },
                     { label: "In Active", value: 1 },
-                    { label: "Un Assigned", value: 2 },
                   ]
             }
             value={statusSort}

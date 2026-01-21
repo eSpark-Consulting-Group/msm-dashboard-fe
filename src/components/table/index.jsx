@@ -51,20 +51,16 @@ const DynamicTable = ({
     keyPath: column.key.split("."),
   }));
 
-  const allStatusFalse = data.every(
-    (item) => item?.status?.label === "Inactive"
-  );
-  const enabledRows = data.filter((item) => item?.status?.label !== "Inactive");
+  const enabledRows = data.filter((item) => item?.status?.label);
   const allSelected =
     enabledRows.length > 0 &&
     enabledRows
       .filter((item) => {
-        const isInactive = item?.status?.label === "Inactive";
         const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
         const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
         const otaStatus = otaStatus1 || otaStatus2;
         const isOtaStarted = otaStatus === "started";
-        return !isInactive && !isOtaStarted;
+        return !isOtaStarted;
       })
       .every((item) => selectedRows.includes(item._id));
 
@@ -184,7 +180,7 @@ const DynamicTable = ({
 
     if (column.chipArray && Array.isArray(cell)) {
       const filtered = cell.filter(
-        (val) => val !== undefined && val !== null && val !== ""
+        (val) => val !== undefined && val !== null && val !== "",
       );
       const maxVisible = 3; // show 3 chips max
       const visibleChips = filtered.slice(0, maxVisible);
@@ -262,28 +258,18 @@ const DynamicTable = ({
           No Data Found
         </Typography>
       ) : (
-        <TableContainer
-          sx={
-            mqttTable
-              ? {
-                  maxHeight: "60vh",
-                  overflowY: "auto",
-                }
-              : {}
-          }
-        >
+        <TableContainer>
           <Table>
             <TableHead
               sx={{
                 ...(mqttTable && {
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 2,
-                  backgroundColor: "#F7F9FB",
+                  "& .MuiTableRow-root": {
+                    background: "#F7F9FB",
+                    border: "1px solid #E9E9EA",
+                  },
                   "& .MuiTableCell-root": {
                     padding: "8px 8px",
                     color: "#454545",
-                    backgroundColor: "#F7F9FB",
                   },
                 }),
               }}
@@ -294,7 +280,6 @@ const DynamicTable = ({
                     <Checkbox
                       sx={{ color: "#000" }}
                       checked={allSelected}
-                      disabled={allStatusFalse}
                       indeterminate={allSelected}
                       onChange={(e) => onSelectAll?.(e.target.checked)}
                     />
@@ -372,9 +357,7 @@ const DynamicTable = ({
                             onChange={(e) =>
                               onSelectRow?.(item._id, e.target.checked)
                             }
-                            disabled={
-                              item?.status?.label === "Inactive" || otaStarted
-                            }
+                            disabled={otaStarted}
                           />
                         </TableCell>
                       )}
@@ -388,8 +371,8 @@ const DynamicTable = ({
                             cursor: otaStarted
                               ? "not-allowed"
                               : onRowClick
-                              ? "pointer"
-                              : "auto",
+                                ? "pointer"
+                                : "auto",
                           }}
                           key={column.key}
                           onClick={

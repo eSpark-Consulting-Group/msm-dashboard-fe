@@ -14,16 +14,21 @@ const SubHeader = ({
   userName = "User",
   btnLoading,
   disabled,
+  OTA_Files_Download_Button = false,
+  onImportClick = () => {},
+  onExportClick = () => {},
+  importButtonLoading = false,
+  exportButtonLoading = false,
 }) => {
   const { user } = useSelector((state) => state.auth);
   return (
     <Box>
       <Stack
-        direction="row"
+        direction={{ xs: "column", md: "row" }}
         justifyContent="space-between"
-        alignItems="center"
+        alignItems={{ xs: "flex-start", md: "center" }}
         flexWrap={"wrap"}
-        gap={1}
+        gap={{ xs: 2, md: 3 }}
       >
         <Stack
           direction="row"
@@ -66,18 +71,56 @@ const SubHeader = ({
             </Typography>
           )}
         </Stack>
-        {user?.role?.name !== "user" && buttonText && (
-          <Button
-            sx={{ width: "max-content", minWidth: "160px" }}
-            variant={variant}
-            onClick={onClick ? onClick : () => {}}
-            disableRipple
-            loading={btnLoading}
-            disabled={disabled}
-          >
-            {buttonText}
-          </Button>
-        )}
+        <Stack direction={"row"} flexWrap={"wrap"} spacing={0} gap={2}>
+          {OTA_Files_Download_Button && user?.role?.name !== "user" && (
+            <Button
+              sx={{
+                width: { xs: "100%", sm: "max-content" },
+                minWidth: "160px",
+                fontSize: { xs: "14px", md: "16px", lg: "18px" },
+              }}
+              variant={variant}
+              onClick={onImportClick}
+              disableRipple
+              loading={importButtonLoading}
+              disabled={disabled}
+            >
+              {importButtonLoading ? "" : "Import OTA File"}
+            </Button>
+          )}
+          {OTA_Files_Download_Button && user?.role?.name !== "user" && (
+            <Button
+              sx={{
+                width: { xs: "100%", sm: "max-content" },
+                minWidth: "160px",
+                fontSize: { xs: "14px", md: "16px", lg: "18px" },
+              }}
+              variant={variant}
+              onClick={onExportClick}
+              disableRipple
+              loading={exportButtonLoading}
+              disabled={disabled}
+            >
+              {exportButtonLoading ? "" : "Export OTA Files"}
+            </Button>
+          )}
+          {user?.role?.name !== "user" && buttonText && (
+            <Button
+              sx={{
+                width: { xs: "100%", sm: "max-content" },
+                minWidth: "160px",
+                fontSize: { xs: "14px", md: "16px", lg: "18px" },
+              }}
+              variant={variant}
+              onClick={onClick ? onClick : () => {}}
+              disableRipple
+              loading={btnLoading}
+              disabled={disabled}
+            >
+              {btnLoading ? "" : buttonText}
+            </Button>
+          )}
+        </Stack>
       </Stack>
       {subHeading && (
         <Typography

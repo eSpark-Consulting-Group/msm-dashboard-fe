@@ -27,6 +27,22 @@ export const otaApi = api.injectEndpoints({
         method: "GET",
       }),
     }),
+    importVersion: builder.mutation({
+      query: (formData) => ({
+        url: "/version-list/import",
+        method: "POST",
+        body: formData,
+      }),
+    }),
+    exportSelectedVersion: builder.mutation({
+      query: (payload) => ({
+        url: "/version-list/export",
+        method: "POST",
+        body: payload,
+        responseHandler: (response) => response.blob(),
+        cache: "no-cache",
+      }),
+    }),
   }),
 });
 
@@ -34,5 +50,7 @@ export const {
   useGetCurrentOtaQuery,
   useGetVersionsListQuery,
   useUpdateVersionMutation,
+  useExportSelectedVersionMutation,
+  useImportVersionMutation,
   useLazyCheckUpdatesQuery,
 } = otaApi;

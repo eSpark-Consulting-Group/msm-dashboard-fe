@@ -52,6 +52,15 @@ export const theme = createTheme({
           alignItems: "center",
           lineHeight: "0px",
           transition: "all 0.3s ease-in-out",
+
+          // ✅ Disabled state
+          "&.Mui-disabled": {
+            background: "#E0E0E0", // disabled background
+            backgroundColor: "#E0E0E0", // disabled background
+            color: "#9E9E9E", // disabled text
+            opacity: 1, // MUI default opacity override
+            cursor: "not-allowed",
+          },
         },
       },
       variants: [
@@ -63,7 +72,6 @@ export const theme = createTheme({
             "&:hover": {
               background: "linear-gradient(180deg, #0095FF 0%, #0886E0 100%)",
               color: "#FFFFFF",
-              border: "none",
               boxShadow: "none",
             },
           },
@@ -74,11 +82,17 @@ export const theme = createTheme({
             background: "#FFFFFF",
             border: "1px solid #505050",
             color: "#505050",
+
+            "&.Mui-disabled": {
+              background: "#F5F5F5",
+              color: "#BDBDBD",
+              border: "1px solid #D6D6D6",
+            },
+
             "&:hover": {
               border: "1px solid #505050",
               color: "#505050",
               background: "#FFFFFF",
-              boxShadow: "none",
             },
           },
         },
@@ -124,6 +138,7 @@ export const theme = createTheme({
         },
       ],
     },
+
     MuiTable: {
       styleOverrides: {
         root: {

@@ -182,13 +182,13 @@ const DashboardInfo = () => {
       dispatch(addDeviceStatus(data?.device_data?.device_data?.device_status));
       dispatch(
         addCurrentData(
-          data?.device_data?.device_data?.device_status === false ? 1 : 0
-        )
+          data?.device_data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(
         addMqttDataState(
-          data?.device_data?.device_data?.device_status === false ? 1 : 0
-        )
+          data?.device_data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(handleSelectedDevice(data));
 
@@ -201,13 +201,13 @@ const DashboardInfo = () => {
       dispatch(addDeviceStatus(deviceData?.data?.device_data?.device_status));
       dispatch(
         addCurrentData(
-          deviceData?.data?.device_data?.device_status === false ? 1 : 0
-        )
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
       dispatch(
         addMqttDataState(
-          deviceData?.data?.device_data?.device_status === false ? 1 : 0
-        )
+          deviceData?.data?.device_data?.device_status === false ? 1 : 0,
+        ),
       );
 
       // requestDeviceInfo(id);

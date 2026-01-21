@@ -177,10 +177,6 @@ const Devices = () => {
             ? item?.device_data?.device_data?.device_status
             : item?.device_data?.device_status;
 
-        const unAssign =
-          user?.role?.name === "user"
-            ? item?.device_data?.device_data?.device_imei
-            : item?.device_data?.device_imei;
         return {
           ...item,
           createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
@@ -260,18 +256,16 @@ const Devices = () => {
         };
       }) || [];
 
+    const totalCount =
+      user?.role?.name === "user"
+        ? assignDevicesData2?.count
+        : assignDevicesData?.count;
+
     setDeviceGroupData(deviceGroupData);
     if (activeTab === 1 && user?.role?.name !== "user") {
       setData(deviceGroupData);
       setTotal(groupData?.count);
     } else if (activeTab === 1 && user?.role?.name === "user") {
-      // const data = devicesData2?.map((item) => ({
-      //   createdAt: dayjs(item?.createdAt).format("DD-MM-YYYY HH:mm"),
-      //   name: item?.device_data?.groups_data?.name,
-      //   description: item?.device_data?.groups_data?.description,
-      // }));
-
-      // checking
       const temp = devicesData2?.map((item) => item?.device_data?.groups_data);
       const result = temp?.flat()?.map((item) => ({
         createdAt: dayjs(item?.createdAt)?.format("DD-MM-YYYY HH:mm"),
@@ -280,6 +274,8 @@ const Devices = () => {
       }));
       setData(result);
       setTotal(result?.length);
+    } else if (activeTab === 0) {
+      setTotal(totalCount);
     }
   }, [isGroupError, groupError, groupData, user, devicesData2, activeTab]);
 
@@ -419,8 +415,9 @@ const Devices = () => {
               setSearch(val);
               setPage(1);
             }}
-            label={activeTab === 0 ? "Type Device Name to Search" : null}
-            placeholder="Enter Device Name"
+            placeholder={
+              activeTab === 0 ? "Enter device name" : "Enter group name"
+            }
           />
         </Box>
       </Box>

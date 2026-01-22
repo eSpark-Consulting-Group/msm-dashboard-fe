@@ -4,7 +4,7 @@ export const loginSchema = Yup.object({
   email: Yup.string()
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email address"
+      "Invalid email address",
     )
     .required("Email is required"),
   password: Yup.string()
@@ -40,10 +40,8 @@ export const passwordScehma = Yup.object({
 });
 
 export const devicePasswordScehma = Yup.object({
-  old_password: Yup.string()
-    .required("Old Password is required"),
-  new_password: Yup.string()
-    .required("New Password is required"),
+  old_password: Yup.string().required("Old Password is required"),
+  new_password: Yup.string().required("New Password is required"),
   confirm_new_password: Yup.string()
     .oneOf([Yup.ref("new_password"), null], "New Passwords must match")
     .required("Please confirm your password"),
@@ -59,7 +57,7 @@ export const profileSchema = Yup.object({
   companyMail: Yup.string()
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email address"
+      "Invalid email address",
     )
     .required("Company mail is required"),
   phone: Yup.string()
@@ -78,7 +76,7 @@ export const userSchema = Yup.object().shape({
   email: Yup.string()
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email address"
+      "Invalid email address",
     )
     .required("Email is required"),
   // password: Yup.string()
@@ -156,7 +154,7 @@ export const verifyEmailSchema = Yup.object({
   email: Yup.string()
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email address"
+      "Invalid email address",
     )
     .required("Email is required"),
 });
@@ -206,10 +204,25 @@ export const mqttSettingsSchema = Yup.object().shape({
   mqtt_topic: Yup.string().required("MQTT Topic is required"),
 });
 
+export const editMqttSettingsSchema = Yup.object().shape({
+  broker_ip: Yup.string().required("Broker IP is required"),
+
+  broker_pass: Yup.string().required("Broker Password is required"),
+
+  broker_user: Yup.string().required("Broker Username is required"),
+
+  data_interval: Yup.number()
+    .typeError("Data Interval must be a number")
+    .required("Data Interval is required")
+    .min(1, "Data Interval must be at least 1"),
+
+  mqtt_topic: Yup.string().required("MQTT Topic is required"),
+});
+
 export const mqttsSettingsSchema = Yup.object().shape({
   broker_ip: Yup.string().required("MQTTs Endpoint is required"),
   // broker_port: Yup.string().required("MQTTs Port is required"),
-  data_interval: Yup.string().required("MQTTs Interval is required")
+  data_interval: Yup.string().required("MQTTs Interval is required"),
 });
 
 export const sftpSettingsSchema = Yup.object().shape({
@@ -218,6 +231,19 @@ export const sftpSettingsSchema = Yup.object().shape({
   server_port: Yup.number()
     .typeError("Server Port must be a number")
     .required("Server Port is required"),
+
+  username: Yup.string().required("Username is required"),
+
+  password: Yup.string().required("Password is required"),
+
+  data_interval: Yup.number()
+    .typeError("Data Interval must be a number")
+    .required("Data Interval is required")
+    .min(1, "Data Interval must be at least 1"),
+});
+
+export const editSftpSettingsSchema = Yup.object().shape({
+  server_ip: Yup.string().required("Server IP is required"),
 
   username: Yup.string().required("Username is required"),
 

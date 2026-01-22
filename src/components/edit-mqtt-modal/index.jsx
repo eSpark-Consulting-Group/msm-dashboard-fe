@@ -4,7 +4,7 @@ import OutlinedInput from "../input";
 import Button from "../buttons";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { toast } from "react-toastify";
-import { mqttSettingsSchema } from "../../schemas";
+import { editMqttSettingsSchema } from "../../schemas";
 
 const EditMqtt = ({ data, handleCancel }) => {
   const [mqtt, { isLoading }] = useUpdateMqttMutation();
@@ -13,13 +13,12 @@ const EditMqtt = ({ data, handleCancel }) => {
     initialValues: {
       broker_ip: data?.broker_ip ?? "",
       broker_pass: data?.broker_pass ?? "",
-      // broker_port: data?.broker_port ?? "",
       broker_user: data?.broker_user ?? "",
       data_interval: data?.data_interval ?? "",
       mqtt_topic: data?.mqtt_topic ?? "",
       id: data?.id ?? "",
     },
-    validationSchema: mqttSettingsSchema,
+    validationSchema: editMqttSettingsSchema,
     onSubmit: async (values) => {
       try {
         const obj = {

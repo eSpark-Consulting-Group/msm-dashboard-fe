@@ -337,13 +337,20 @@ const Dashboard = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: { xs: "start", lg: "space-between" },
           flexWrap: "wrap",
           alignItems: "center",
+          gap: 1.5,
         }}
       >
-        <Box sx={{ my: "27px", width: { xs: "100%", md: "495px" } }}>
+        <Box
+          sx={{
+            my: { xs: "15px", lg: "27px" },
+            width: { xs: "100%", md: "495px" },
+          }}
+        >
           <SearchBar
+            placeholder="Enter device name"
             value={search}
             onChange={(val) => {
               setSearch(val);
@@ -351,7 +358,9 @@ const Dashboard = () => {
             }}
           />
         </Box>
-        <Box sx={{ width: { xs: "100%", md: "200px" } }}>
+        <Box
+          sx={{ width: { xs: "100%", lg: "30%" }, maxWidth: { md: "495px" } }}
+        >
           <Dropdown
             name="status"
             variant="outlined"

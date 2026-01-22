@@ -43,6 +43,7 @@ const DynamicTable = ({
   selectedRows = [],
   onSelectRow,
   onSelectAll,
+  minWidth = "1200px",
 }) => {
   // keep key as string for sorting, arrows
   // add keyPath for nested object access
@@ -259,7 +260,11 @@ const DynamicTable = ({
         </Typography>
       ) : (
         <TableContainer>
-          <Table>
+          <Table
+            sx={{
+              minWidth: !isLoading ? minWidth : "auto",
+            }}
+          >
             <TableHead
               sx={{
                 ...(mqttTable && {

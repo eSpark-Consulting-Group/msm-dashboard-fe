@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import {
   AddDeviceModal,
   AddGroupModal,
@@ -36,7 +44,7 @@ const Devices = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState();
   const tab = searchParams.get("tab");
   const [data, setData] = useState([]);
@@ -53,6 +61,11 @@ const Devices = () => {
   const [statusSort, setStatusSort] = useState("");
   const [createdSort, setCreatedSort] = useState(-1);
   const [updatedSort, setUpdatedSort] = useState(-1);
+
+  const tabFromQuery = searchParams.get("tab");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSort = (key, dir) => {
     if (key === "status") {
@@ -366,6 +379,11 @@ const Devices = () => {
     });
   };
 
+  const handleTabChange = (event, newIndex) => {
+    setSelectedIndex(newIndex);
+    setSearchParams({ tab: newIndex });
+  };
+
   // Sorting function
   // const handleSortChange = (key, order) => {
   //   setSortKey(key);
@@ -400,68 +418,137 @@ const Devices = () => {
         onClick={handleSubHeaderClick}
         variant="contained"
       />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
+      <Stack
+        direction={"row"}
+        py={2}
+        justifyContent={{ xs: "start", lg: "space-between" }}
+        alignItems={"center"}
+        gap={1.5}
+        flexWrap={"wrap"}
       >
-        <DynamicTabs tabs={tabs} width="fit-content" maxWidth={650} />
-        <Box sx={{ my: "27px", width: { xs: "100%", lg: "495px" } }}>
-          <SearchBar
-            value={search}
-            onChange={(val) => {
-              setSearch(val);
-              setPage(1);
-            }}
-            placeholder={
-              activeTab === 0 ? "Enter device name" : "Enter group name"
-            }
-          />
+        <Tabs
+          key={isMobile ? "mobile" : "desktop"}
+          value={selectedIndex}
+          onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
+          sx={{
+            padding: "5px",
+            backgroundColor: "#EFEFEF",
+            border: "1px solid #DBD6D6",
+            borderRadius: "8px",
+            width: "fit-content",
+            "& .MuiTabs-scroller": {
+              overflowX: "auto",
+              scrollSnapType: "x mandatory",
+            },
+            "& .MuiTabs-flexContainer": {
+              display: "inline-flex",
+              scrollSnapType: "x mandatory",
+              scrollPadding: "5px",
+              margin: 0,
+              gap: "5px",
+            },
+          }}
+          slotProps={{
+            indicator: {
+              style: { display: "none" },
+            },
+          }}
+        >
+          {tabs.map((tab, index) => (
+            <Tab
+              key={index}
+              label={tab.label}
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                borderRadius: "8px",
+                minHeight: 0,
+                height: 36,
+                width: {
+                  xs: "80px",
+                  sm: "131px",
+                },
+                minWidth: 80,
+                px: 0,
+                mx: 0,
+                color: selectedIndex === index ? "#fff !important" : "#888",
+                bgcolor: selectedIndex === index ? "#0C89E2" : "transparent",
+                border: selectedIndex === index ? "2px solid #2383C8" : "none",
+                "&:hover": {
+                  bgcolor: selectedIndex === index ? "" : "#e0e0e0",
+                },
+                flexShrink: 0,
+                scrollSnapAlign: "start",
+              }}
+            />
+          ))}
+        </Tabs>
+        {(user?.role?.name === "super_admin" ||
+          (user?.role?.name === "user" && activeTab === 0)) && (
+          <Box
+            sx={{ my: "0", width: { xs: "100%" }, maxWidth: { md: "495px" } }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(val) => {
+                setSearch(val);
+                setPage(1);
+              }}
+              placeholder={
+                activeTab === 0 ? "Enter device name" : "Enter group name"
+              }
+            />
+          </Box>
+        )}
+      </Stack>
+      {activeTab === 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "start", lg: "end" },
+            alignItems: "center",
+          }}
+        >
+          <Box
+            sx={{ width: { xs: "100%", lg: "30%" }, maxWidth: { md: "495px" } }}
+          >
+            <Dropdown
+              name="status"
+              variant="outlined"
+              placeholder="Select Status"
+              noLabel
+              options={
+                user?.role?.name === "user"
+                  ? [
+                      { label: "All", value: "" },
+                      { label: "Active", value: -1 },
+                      { label: "In Active", value: 1 },
+                    ]
+                  : [
+                      { label: "All", value: "" },
+                      { label: "Active", value: -1 },
+                      { label: "In Active", value: 1 },
+                    ]
+              }
+              value={statusSort}
+              handleChange={(e) => setStatusSort(e.target.value)}
+              renderValueSx={{
+                color: "#000",
+                fontWeight: 400,
+              }}
+              selectSx={{
+                backgroundColor: "#FFF",
+                border: "1.38px solid #DBD6D6",
+                borderRadius: "6.92px",
+                height: "56px",
+              }}
+            />
+          </Box>
         </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={{ width: { xs: "100%", md: "40%", lg: "30%" } }}>
-          <Dropdown
-            name="status"
-            variant="outlined"
-            placeholder="Select Status"
-            noLabel
-            options={
-              user?.role?.name === "user"
-                ? [
-                    { label: "All", value: "" },
-                    { label: "Active", value: -1 },
-                    { label: "In Active", value: 1 },
-                  ]
-                : [
-                    { label: "All", value: "" },
-                    { label: "Active", value: -1 },
-                    { label: "In Active", value: 1 },
-                  ]
-            }
-            value={statusSort}
-            handleChange={(e) => setStatusSort(e.target.value)}
-            renderValueSx={{
-              color: "#000",
-              fontWeight: 400,
-            }}
-            selectSx={{
-              backgroundColor: "#FFF",
-              border: "1.38px solid #DBD6D6",
-              borderRadius: "6.92px",
-              height: "56px",
-            }}
-          />
-        </Box>
-      </Box>
+      )}
       <DynamicTable
         data={data}
         columns={

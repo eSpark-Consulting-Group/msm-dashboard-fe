@@ -5,20 +5,19 @@ import OutlinedInput from "../input";
 import Button from "../buttons";
 import { useUpdateSftpMutation } from "../../services/sftp";
 import { toast } from "react-toastify";
-import { sftpSettingsSchema } from "../../schemas";
+import { editSftpSettingsSchema } from "../../schemas";
 
 const SftpEditModal = ({ data, handleCancel }) => {
   const [sftp, { isLoading }] = useUpdateSftpMutation();
   const formik = useFormik({
     initialValues: {
       server_ip: data?.server_ip ?? "",
-      // server_port: data?.server_port ?? "",
       username: data?.username ?? "",
       password: data?.password ?? "",
       data_interval: data?.data_interval ?? "",
       id: data?.id ?? "",
     },
-    validationSchema: sftpSettingsSchema,
+    validationSchema: editSftpSettingsSchema,
     onSubmit: async (values) => {
       try {
         const obj = {

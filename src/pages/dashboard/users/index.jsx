@@ -184,6 +184,7 @@ const Users = () => {
         />
         <Box sx={{ width: { xs: "100%", sm: "495px" } }}>
           <SearchBar
+            placeholder="Enter user name"
             onChange={(e) => {
               setPage(1);
               setSearch(e);
@@ -207,6 +208,7 @@ const Users = () => {
           // sortOrder={sortOrder}
           // onSortChange={handleSortChange}
           onSortChange={handleSort}
+          minWidth={'1500px'}
         />
       </Box>
       <DynamicModal

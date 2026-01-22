@@ -137,17 +137,19 @@ const Devices = () => {
 
   useEffect(() => {
     if (isError && error) {
-      toast.error(error?.data?.message, { toastId: "DEVICEERROR" });
+      const message = error?.data?.message;
+      if (message && message !== "Devices Not Found") {
+        toast.error(message, { toastId: "DEVICEERROR" });
+      } else {
+        setData([]);
+      }
       return;
     }
     if (isError2 && error2) {
       toast.error(error2?.data?.message, { toastId: "DEVICEERROR" });
       return;
     }
-    if (error?.data?.message === "Devices Not Found") {
-      setData([]);
-      return;
-    }
+
     const totalCount =
       user?.role?.name === "user"
         ? assignDevicesData?.count
@@ -531,8 +533,7 @@ const Devices = () => {
           <SearchBar
             value={search}
             onChange={(val) => setSearch(val)}
-            label={"Type Device Name to Search"}
-            placeholder="Enter Device Name"
+            placeholder="Enter device name"
           />
         </Box>
       </Box>
@@ -543,7 +544,7 @@ const Devices = () => {
           alignItems: "center",
         }}
       >
-        <Box sx={{ width: { xs: "100%", md: "40%", lg: "30%" } }}>
+        <Box sx={{ width: { xs: "100%", lg: "30%" } }}>
           <Dropdown
             name="status"
             variant="outlined"

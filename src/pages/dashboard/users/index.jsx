@@ -55,7 +55,7 @@ const Users = () => {
     error,
   } = useGetAllUsersQuery(
     { page: 1, limit: 20, search, statusSort, createdSort, countSort },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true },
   );
 
   useEffect(() => {
@@ -65,15 +65,22 @@ const Users = () => {
     }
     setData(
       userData?.data?.map((item) => {
-        // const groups = item?.groupsData?.map((group) => group?.name);
         const role = item?.role?.name;
         let groups = [];
         if (role === "user") {
-          groups = item?.userDevicesData?.map(
-            (group) => group?.device_data?.groups_data?.name
-          );
+          groups = [
+            ...new Set(
+              item?.userDevicesData
+                ?.map((group) => group?.device_data?.groups_data?.name)
+                ?.filter(Boolean),
+            ),
+          ];
         } else if (role !== "user") {
-          groups = item?.groupsData?.map((group) => group?.name);
+          groups = [
+            ...new Set(
+              item?.groupsData?.map((group) => group?.name)?.filter(Boolean),
+            ),
+          ];
         }
         return {
           ...item,
@@ -89,18 +96,18 @@ const Users = () => {
             label: !item?.isPasswordChanged
               ? "Pending"
               : item?.status === "active"
-              ? "Active"
-              : "Inactive",
+                ? "Active"
+                : "Inactive",
             variant: !item?.isPasswordChanged
               ? "simple2"
               : item?.status === "active"
-              ? "green"
-              : "red",
+                ? "green"
+                : "red",
           },
           deviceId: "-",
           tags: groups,
         };
-      }) || []
+      }) || [],
     );
     setTotal(userData?.count);
   }, [isError, error, userData, statusSort, createdSort, countSort]);
@@ -136,8 +143,8 @@ const Users = () => {
     // console.log(item);
     navigate(
       `/users/${item?._id}?name=${encodeURIComponent(
-        item?.userName?.name
-      )}&role=${encodeURIComponent(item?.role?.name)}`
+        item?.userName?.name,
+      )}&role=${encodeURIComponent(item?.role?.name)}`,
     );
   };
 
@@ -208,7 +215,7 @@ const Users = () => {
           // sortOrder={sortOrder}
           // onSortChange={handleSortChange}
           onSortChange={handleSort}
-          minWidth={'1500px'}
+          minWidth={"1500px"}
         />
       </Box>
       <DynamicModal

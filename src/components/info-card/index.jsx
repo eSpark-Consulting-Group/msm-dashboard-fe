@@ -40,6 +40,7 @@ import {
 } from "../../services/auth";
 import { useFormik } from "formik";
 import { devicePasswordScehma } from "../../schemas";
+import ConfigurationEditModal from "../configuration-edit-modal";
 
 const InfoCard = ({
   title,
@@ -58,7 +59,7 @@ const InfoCard = ({
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { currentDevice, selectedDevice } = useSelector(
-    (state) => state?.devices
+    (state) => state?.devices,
   );
 
   const { user } = useSelector((state) => state?.auth);
@@ -108,6 +109,7 @@ const InfoCard = ({
   const [ntpModal, setNtpModal] = useState(false);
   const [sftpModal, setSftpModal] = useState(false);
   const [mqttsModal, setMqttsModal] = useState(false);
+  const [configurationModal, setConfigurationModal] = useState(false);
   const [versionData, setversionData] = useState([]);
 
   const handleEdit = (info) => {
@@ -126,6 +128,8 @@ const InfoCard = ({
       setSftpModal(true);
     } else if (type === "MQTTS") {
       setMqttsModal(true);
+    } else if (type === "CONFIGURATION") {
+      setConfigurationModal(true);
     }
   };
 
@@ -736,6 +740,21 @@ const InfoCard = ({
           data={editValues}
           handleCancel={() => {
             setSftpModal(false);
+            setEditValues({});
+          }}
+        />
+      </DynamicModal>
+      <DynamicModal
+        open={configurationModal}
+        handleClose={() => {
+          setConfigurationModal(false);
+          setEditValues({});
+        }}
+      >
+        <ConfigurationEditModal
+          data={editValues}
+          handleCancel={() => {
+            setConfigurationModal(false);
             setEditValues({});
           }}
         />

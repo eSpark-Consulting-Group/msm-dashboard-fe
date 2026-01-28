@@ -255,6 +255,10 @@ export const editSftpSettingsSchema = Yup.object().shape({
     .min(1, "Data Interval must be at least 1"),
 });
 
+export const editConfigurationSettingsSchema = Yup.object().shape({
+  voltage_unbalance: Yup.number().required("Voltage unbalance is required"),
+});
+
 export const ntpSettingsSchema = Yup.object().shape({
   server_1: Yup.string().required("Server 1 is required"),
   server_2: Yup.string().required("Server 2 is required"),

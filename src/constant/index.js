@@ -920,6 +920,17 @@ export const otaData = (realData) => {
   ];
 };
 
+export const deviceConfiguration = (realData) => {
+  const { data } = realData || {};
+  return [
+    {
+      label: "Voltage Unbalance",
+      value: data?.voltage_unbalance || 0,
+      key: "voltage_unbalance",
+    },
+  ];
+};
+
 export const dashboardData = [
   {
     id: "1",

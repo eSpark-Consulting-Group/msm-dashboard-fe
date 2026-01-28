@@ -20,7 +20,7 @@ const ConfigrationEditModal = ({ data, handleCancel }) => {
         };
         const res = await updateConfiguration({
           formData: obj,
-          id: "ESP90000005",
+          id: data?.id,
         });
         if (res?.data) {
           toast.success("Device Configuration updated successfully");

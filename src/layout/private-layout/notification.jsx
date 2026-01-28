@@ -69,6 +69,7 @@ const Notifications = ({ icon }) => {
           sx: {
             width: 240,
             borderRadius: 2,
+            mt: 1,
           },
         }}
         sx={{
@@ -81,7 +82,8 @@ const Notifications = ({ icon }) => {
         <Box
           sx={{
             px: 2,
-            py: 1,
+            pt: 0,
+            pb: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

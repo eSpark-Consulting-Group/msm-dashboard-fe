@@ -16,17 +16,29 @@ import dayjs from "dayjs";
 import {
   useGetNotificationQuery,
   useMarkAsAllReadMutation,
-} from "../../services/configration copy";
+} from "../../services/notification";
 
 const Notifications = ({ icon }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-
-  const { data, isLoading, isFetching, refetch } = useGetNotificationQuery();
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const { data, isPending, isLoading, isFetching, refetch } =
+    useGetNotificationQuery({
+      page,
+      limit,
+      unread_only: false,
+    });
 
   const [markAsAllRead] = useMarkAsAllReadMutation();
 
+  const notifications = useMemo(() => {
+    if (!data?.data) return [];
+    return data.data;
+  }, [data]);
+
   const open = Boolean(anchorEl);
-  const notifications = data?.data || [];
+  const totalCount = data?.count || 0;
+  const hasMore = notifications.length < totalCount;
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.is_read).length,
@@ -35,6 +47,7 @@ const Notifications = ({ icon }) => {
 
   const handleOpen = async (event) => {
     setAnchorEl(event.currentTarget);
+    setPage(1);
 
     if (unreadCount > 0) {
       await markAsAllRead();
@@ -43,6 +56,10 @@ const Notifications = ({ icon }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLoadMore = () => {
+    setPage((prev) => prev + 1);
   };
 
   return (
@@ -146,6 +163,22 @@ const Notifications = ({ icon }) => {
               </MenuItem>
             ))}
         </Box>
+        {hasMore && (
+          <Box sx={{ pt: 1, textAlign: "center" }}>
+            <IconButton
+              size="small"
+              disableRipple
+              disabled={isFetching}
+              onClick={handleLoadMore}
+            >
+              {isPending ? (
+                <CircularProgress size={18} />
+              ) : (
+                <Typography fontSize="12px">Load more</Typography>
+              )}
+            </IconButton>
+          </Box>
+        )}
       </Menu>
     </>
   );

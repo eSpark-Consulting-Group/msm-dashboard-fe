@@ -30,15 +30,17 @@ const Users = () => {
   const [selectedUserToDelete, setSelectedUserToDelete] = useState(null);
 
   const [statusSort, setStatusSort] = useState(-1);
-  const [createdSort, setCreatedSort] = useState(-1);
-  const [countSort, setCountSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState("");
+  const [countSort, setCountSort] = useState("");
 
   const handleSort = (key, dir) => {
     if (key === "status") {
       setStatusSort(dir);
     } else if (key === "createdAt") {
       setCreatedSort(dir);
+      setCountSort("");
     } else if (key === "total_devices_count") {
+      setCreatedSort("");
       setCountSort(dir);
     }
   };

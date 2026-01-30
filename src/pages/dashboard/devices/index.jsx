@@ -59,8 +59,8 @@ const Devices = () => {
   const { user } = useSelector((state) => state.auth);
 
   const [statusSort, setStatusSort] = useState("");
-  const [createdSort, setCreatedSort] = useState(-1);
-  const [updatedSort, setUpdatedSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState("");
+  const [updatedSort, setUpdatedSort] = useState("");
 
   const tabFromQuery = searchParams.get("tab");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -72,8 +72,10 @@ const Devices = () => {
       setStatusSort(dir);
     } else if (key === "createdAt") {
       setCreatedSort(dir);
+      setUpdatedSort("");
     } else if (key === "lastUpdated") {
       setUpdatedSort(dir);
+      setCreatedSort("");
     }
   };
 

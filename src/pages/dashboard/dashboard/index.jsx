@@ -39,16 +39,18 @@ const Dashboard = () => {
   const token = localStorage.getItem("msm_token");
 
   const [statusSort, setStatusSort] = useState("");
-  const [createdSort, setCreatedSort] = useState(-1);
-  const [updatedSort, setUpdatedSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState("");
+  const [updatedSort, setUpdatedSort] = useState("");
 
   const handleSort = (key, dir) => {
     if (key === "status") {
       // setStatusSort(dir);
     } else if (key === "createdAt") {
       setCreatedSort(dir);
+      setUpdatedSort("");
     } else if (key === "lastUpdated") {
       setUpdatedSort(dir);
+      setCreatedSort("");
     }
   };
 

@@ -16,7 +16,8 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
 import { copyToClipboard, getValue } from "../../utils";
 import { view, edit, trash, copy, unassign } from "../../assets";
 
@@ -51,6 +52,12 @@ const DynamicTable = ({
     ...column,
     keyPath: column.key.split("."),
   }));
+
+  const getNextSortDir = (current) => {
+    if (current === "") return 1;
+    if (current === 1) return -1;
+    return "";
+  };
 
   const enabledRows = data.filter((item) => item?.status?.label);
   const allSelected =
@@ -296,8 +303,7 @@ const DynamicTable = ({
                     key={`${index}`}
                     onClick={() => {
                       if (column.sortable && onSortChange) {
-                        // clicked SAME column → toggle asc ↔ desc only
-                        const newOrder = column?.sortDir === 1 ? -1 : 1;
+                        const newOrder = getNextSortDir(column.sortDir);
                         onSortChange(column.key, newOrder);
                       }
                     }}
@@ -315,9 +321,15 @@ const DynamicTable = ({
                       {column.name}
                       {column.sortable && (
                         <>
-                          {column.sortDir === -1 ? (
+                          {column.sortDir === "" && (
+                            <SwapVertIcon sx={{ fontSize: 16, opacity: 0.5 }} />
+                          )}
+
+                          {column.sortDir === 1 && (
                             <ArrowUpward sx={{ fontSize: 16 }} />
-                          ) : (
+                          )}
+
+                          {column.sortDir === -1 && (
                             <ArrowDownward sx={{ fontSize: 16 }} />
                           )}
                         </>

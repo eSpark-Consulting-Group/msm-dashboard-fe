@@ -17,24 +17,33 @@ import {
   useGetNotificationQuery,
   useMarkAsAllReadMutation,
 } from "../../services/notification";
+import { useEffect } from "react";
+import { useSocket } from "../../SocketTest";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addNotificationData,
+  markAllReadInStore,
+  prependNotification,
+} from "../../store/slices/notification";
 
 const Notifications = ({ icon }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [page, setPage] = useState(1);
   const limit = 10;
-  const { data, isPending, isLoading, isFetching, refetch } =
-    useGetNotificationQuery({
-      page,
-      limit,
-      unread_only: false,
-    });
+  const { socket } = useSocket();
+  const { data, isPending, isFetching, refetch } = useGetNotificationQuery({
+    page,
+    limit,
+    unread_only: false,
+  });
 
   const [markAsAllRead] = useMarkAsAllReadMutation();
 
-  const notifications = useMemo(() => {
-    if (!data?.data) return [];
-    return data.data;
-  }, [data]);
+  const notifications = useSelector((state) => state.notification.notification);
+  const notificationLoading = useSelector(
+    (state) => state.notification.notificationLoading,
+  );
+  const dispatch = useDispatch();
 
   const open = Boolean(anchorEl);
   const totalCount = data?.count || 0;
@@ -50,7 +59,14 @@ const Notifications = ({ icon }) => {
     setPage(1);
 
     if (unreadCount > 0) {
-      await markAsAllRead();
+      try {
+        // 1️⃣ Call backend API
+        await markAsAllRead();
+
+        dispatch(markAllReadInStore());
+      } catch (err) {
+        console.error("Failed to mark notifications as read:", err);
+      }
     }
   };
 
@@ -61,6 +77,26 @@ const Notifications = ({ icon }) => {
   const handleLoadMore = () => {
     setPage((prev) => prev + 1);
   };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNotification = (newNotification) => {
+      dispatch(prependNotification(newNotification));
+    };
+
+    socket.on("new_notification", handleNotification);
+
+    return () => {
+      socket.off("new_notification", handleNotification);
+    };
+  }, [socket, dispatch]);
+
+  useEffect(() => {
+    if (data?.data) {
+      dispatch(addNotificationData(data?.data));
+    }
+  }, [data, dispatch, page]);
 
   return (
     <>
@@ -129,39 +165,34 @@ const Notifications = ({ icon }) => {
             overflowY: "auto",
           }}
         >
-          {isLoading && (
+          {notificationLoading && (
             <Box sx={{ p: 2, textAlign: "center" }}>
               <CircularProgress size={20} />
             </Box>
           )}
 
-          {!isLoading && notifications.length === 0 && (
+          {notifications.length === 0 && !notificationLoading && (
             <MenuItem>No notifications</MenuItem>
           )}
 
-          {!isLoading &&
-            notifications?.map((item) => (
-              <MenuItem
-                key={item?._id}
-                onClick={handleClose}
-                sx={{
-                  alignItems: "flex-start",
-                  whiteSpace: "normal",
-                  bgcolor: item?.is_read ? "#FFF" : "#F0F6FF",
-                }}
-              >
-                <Box>
-                  <Typography fontSize="13px">{item?.message}</Typography>
-                  <Typography
-                    fontSize="11px"
-                    sx={{ color: "#A1A1A1" }}
-                    mt={0.3}
-                  >
-                    {dayjs(item?.createdAt)?.fromNow()}
-                  </Typography>
-                </Box>
-              </MenuItem>
-            ))}
+          {notifications.map((item) => (
+            <MenuItem
+              key={item._id}
+              onClick={handleClose}
+              sx={{
+                alignItems: "flex-start",
+                whiteSpace: "normal",
+                bgcolor: item.is_read ? "#FFF" : "#F0F6FF",
+              }}
+            >
+              <Box>
+                <Typography fontSize="13px">{item.message}</Typography>
+                <Typography fontSize="11px" sx={{ color: "#A1A1A1" }} mt={0.3}>
+                  {dayjs(item.createdAt).fromNow()}
+                </Typography>
+              </Box>
+            </MenuItem>
+          ))}
         </Box>
         {hasMore && (
           <Box sx={{ pt: 1, textAlign: "center" }}>

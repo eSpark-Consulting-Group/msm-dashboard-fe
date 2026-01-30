@@ -21,7 +21,6 @@ export const notificationApi = api.injectEndpoints({
         url: `/notification/read-all`,
         method: "PUT",
       }),
-      invalidatesTags: ["Notification"],
     }),
   }),
 });

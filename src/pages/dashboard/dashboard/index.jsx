@@ -41,6 +41,8 @@ const Dashboard = () => {
   const [statusSort, setStatusSort] = useState("");
   const [createdSort, setCreatedSort] = useState("");
   const [updatedSort, setUpdatedSort] = useState("");
+  const [nameSort, setNameSort] = useState("");
+  const [groupNameSort, setGroupNameSort] = useState("");
 
   const handleSort = (key, dir) => {
     if (key === "status") {
@@ -48,9 +50,23 @@ const Dashboard = () => {
     } else if (key === "createdAt") {
       setCreatedSort(dir);
       setUpdatedSort("");
+      setNameSort("");
+      setGroupNameSort("");
     } else if (key === "lastUpdated") {
       setUpdatedSort(dir);
       setCreatedSort("");
+      setNameSort("");
+      setGroupNameSort("");
+    } else if (key === "name") {
+      setNameSort(dir);
+      setCreatedSort("");
+      setUpdatedSort("");
+      setGroupNameSort("");
+    } else if (key === "group") {
+      setGroupNameSort(dir);
+      setCreatedSort("");
+      setUpdatedSort("");
+      setNameSort("");
     }
   };
 
@@ -74,6 +90,8 @@ const Dashboard = () => {
       statusSort,
       createdSort,
       updatedSort,
+      nameSort,
+      groupNameSort,
     },
     {
       skip: !token || user?.role?.name === "user",
@@ -95,6 +113,8 @@ const Dashboard = () => {
       statusSort,
       createdSort,
       updatedSort,
+      nameSort,
+      groupNameSort,
     },
     {
       skip: !token || user?.role?.name !== "user",
@@ -259,6 +279,8 @@ const Dashboard = () => {
     statusSort,
     createdSort,
     updatedSort,
+    nameSort,
+    groupNameSort,
     dashboardData2,
     user,
     isError2,
@@ -404,6 +426,8 @@ const Dashboard = () => {
           statusSort,
           createdSort,
           updatedSort,
+          nameSort,
+          groupNameSort,
         )}
         hideView
         hideEdit

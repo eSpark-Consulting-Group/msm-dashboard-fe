@@ -57,6 +57,8 @@ export function useSocket() {
     }
   }, [selectedDevice, user]);
 
+  const msm_token = localStorage?.getItem("msm_token");
+
   // ✅ Create singleton socket
   if (!socketInstance) {
     socketInstance = io(import.meta.env.VITE_SOCKET_URL, {
@@ -65,6 +67,10 @@ export function useSocket() {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 3000,
+
+      auth: {
+        token: msm_token,
+      },
     });
 
     socketInstance.on("connect", () => {

@@ -76,6 +76,13 @@ const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  const sortParams = {
+    ...(createdSort && { createdSort }),
+    ...(updatedSort && { updatedSort }),
+    ...(nameSort && { nameSort }),
+    ...(groupNameSort && { groupNameSort }),
+  };
+
   const {
     data: assignDevicesData2,
     isLoading,
@@ -88,10 +95,7 @@ const Dashboard = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
-      nameSort,
-      groupNameSort,
+      ...sortParams,
     },
     {
       skip: !token || user?.role?.name === "user",
@@ -111,10 +115,7 @@ const Dashboard = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
-      nameSort,
-      groupNameSort,
+      ...sortParams,
     },
     {
       skip: !token || user?.role?.name !== "user",

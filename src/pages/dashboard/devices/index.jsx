@@ -119,6 +119,13 @@ const Devices = () => {
     // setSortOrder(null);
   }, [activeTab]);
 
+  const sortParams = {
+    ...(createdSort && { createdSort }),
+    ...(updatedSort && { updatedSort }),
+    ...(nameSort && { nameSort }),
+    ...(groupNameSort && { groupNameSort }),
+  };
+
   const {
     data: assignDevicesData,
     isLoading: deviceLoading,
@@ -131,10 +138,7 @@ const Devices = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
-      nameSort,
-      groupNameSort,
+      ...sortParams,
     },
     {
       skip: activeTab !== 0 || user?.role?.name === "user",
@@ -154,10 +158,7 @@ const Devices = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
-      nameSort,
-      groupNameSort,
+      ...sortParams,
     },
     {
       skip: user?.role?.name !== "user",

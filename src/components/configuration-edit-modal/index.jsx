@@ -5,9 +5,12 @@ import Button from "../buttons";
 import { toast } from "react-toastify";
 import { editConfigurationSettingsSchema } from "../../schemas";
 import { useUpdateConfigurationMutation } from "../../services/configration";
+import { useParams } from "react-router-dom";
 
 const ConfigrationEditModal = ({ data, handleCancel }) => {
+  const { id } = useParams();
   const [updateConfiguration, { isLoading }] = useUpdateConfigurationMutation();
+  
   const formik = useFormik({
     initialValues: {
       voltage_unbalance: data?.voltage_unbalance ?? "",
@@ -20,7 +23,7 @@ const ConfigrationEditModal = ({ data, handleCancel }) => {
         };
         const res = await updateConfiguration({
           formData: obj,
-          id: data?.id,
+          id: id,
         });
         if (res?.data) {
           toast.success("Device Configuration updated successfully");

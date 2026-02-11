@@ -60,7 +60,6 @@ const InfoCard = ({
   const { currentDevice, selectedDevice } = useSelector(
     (state) => state?.devices,
   );
-
   const { user } = useSelector((state) => state?.auth);
 
   const [now, setNow] = useState(dayjs());
@@ -773,6 +772,10 @@ const InfoCard = ({
               if (res?.data?.success) {
                 toast.success("Password Verified");
                 startTimer();
+                const device_pass = info?.find(
+                  (item) => item?.key === "device_pass",
+                )?.value;
+                setDashboardPw(decrypt(device_pass));
               } else {
                 toast.error("Incorrect Password");
                 return;

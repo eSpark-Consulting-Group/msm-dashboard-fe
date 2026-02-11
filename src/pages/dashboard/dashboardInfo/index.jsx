@@ -292,7 +292,7 @@ const DashboardInfo = () => {
           onButtonClick={handleReboot}
           role={user?.role?.name}
           type={"INFO"}
-          id={deviceData?.data?.device_uuid}
+          id={deviceData?.data?.device_data?.device_uuid}
         />
       ),
     },

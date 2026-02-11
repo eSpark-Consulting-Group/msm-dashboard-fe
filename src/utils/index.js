@@ -431,9 +431,14 @@ const ENCRYPTION_KEY = import.meta.env.VITE_ENC_KEY;
 
 export const decrypt = (cipherText) => {
   try {
+    if (!cipherText || !cipherText.includes(":")) return null;
+
     const [ivHex, encryptedHex] = cipherText.split(":");
 
+    // IV (16 bytes)
     const iv = CryptoJS.enc.Hex.parse(ivHex);
+
+    // Encrypted data
     const encrypted = CryptoJS.enc.Hex.parse(encryptedHex);
 
     const decrypted = CryptoJS.AES.decrypt(
@@ -443,17 +448,12 @@ export const decrypt = (cipherText) => {
         iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
-      }
+      },
     );
-    console.log(
-      cipherText,
-      decrypted.toString(CryptoJS.enc.Utf8),
-      "decrypted.toString(CryptoJS.enc.Utf8)",
-      ENCRYPTION_KEY
-    );
+
     return decrypted.toString(CryptoJS.enc.Utf8);
-  } catch (err) {
-    console.error("Decryption failed:", err);
+  } catch (error) {
+    console.error("Decrypt failed:", error);
     return null;
   }
 };

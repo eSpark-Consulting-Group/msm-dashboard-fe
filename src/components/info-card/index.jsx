@@ -57,7 +57,6 @@ const InfoCard = ({
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
   const { currentDevice, selectedDevice } = useSelector(
     (state) => state?.devices,
   );
@@ -774,7 +773,6 @@ const InfoCard = ({
               if (res?.data?.success) {
                 toast.success("Password Verified");
                 startTimer();
-                setDashboardPw(decrypt(openPermissionModal));
               } else {
                 toast.error("Incorrect Password");
                 return;

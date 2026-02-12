@@ -59,8 +59,10 @@ const Devices = () => {
   const { user } = useSelector((state) => state.auth);
 
   const [statusSort, setStatusSort] = useState("");
-  const [createdSort, setCreatedSort] = useState(-1);
-  const [updatedSort, setUpdatedSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState("");
+  const [updatedSort, setUpdatedSort] = useState("");
+  const [nameSort, setNameSort] = useState("");
+  const [groupNameSort, setGroupNameSort] = useState("");
 
   const tabFromQuery = searchParams.get("tab");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -72,8 +74,24 @@ const Devices = () => {
       setStatusSort(dir);
     } else if (key === "createdAt") {
       setCreatedSort(dir);
+      setUpdatedSort("");
+      setNameSort("");
+      setGroupNameSort("");
     } else if (key === "lastUpdated") {
       setUpdatedSort(dir);
+      setCreatedSort("");
+      setNameSort("");
+      setGroupNameSort("");
+    } else if (key === "name") {
+      setNameSort(dir);
+      setCreatedSort("");
+      setUpdatedSort("");
+      setGroupNameSort("");
+    } else if (key === "group" || key === "groups") {
+      setGroupNameSort(dir);
+      setCreatedSort("");
+      setUpdatedSort("");
+      setNameSort("");
     }
   };
 
@@ -101,6 +119,13 @@ const Devices = () => {
     // setSortOrder(null);
   }, [activeTab]);
 
+  const sortParams = {
+    ...(createdSort && { createdSort }),
+    ...(updatedSort && { updatedSort }),
+    ...(nameSort && { nameSort }),
+    ...(groupNameSort && { groupNameSort }),
+  };
+
   const {
     data: assignDevicesData,
     isLoading: deviceLoading,
@@ -113,8 +138,7 @@ const Devices = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
+      ...sortParams,
     },
     {
       skip: activeTab !== 0 || user?.role?.name === "user",
@@ -134,8 +158,7 @@ const Devices = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
+      ...sortParams,
     },
     {
       skip: user?.role?.name !== "user",
@@ -252,6 +275,8 @@ const Devices = () => {
     statusSort,
     createdSort,
     updatedSort,
+    nameSort,
+    groupNameSort,
   ]);
 
   useEffect(() => {
@@ -553,7 +578,14 @@ const Devices = () => {
         data={data}
         columns={
           activeTab === 0
-            ? columns(user?.role?.name, statusSort, createdSort, updatedSort)
+            ? columns(
+                user?.role?.name,
+                statusSort,
+                createdSort,
+                updatedSort,
+                nameSort,
+                groupNameSort,
+              )
             : deviceGroupColumns(user?.role?.name)
         }
         isLoading={

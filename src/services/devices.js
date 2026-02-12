@@ -10,6 +10,8 @@ export const deviceApi = api.injectEndpoints({
         statusSort,
         createdSort,
         updatedSort,
+        nameSort,
+        groupNameSort,
       }) => {
         const params = new URLSearchParams({
           page,
@@ -27,6 +29,14 @@ export const deviceApi = api.injectEndpoints({
 
         if (updatedSort !== undefined) {
           params.append("updated_sort", updatedSort);
+        }
+
+        if (nameSort !== undefined) {
+          params.append("name_sort", nameSort);
+        }
+
+        if (groupNameSort !== undefined) {
+          params.append("groupName_sort", groupNameSort);
         }
 
         return {

@@ -52,10 +52,12 @@ export function useSocket() {
       setDeviceId(
         user?.role?.name === "user"
           ? selectedDevice?.device_data?.device_data?.device_uuid
-          : selectedDevice?.device_data?.device_uuid
+          : selectedDevice?.device_data?.device_uuid,
       );
     }
   }, [selectedDevice, user]);
+
+  const msm_token = localStorage?.getItem("msm_token");
 
   // ✅ Create singleton socket
   if (!socketInstance) {
@@ -65,6 +67,10 @@ export function useSocket() {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 3000,
+
+      auth: {
+        token: msm_token,
+      },
     });
 
     socketInstance.on("connect", () => {
@@ -184,7 +190,7 @@ export function useSocket() {
         toast.success(
           `New version${
             data?.length > 1 ? "s" : ""
-          } ${versions} updated successfully`
+          } ${versions} updated successfully`,
         );
       } else {
         toast.success(data);
@@ -262,7 +268,7 @@ export function useSocket() {
       });
       console.log(`✅ Subscribed to ${eventName}`);
     },
-    [dispatch]
+    [dispatch],
   );
 
   const unsubscribeFromTelemetry = useCallback(
@@ -272,7 +278,7 @@ export function useSocket() {
       dispatch(handleUnsubscribe());
       socketInstance?.off(eventName);
     },
-    [dispatch]
+    [dispatch],
   );
 
   const stopEvent = useCallback((eventName, payload) => {
@@ -284,7 +290,7 @@ export function useSocket() {
         !(
           e.event === eventName &&
           JSON.stringify(e.payload) === JSON.stringify(payload)
-        )
+        ),
     );
 
     socketInstance.emit(eventName, payload);
@@ -298,7 +304,7 @@ export function useSocket() {
       const exists = activeSubscriptions.current.some(
         (e) =>
           e.event === eventName &&
-          JSON.stringify(e.payload) === JSON.stringify(payload)
+          JSON.stringify(e.payload) === JSON.stringify(payload),
       );
       if (!exists)
         activeSubscriptions.current.push({ event: eventName, payload });

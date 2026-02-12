@@ -7,6 +7,7 @@ import DashboardWrapper from "../../../components/card";
 import InfoCard from "../../../components/info-card";
 import DynamicTabs from "../../../components/tabs";
 import {
+  deviceConfiguration,
   infoData,
   mqttProtocol,
   mqttsProtocol,
@@ -32,6 +33,7 @@ import {
 import { addCurrentData, addMqttDataState } from "../../../store/slices/mqtt";
 import { useGetCurrentOtaQuery } from "../../../services/ota";
 import { resetTabs } from "../../../store/slices/info";
+import { useGetConfigurationDevicesByIdQuery } from "../../../services/configration";
 // import { useSocket } from "../../../SocketTest";
 
 const DashboardInfo = () => {
@@ -134,6 +136,18 @@ const DashboardInfo = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  const {
+    data: configurationData,
+    isLoading: configurationLoading,
+    isError: isConfigurationError,
+    error: configurationError,
+    refetch: configurationRefetch,
+    isFetching: configurationFetching,
+  } = useGetConfigurationDevicesByIdQuery(id, {
+    skip: !id,
+    refetchOnMountOrArgChange: true,
+  });
+
   const [reboot] = useRebootDeviceMutation();
 
   useEffect(() => {
@@ -151,6 +165,10 @@ const DashboardInfo = () => {
       toast.error(otaError?.data?.message, { toastId: "OTAERROR" });
     if (isSftpError)
       toast.error(sftpError?.data?.message, { toastId: "SFTPERROR" });
+    if (isConfigurationError)
+      toast.error(configurationError?.data?.message, {
+        toastId: "CONFIGURATION",
+      });
   }, [
     isDeviceError,
     deviceError,
@@ -164,6 +182,8 @@ const DashboardInfo = () => {
     otaError,
     isSftpError,
     sftpError,
+    isConfigurationError,
+    configurationError,
     isDeviceError2,
     deviceError2,
   ]);
@@ -272,7 +292,7 @@ const DashboardInfo = () => {
           onButtonClick={handleReboot}
           role={user?.role?.name}
           type={"INFO"}
-          id={deviceData?.data?.device_uuid}
+          id={deviceData?.data?.device_data?.device_uuid}
         />
       ),
     },
@@ -364,6 +384,20 @@ const DashboardInfo = () => {
         />
       ),
     },
+    {
+      label: "CONFIGURATION",
+      component: (
+        <InfoCard
+          info={deviceConfiguration(configurationData)}
+          title="Device Configuration"
+          onButtonClick={() => configurationRefetch()}
+          role={user?.role?.name}
+          buttonLoading={configurationFetching}
+          type={"CONFIGURATION"}
+          id={configurationData?.data?.device_uuid}
+        />
+      ),
+    },
   ];
 
   return (
@@ -375,6 +409,7 @@ const DashboardInfo = () => {
         mqttsLoading ||
         otaLoading ||
         sftpLoading ||
+        configurationLoading ||
         deviceLoading2
       }
     >

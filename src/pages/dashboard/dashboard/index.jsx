@@ -39,16 +39,34 @@ const Dashboard = () => {
   const token = localStorage.getItem("msm_token");
 
   const [statusSort, setStatusSort] = useState("");
-  const [createdSort, setCreatedSort] = useState(-1);
-  const [updatedSort, setUpdatedSort] = useState(-1);
+  const [createdSort, setCreatedSort] = useState("");
+  const [updatedSort, setUpdatedSort] = useState("");
+  const [nameSort, setNameSort] = useState("");
+  const [groupNameSort, setGroupNameSort] = useState("");
 
   const handleSort = (key, dir) => {
     if (key === "status") {
       // setStatusSort(dir);
     } else if (key === "createdAt") {
       setCreatedSort(dir);
+      setUpdatedSort("");
+      setNameSort("");
+      setGroupNameSort("");
     } else if (key === "lastUpdated") {
       setUpdatedSort(dir);
+      setCreatedSort("");
+      setNameSort("");
+      setGroupNameSort("");
+    } else if (key === "name") {
+      setNameSort(dir);
+      setCreatedSort("");
+      setUpdatedSort("");
+      setGroupNameSort("");
+    } else if (key === "group") {
+      setGroupNameSort(dir);
+      setCreatedSort("");
+      setUpdatedSort("");
+      setNameSort("");
     }
   };
 
@@ -57,6 +75,13 @@ const Dashboard = () => {
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  const sortParams = {
+    ...(createdSort && { createdSort }),
+    ...(updatedSort && { updatedSort }),
+    ...(nameSort && { nameSort }),
+    ...(groupNameSort && { groupNameSort }),
+  };
 
   const {
     data: assignDevicesData2,
@@ -70,8 +95,7 @@ const Dashboard = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
+      ...sortParams,
     },
     {
       skip: !token || user?.role?.name === "user",
@@ -91,8 +115,7 @@ const Dashboard = () => {
       limit: pageSize,
       search,
       statusSort,
-      createdSort,
-      updatedSort,
+      ...sortParams,
     },
     {
       skip: !token || user?.role?.name !== "user",
@@ -257,6 +280,8 @@ const Dashboard = () => {
     statusSort,
     createdSort,
     updatedSort,
+    nameSort,
+    groupNameSort,
     dashboardData2,
     user,
     isError2,
@@ -402,6 +427,8 @@ const Dashboard = () => {
           statusSort,
           createdSort,
           updatedSort,
+          nameSort,
+          groupNameSort,
         )}
         hideView
         hideEdit

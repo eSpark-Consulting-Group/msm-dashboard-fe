@@ -1,7 +1,24 @@
-export const columns = (role, statusSort, createdSort, updatedSort) => [
-  { name: "Device Name", key: "name" },
+export const columns = (
+  role,
+  statusSort,
+  createdSort,
+  updatedSort,
+  nameSort,
+  groupNameSort,
+) => [
+  {
+    name: "Device Name",
+    key: "name",
+    sortable: role !== "user" ? true : false,
+    sortDir: role !== "user" ? nameSort : "",
+  },
   { name: "Device ID", key: "deviceId" },
-  { name: "Group", key: "groups" },
+  {
+    name: "Group",
+    key: "groups",
+    sortable: role !== "user" ? true : false,
+    sortDir: role !== "user" ? groupNameSort : "",
+  },
   {
     name: "Created Time",
     key: "createdAt",

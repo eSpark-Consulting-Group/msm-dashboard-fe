@@ -8,33 +8,7 @@ import {
   SearchBar,
 } from "../../components";
 import { messageIcon, bellIcon, avatar, hamburger } from "../../assets";
-
-const Notifications = ({ icon, count }) => {
-  return (
-    <Box sx={{ cursor: "pointer", position: "relative" }}>
-      <img src={icon} alt="message" />
-      <Box
-        sx={{
-          position: "absolute",
-          top: "-3px",
-          right: "-3px",
-          width: "14px",
-          height: "16px",
-          background: "#0077FF",
-          borderRadius: "50%",
-          color: "#FFF",
-          fontSize: "10px",
-          fontWeight: 700,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {count}
-      </Box>
-    </Box>
-  );
-};
+import Notifications from "./notification";
 
 const Header = ({ open, setOpen }) => {
   const { user } = useSelector((state) => state.auth);
@@ -92,12 +66,12 @@ const Header = ({ open, setOpen }) => {
           sx={{
             display: "flex",
             justifyContent: "flex-end",
-            alignItems: "flex-end",
-            gap: "16px",
+            alignItems: "center",
+            gap: "13px",
           }}
         >
-          {/* <Notifications icon={messageIcon} count={2} />
-          <Notifications icon={bellIcon} count={6} /> */}
+          {/* <Notifications icon={messageIcon} count={2} /> */}
+          <Notifications icon={bellIcon} count={6} />
           <Avatar
             sx={{ cursor: "pointer" }}
             alt={user?.name ?? "User"}

@@ -53,11 +53,8 @@ export const authApi = api.injectEndpoints({
         url: `/auth/change-device-password/${id}`,
         method: "POST",
         body,
-        invalidatesTags: (result, error, id) => [
-          "Devices",
-          { type: "Devices", id },
-        ],
       }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Devices", id }],
     }),
   }),
 });

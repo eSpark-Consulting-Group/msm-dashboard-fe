@@ -6,6 +6,13 @@ import {
   CircularProgress,
   FormControlLabel,
   Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
   useMediaQuery,
   useTheme,
@@ -15,11 +22,11 @@ import OutlinedInput from "../input";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { useUpdateNtpMutation } from "../../services/ntp";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUpdateMqttMutation } from "../../services/mqtt";
 import { useUpdateSftpMutation } from "../../services/sftp";
-import { copy, edit, eye, pen } from "../../assets";
+import { copy, edit, eye } from "../../assets";
 import { useSelector } from "react-redux";
 import DynamicModal from "../modal";
 import EditMqtt from "../edit-mqtt-modal";
@@ -27,7 +34,7 @@ import NtpEditModal from "../ntp-edit-modal";
 import SftpEditModal from "../sftp-edit-modal";
 import dayjs from "dayjs";
 import Dropdown from "../drop-down";
-import { copyToClipboard, decrypt } from "../../utils";
+import { copyToClipboard, decrypt, formatLabel } from "../../utils";
 import EditMqtts from "../edit-mqtts-modal";
 import {
   useGetVersionsListQuery,
@@ -53,6 +60,8 @@ const InfoCard = ({
   id,
   buttonLoading,
   type,
+  columns = [],
+  data = [],
 }) => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -286,10 +295,10 @@ const InfoCard = ({
         display="flex"
         justifyContent={isSmallScreen ? "center" : "space-between"}
         alignItems="center"
-        mb={2}
         flexDirection={isSmallScreen ? "column" : "row"}
-        gap={2}
         textAlign={isSmallScreen ? "center" : "left"}
+        gap={2}
+        mb={2}
       >
         <Typography variant="h6" fontWeight="bold" fontSize="25px" color="#000">
           {title}
@@ -339,7 +348,7 @@ const InfoCard = ({
             }}
             variant="outlined"
             size="small"
-            onClick={() => handleEdit(info)}
+            onClick={() => handleEdit(type === "CONFIGURATION" ? data : info)}
           >
             Edit
           </Button>
@@ -441,140 +450,252 @@ const InfoCard = ({
               </Card>
             </Grid>
           )}
-          {info
-            .filter((i) => !i?.checkBox)
-            ?.map((item, index) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                key={index}
-                sx={{
-                  width: "100%",
-                  boxShadow: "none",
-                  textAlign: isSmallScreen ? "center" : "left",
-                }}
-              >
-                <Card
-                  elevation={1}
+
+          {type === "CONFIGURATION" && (
+            <Card
+              elevation={1}
+              sx={{
+                px: 1,
+                borderRadius: 1,
+                boxShadow: "none",
+                border: "1px solid #E4E4E4",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <TableContainer>
+                <Table
                   sx={{
-                    p: 2,
-                    borderRadius: 1,
-                    boxShadow: "none",
-                    border: "1px solid #E4E4E4",
-                    height: "100%",
+                    minWidth: { xs: 750, md: 850 },
+                    width: "100%",
+                    borderSpacing: "8px 8px",
                   }}
                 >
-                  <Box
-                    display="flex"
-                    justifyContent={isSmallScreen ? "center" : "space-between"}
-                    alignItems="center"
-                    flexWrap="wrap"
-                    gap={1}
-                    flexDirection={isSmallScreen ? "column" : "row"}
+                  <TableRow
+                    sx={{
+                      "& td": {
+                        border: "0 !important",
+                        boxShadow:
+                          "0px 6px 20px rgba(0, 0, 0, 0.12) !important",
+                      },
+                    }}
                   >
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary !important"
-                      fontSize="20px"
-                      fontWeight="400"
-                      sx={{ mr: isSmallScreen ? 0 : 2 }}
-                    >
-                      {item.label}
-                    </Typography>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      gap={{
-                        xs: "8px",
-                        sm: "20px",
-                      }}
-                      justifyContent={isSmallScreen ? "center" : "flex-start"}
-                      sx={{ wordBreak: "break-word" }}
-                    >
-                      {isEditMode && item?.key === editId ? (
-                        <OutlinedInput
-                          name={item?.key}
-                          value={newVal}
-                          onInputChange={(e) => setNewVal(e.target.value)}
-                          sx={{ width: "350px" }}
-                        />
-                      ) : (
-                        <Typography
-                          variant="body1"
-                          fontWeight="medium"
-                          fontSize="20px"
-                        >
-                          {item?.password
-                            ? item.value
-                                ?.slice(0, 6)
-                                ?.split("")
-                                .map((i) => "*")
-                                .join("")
-                            : item.value}
-                        </Typography>
-                      )}
-                      {item?.password && (
-                        <img
-                          onClick={() => setOpenPermissionModal(item.value)}
-                          src={eye}
-                          alt="Icon"
-                          style={{
-                            cursor: "pointer",
-                            width: "24px",
-                            height: "24px",
-                            marginRight: "10px",
-                            marginTop: "5px",
+                    {columns?.map((col) => (
+                      <TableCell
+                        key={col.key}
+                        sx={{
+                          width: "fit-content",
+                          textAlign: col?.key === "name" ? "center" : "center",
+                          fontSize: "16px",
+                          textWrap: "nowrap",
+                        }}
+                      >
+                        {col.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  <TableBody>
+                    {data && data?.length > 0 ? (
+                      data?.map((row, rowIndex) => (
+                        <TableRow
+                          key={rowIndex}
+                          sx={{
+                            "& td": {
+                              boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.12)",
+                            },
                           }}
-                        />
-                      )}
-                      {item.showIcon &&
-                        role !== "user" &&
-                        editId !== item?.key &&
-                        selectedDevice !== null &&
-                        selectedDevice?.device_data?.device_status === true && (
-                          // <img
-                          //   src={pen}
-                          //   alt="icon"
-                          //   style={{ width: 18, height: 18, cursor: "pointer" }}
-                          //   // onClick={() => handleEdit(info)}
-                          //   onClick={() => handleEdit(info)}
-                          // />
-                          <></>
-                        )}
-                      {item.showIcon &&
-                        role !== "user" &&
-                        editId === item?.key &&
-                        !isLoading &&
-                        !mqttLoading &&
-                        !sftpLoading && (
-                          <Box sx={{ display: "flex", columnGap: "10px" }}>
-                            <CloseIcon
-                              sx={{ color: "red", cursor: "pointer" }}
-                              onClick={() => {
-                                setEditId("");
-                                setIsEditMode(false);
-                                setNewVal("");
+                        >
+                          {columns?.map((col) => (
+                            <TableCell
+                              key={col?.key}
+                              sx={{
+                                width: "fit-content",
+                                textAlign:
+                                  col?.key === "name" ? "center" : "center",
+                                color:
+                                  col?.key === "status" && row?.status
+                                    ? "#0ea709 !important"
+                                    : col?.key === "status" && !row?.status
+                                      ? "#ff0000 !important"
+                                      : "inherit",
+                              }}
+                            >
+                              {col?.key === "name"
+                                ? formatLabel(row[col?.key])
+                                : col?.key === "status"
+                                  ? row?.status
+                                    ? "Active"
+                                    : "Inactive"
+                                  : (row[col?.key] ?? "-")}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow
+                        sx={{
+                          "& td": {
+                            boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.12)",
+                          },
+                        }}
+                      >
+                        <TableCell
+                          colSpan={columns?.length}
+                          align="center"
+                          sx={{ fontWeight: 500 }}
+                        >
+                          Not Found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Card>
+          )}
+
+          {type === "CONFIGURATION"
+            ? null
+            : info
+                .filter((i) => !i?.checkBox)
+                ?.map((item, index) => (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    key={index}
+                    sx={{
+                      width: "100%",
+                      boxShadow: "none",
+                      textAlign: isSmallScreen ? "center" : "left",
+                    }}
+                  >
+                    <Card
+                      elevation={1}
+                      sx={{
+                        p: 2,
+                        borderRadius: 1,
+                        boxShadow: "none",
+                        border: "1px solid #E4E4E4",
+                        height: "100%",
+                      }}
+                    >
+                      <Box
+                        display="flex"
+                        justifyContent={
+                          isSmallScreen ? "center" : "space-between"
+                        }
+                        alignItems="center"
+                        flexWrap="wrap"
+                        gap={1}
+                        flexDirection={isSmallScreen ? "column" : "row"}
+                      >
+                        <Typography
+                          variant="subtitle2"
+                          color="text.secondary !important"
+                          fontSize="20px"
+                          fontWeight="400"
+                          sx={{ mr: isSmallScreen ? 0 : 2 }}
+                        >
+                          {item.label}
+                        </Typography>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          gap={{
+                            xs: "8px",
+                            sm: "20px",
+                          }}
+                          justifyContent={
+                            isSmallScreen ? "center" : "flex-start"
+                          }
+                          sx={{ wordBreak: "break-word" }}
+                        >
+                          {isEditMode && item?.key === editId ? (
+                            <OutlinedInput
+                              name={item?.key}
+                              value={newVal}
+                              onInputChange={(e) => setNewVal(e.target.value)}
+                              sx={{ width: "350px" }}
+                            />
+                          ) : (
+                            <Typography
+                              variant="body1"
+                              fontWeight="medium"
+                              fontSize="20px"
+                            >
+                              {item?.password
+                                ? item.value
+                                    ?.slice(0, 6)
+                                    ?.split("")
+                                    .map((i) => "*")
+                                    .join("")
+                                : item.value}
+                            </Typography>
+                          )}
+                          {item?.password && (
+                            <img
+                              onClick={() => setOpenPermissionModal(item.value)}
+                              src={eye}
+                              alt="Icon"
+                              style={{
+                                cursor: "pointer",
+                                width: "24px",
+                                height: "24px",
+                                marginRight: "10px",
+                                marginTop: "5px",
                               }}
                             />
-                            <CheckIcon
-                              sx={{ color: "green", cursor: "pointer" }}
-                              onClick={handleFinalEdit}
-                            />
-                          </Box>
-                        )}
-                      {item.showIcon &&
-                        role !== "user" &&
-                        editId === item?.key &&
-                        (isLoading || mqttLoading || sftpLoading) && (
-                          <CircularProgress size={15} />
-                        )}
-                    </Box>
-                  </Box>
-                </Card>
-              </Grid>
-            ))}
+                          )}
+                          {item.showIcon &&
+                            role !== "user" &&
+                            editId !== item?.key &&
+                            selectedDevice !== null &&
+                            selectedDevice?.device_data?.device_status ===
+                              true && (
+                              // <img
+                              //   src={pen}
+                              //   alt="icon"
+                              //   style={{ width: 18, height: 18, cursor: "pointer" }}
+                              //   // onClick={() => handleEdit(info)}
+                              //   onClick={() => handleEdit(info)}
+                              // />
+                              <></>
+                            )}
+                          {item.showIcon &&
+                            role !== "user" &&
+                            editId === item?.key &&
+                            !isLoading &&
+                            !mqttLoading &&
+                            !sftpLoading && (
+                              <Box sx={{ display: "flex", columnGap: "10px" }}>
+                                <CloseIcon
+                                  sx={{ color: "red", cursor: "pointer" }}
+                                  onClick={() => {
+                                    setEditId("");
+                                    setIsEditMode(false);
+                                    setNewVal("");
+                                  }}
+                                />
+                                <CheckIcon
+                                  sx={{ color: "green", cursor: "pointer" }}
+                                  onClick={handleFinalEdit}
+                                />
+                              </Box>
+                            )}
+                          {item.showIcon &&
+                            role !== "user" &&
+                            editId === item?.key &&
+                            (isLoading || mqttLoading || sftpLoading) && (
+                              <CircularProgress size={15} />
+                            )}
+                        </Box>
+                      </Box>
+                    </Card>
+                  </Grid>
+                ))}
+
           {type === "MQTTS" && (
             <Grid
               item
@@ -680,6 +801,7 @@ const InfoCard = ({
           )}
         </Box>
       )}
+
       <DynamicModal
         open={mqttModal}
         handleClose={() => {
@@ -750,7 +872,7 @@ const InfoCard = ({
         }}
       >
         <ConfigurationEditModal
-          data={editValues}
+          data={data}
           handleCancel={() => {
             setConfigurationModal(false);
             setEditValues({});

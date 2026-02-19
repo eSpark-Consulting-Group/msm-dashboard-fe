@@ -920,16 +920,139 @@ export const otaData = (realData) => {
   ];
 };
 
-export const deviceConfiguration = (realData) => {
-  const { data } = realData || {};
-  return [
-    {
-      label: "Voltage Unbalance",
-      value: data?.voltage_unbalance || 0,
-      key: "voltage_unbalance",
-    },
-  ];
-};
+export const DEVICE_CONFIGURATION_COLUMNS = [
+  { key: "name", label: "Name" },
+  { key: "delay_time", label: "Delay Time" },
+  { key: "minimum", label: "Min" },
+  { key: "maximum", label: "Max" },
+  { key: "percentage_value", label: "Percentage" },
+  { key: "status", label: "Status" },
+];
+
+export const DEVICE_CONFIGURATION_FIELDS = [
+  {
+    title: "Voltage Unbalance",
+    fields: [
+      {
+        label: "Voltage Unbalance Minimum",
+        key: "voltage_unbalance_minimum",
+        placeholder: "Voltage Unbalance Minimum",
+        value: "",
+      },
+      {
+        label: "Voltage Unbalance Maximum",
+        key: "voltage_unbalance_maximum",
+        placeholder: "Voltage Unbalance Maximum",
+        value: "",
+      },
+      {
+        label: "Voltage Unbalance Delay Time",
+        key: "voltage_unbalance_delay_time",
+        placeholder: "Voltage Unbalance Delay Time",
+        value: "",
+      },
+      {
+        label: "Voltage Unbalance Status",
+        key: "voltage_unbalance_status",
+        value: false,
+        type: "switch",
+      },
+    ],
+  },
+
+  {
+    title: "Voltage THD",
+    fields: [
+      {
+        label: "Voltage THD Minimum",
+        key: "voltage_thd_minimum",
+        value: "",
+      },
+      {
+        label: "Voltage THD Maximum",
+        key: "voltage_thd_maximum",
+        value: "",
+      },
+      {
+        label: "Voltage THD Delay Time",
+        key: "voltage_thd_delay_time",
+        value: "",
+      },
+      {
+        label: "Voltage THD Status",
+        key: "voltage_thd_status",
+        value: false,
+        type: "switch",
+      },
+    ],
+  },
+
+  {
+    title: "Current Unbalance",
+    fields: [
+      {
+        label: "Current Unbalance Minimum",
+        key: "current_unbalance_minimum",
+        value: "",
+      },
+      {
+        label: "Current Unbalance Maximum",
+        key: "current_unbalance_maximum",
+        value: "",
+      },
+      {
+        label: "Current Unbalance Delay Time",
+        key: "current_unbalance_delay_time",
+        value: "",
+      },
+      {
+        label: "Current Unbalance Status",
+        key: "current_unbalance_status",
+        value: false,
+        type: "switch",
+      },
+    ],
+  },
+
+  {
+    title: "Sustained Load Nameplate KVA",
+    fields: [
+      {
+        label: "Sustained Load Nameplate KVA Value",
+        key: "sustained_load_nameplate_kva_percentage_value",
+        value: "",
+      },
+      {
+        label: "Sustained Load Nameplate KVA Delay Time",
+        key: "sustained_load_nameplate_kva_delay_time",
+        value: "",
+      },
+      {
+        label: "Sustained Load Nameplate KVA Status",
+        key: "sustained_load_nameplate_kva_status",
+        value: false,
+        type: "switch",
+      },
+    ],
+  },
+
+  {
+    title: "Power Factor Unbalance",
+    fields: [
+      {
+        label: "Power Factor Unbalance Delay Time",
+        key: "power_factor_unbalance_delay_time",
+        value: "",
+      },
+      {
+        label: "Power Factor Unbalance Status",
+        key: "power_factor_unbalance_status",
+        value: false,
+        type: "switch",
+      },
+    ],
+  },
+];
 
 export const dashboardData = [
   {

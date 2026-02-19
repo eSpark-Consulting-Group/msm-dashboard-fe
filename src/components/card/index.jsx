@@ -12,7 +12,7 @@ const DashboardWrapper = ({ loading, children }) => {
   const [activeTab, setActiveTab] = useState(1);
 
   const { currentDevice, selectedDevice } = useSelector(
-    (state) => state?.devices
+    (state) => state?.devices,
   );
 
   const { user } = useSelector((state) => state?.auth);
@@ -64,7 +64,7 @@ const DashboardWrapper = ({ loading, children }) => {
             maxWidth: 1090,
             borderRadius: 3,
             boxShadow: 3,
-            p: 4,
+            p: { xs: 2.5, md: 4 },
             position: "relative",
             overflow: "visible",
             textAlign: "center",

@@ -7,7 +7,7 @@ import DashboardWrapper from "../../../components/card";
 import InfoCard from "../../../components/info-card";
 import DynamicTabs from "../../../components/tabs";
 import {
-  deviceConfiguration,
+  DEVICE_CONFIGURATION_COLUMNS,
   infoData,
   mqttProtocol,
   mqttsProtocol,
@@ -388,7 +388,43 @@ const DashboardInfo = () => {
       label: "CONFIGURATION",
       component: (
         <InfoCard
-          info={deviceConfiguration(configurationData)}
+          columns={DEVICE_CONFIGURATION_COLUMNS}
+          data={
+            configurationData?.data?.configuration_data || [
+              {
+                name: "voltage_unbalance",
+                delay_time: 0,
+                minimum: 0,
+                maximum: 0,
+                status: false,
+              },
+              {
+                name: "voltage_thd",
+                delay_time: 0,
+                minimum: 0,
+                maximum: 0,
+                status: false,
+              },
+              {
+                name: "current_unbalance",
+                delay_time: 0,
+                minimum: 0,
+                maximum: 0,
+                status: false,
+              },
+              {
+                name: "power_factor_unbalance",
+                delay_time: 0,
+                status: false,
+              },
+              {
+                name: "sustained_load_nameplate_kva",
+                delay_time: 0,
+                percentage_value: 0,
+                status: false,
+              },
+            ]
+          }
           title="Device Configuration"
           onButtonClick={() => configurationRefetch()}
           role={user?.role?.name}

@@ -92,6 +92,7 @@ const DynamicTabs = ({ tabs, onTabChange, width, maxWidth }) => {
                   minWidth: 80,
                   px: 0,
                   mx: 0,
+                  fontSize: { xs: "12px", md: "14px" },
                   color: selectedIndex === index ? "#fff !important" : "#888",
                   bgcolor: selectedIndex === index ? "#0C89E2" : "transparent",
                   border:
@@ -108,7 +109,7 @@ const DynamicTabs = ({ tabs, onTabChange, width, maxWidth }) => {
         </Box>
       </Box>
 
-      <Box marginY={2} paddingX={2} sx={{ width: "100%" }}>
+      <Box marginY={2} paddingX={{ xs: 0, md: 2 }} sx={{ width: "100%" }}>
         {tabs.map((tab, index) => (
           <Box
             key={tab.id || index}

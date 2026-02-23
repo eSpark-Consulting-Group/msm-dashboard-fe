@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { DEVICE_CONFIGURATION_FIELDS } from "../constant";
 
 export const loginSchema = Yup.object({
   email: Yup.string()
@@ -255,9 +256,26 @@ export const editSftpSettingsSchema = Yup.object().shape({
     .min(1, "Data Interval must be at least 1"),
 });
 
-export const editConfigurationSettingsSchema = Yup.object().shape({
-  voltage_unbalance: Yup.number().required("Voltage unbalance is required"),
-});
+export const editConfigurationSettingsSchema = Yup.object().shape(
+  DEVICE_CONFIGURATION_FIELDS.reduce((acc, group) => {
+    group.fields.forEach((field) => {
+      // 🔹 Switch fields
+      if (field.type === "switch") {
+        acc[field.key] = Yup.boolean();
+      }
+
+      // 🔹 Number fields
+      else {
+        acc[field.key] = Yup.number()
+          .typeError(`${field.label} must be a number`)
+          .required(`${field.label} is required`)
+          .min(0, `${field.label} must be greater than or equal to 0`);
+      }
+    });
+
+    return acc;
+  }, {}),
+);
 
 export const ntpSettingsSchema = Yup.object().shape({
   server_1: Yup.string().required("Server 1 is required"),

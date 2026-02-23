@@ -457,3 +457,6 @@ export const decrypt = (cipherText) => {
     return null;
   }
 };
+
+export const formatLabel = (text) =>
+  text?.replaceAll("_", " ")?.replace(/\b\w/g, (c) => c.toUpperCase());

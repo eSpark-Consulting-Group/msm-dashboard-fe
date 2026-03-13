@@ -60,6 +60,7 @@ const DynamicTable = ({
   };
 
   const enabledRows = data.filter((item) => item?.status?.label);
+
   const allSelected =
     enabledRows.length > 0 &&
     enabledRows
@@ -354,10 +355,13 @@ const DynamicTable = ({
                 }}
               >
                 {data?.map((item, index) => {
-                  const otaStarted =
-                    item?.device_data?.ota?.[0]?.ota_status === "started" ||
-                    item?.device_data?.device_data?.ota?.[0]?.ota_status ===
-                      "started";
+                  // const otaStarted =
+                  //   item?.device_data?.ota?.[0]?.ota_status === "started" ||
+                  //   item?.device_data?.device_data?.ota?.[0]?.ota_status ===
+                  //     "started";
+
+                  const status = item?.device_data?.device_status;
+
                   return (
                     <TableRow key={index}>
                       {/* Row Checkbox */}
@@ -365,7 +369,8 @@ const DynamicTable = ({
                         <TableCell
                           sx={{
                             textAlign: "center",
-                            backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
+                            backgroundColor:
+                              status === false ? "#f0f8ff" : "inherit",
                           }}
                         >
                           <Checkbox
@@ -374,7 +379,7 @@ const DynamicTable = ({
                             onChange={(e) =>
                               onSelectRow?.(item._id, e.target.checked)
                             }
-                            disabled={otaStarted}
+                            disabled={status}
                           />
                         </TableCell>
                       )}
@@ -384,16 +389,13 @@ const DynamicTable = ({
                             textAlign: "center",
                             pl: "0px",
                             whiteSpace: "pre-line",
-                            backgroundColor: otaStarted ? "#f0f8ff" : "inherit",
-                            cursor: otaStarted
-                              ? "not-allowed"
-                              : onRowClick
-                                ? "pointer"
-                                : "auto",
+                            backgroundColor:
+                              status === false ? "#f0f8ff" : "inherit",
+                            cursor: onRowClick && status ? "pointer" : "auto",
                           }}
                           key={column.key}
                           onClick={
-                            onRowClick && !otaStarted
+                            onRowClick && status
                               ? () => onRowClick(item)
                               : () => {}
                           }

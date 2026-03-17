@@ -121,12 +121,30 @@ export const deviceApi = api.injectEndpoints({
         statusSort,
         createdSort,
         updatedSort,
-      }) => ({
-        url: `/devices/assign_devices?page=${page}&limit=${limit}&search=${search}&status_sort=${
-          statusSort === 2 ? 0 : statusSort
-        }&created_sort=${createdSort}&updated_sort=${updatedSort}`,
-        method: "GET",
-      }),
+      }) => {
+        const params = new URLSearchParams({
+          page,
+          limit,
+          search,
+        });
+
+        if (statusSort !== undefined) {
+          params.append("status_sort", statusSort === 2 ? 0 : statusSort);
+        }
+
+        if (createdSort !== undefined) {
+          params.append("created_sort", createdSort);
+        }
+
+        if (updatedSort !== undefined) {
+          params.append("updated_sort", updatedSort);
+        }
+
+        return {
+          url: `/devices/assign_devices?${params.toString()}`,
+          method: "GET",
+        };
+      },
       providesTags: ["Devices"],
     }),
     getAssignDeviceById: builder.query({

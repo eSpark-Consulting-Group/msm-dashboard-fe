@@ -360,7 +360,11 @@ const DynamicTable = ({
                   //   item?.device_data?.device_data?.ota?.[0]?.ota_status ===
                   //     "started";
 
-                  const status = item?.device_data?.device_status;
+                  const status =
+                    item?.device_data?.device_status ||
+                    item?.status?.label === "Active"
+                      ? true
+                      : false;
 
                   return (
                     <TableRow key={index}>
@@ -391,7 +395,11 @@ const DynamicTable = ({
                             whiteSpace: "pre-line",
                             backgroundColor:
                               status === false ? "#f0f8ff" : "inherit",
-                            cursor: onRowClick && status ? "pointer" : "auto",
+                            cursor: !onRowClick
+                              ? "auto"
+                              : status
+                                ? "pointer"
+                                : "not-allowed",
                           }}
                           key={column.key}
                           onClick={

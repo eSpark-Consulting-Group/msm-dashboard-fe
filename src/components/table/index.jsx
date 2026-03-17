@@ -61,17 +61,18 @@ const DynamicTable = ({
 
   const enabledRows = data.filter((item) => item?.status?.label);
 
+  const selectableRows = enabledRows.filter((item) => {
+    const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
+    const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
+
+    const otaStatus = otaStatus1 || otaStatus2;
+
+    return otaStatus !== "started";
+  });
+
   const allSelected =
-    enabledRows.length > 0 &&
-    enabledRows
-      .filter((item) => {
-        const otaStatus1 = item?.device_data?.ota?.[0]?.ota_status;
-        const otaStatus2 = item?.device_data?.device_data?.ota?.[0]?.ota_status;
-        const otaStatus = otaStatus1 || otaStatus2;
-        const isOtaStarted = otaStatus === "started";
-        return !isOtaStarted;
-      })
-      .every((item) => selectedRows.includes(item._id));
+    selectableRows.length > 0 &&
+    selectableRows.every((item) => selectedRows.includes(item._id));
 
   const generateCell = (column, item) => {
     const cell = column.component
@@ -355,10 +356,10 @@ const DynamicTable = ({
                 }}
               >
                 {data?.map((item, index) => {
-                  // const otaStarted =
-                  //   item?.device_data?.ota?.[0]?.ota_status === "started" ||
-                  //   item?.device_data?.device_data?.ota?.[0]?.ota_status ===
-                  //     "started";
+                  const otaStarted =
+                    item?.device_data?.ota?.[0]?.ota_status === "started" ||
+                    item?.device_data?.device_data?.ota?.[0]?.ota_status ===
+                      "started";
 
                   const status =
                     item?.device_data?.device_status ||
@@ -383,7 +384,7 @@ const DynamicTable = ({
                             onChange={(e) =>
                               onSelectRow?.(item._id, e.target.checked)
                             }
-                            disabled={status}
+                            disabled={otaStarted}
                           />
                         </TableCell>
                       )}

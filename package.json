@@ -14,7 +14,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.1.1",
     "@reduxjs/toolkit": "^2.8.2",
-    "dayjs": "^1.11.13",
+    "dayjs": "^1.11.21",
     "formik": "^2.4.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
